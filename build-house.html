@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>בונים בית</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --ink-light:#4b5f82;
+    --paper:#F3EEE1;
+    --paper-dark:#E7E0CE;
+    --grid-line:rgba(61,90,128,0.28);
+    --gold:#D4A017;
+    --gold-deep:#A87A0E;
+    --sage:#7C9070;
+    --brick:#A64B4B;
+    --white:#fdfbf5;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Heebo',sans-serif;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/34px 34px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/34px 34px,
+      var(--ink);
+    color:var(--white);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+  .stage{width:100%;max-width:1180px;}
+  .hidden{display:none !important;}
+  h1,h2,h3{font-family:'Heebo',sans-serif;margin:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Setup screen ---------- */
+  #setup{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:18px;
+    padding:40px 40px 34px;
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+    text-align:center;
+    max-height:88vh;
+    overflow-y:auto;
+  }
+  #setup .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:.15em;
+    font-size:12px;
+    color:var(--gold-deep);
+    font-weight:600;
+  }
+  #setup h1{font-size:36px;font-weight:900;margin:8px 0 4px;}
+  #setup p.sub{color:var(--ink-light);margin:0 0 26px;font-size:14.5px;}
+  .choice-row{margin-bottom:24px;}
+  .choice-label{font-weight:700;font-size:14px;color:var(--ink-light);margin-bottom:12px;text-align:center;}
+  .opt-row-center{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .pill-btn{
+    border:2px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    padding:10px 20px;
+    border-radius:999px;
+    font-family:'Heebo',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .pill-btn:hover{background:var(--ink);color:var(--white);}
+  .pill-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+
+  .avatar-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .avatar-btn{
+    border:2px solid var(--paper-dark);
+    background:var(--white);
+    border-radius:12px;
+    padding:8px 6px 6px;
+    width:78px;
+    cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    transition:all .12s ease;
+  }
+  .avatar-btn svg{width:52px;height:58px;}
+  .avatar-btn span{font-size:11px;font-weight:700;color:var(--ink);}
+  .avatar-btn:hover{border-color:var(--gold);}
+  .avatar-btn.selected{border-color:var(--gold);background:#FDF3D6;}
+
+  #startBtn{
+    margin-top:10px;
+    background:var(--sage);
+    color:var(--white);
+    border:none;
+    padding:16px 44px;
+    border-radius:12px;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 8px 18px rgba(124,144,112,.4);
+    transition:transform .12s ease;
+  }
+  #startBtn:hover{transform:translateY(-2px);}
+
+  /* ---------- Game screen ---------- */
+  #game{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+  }
+  .topbar{
+    background:var(--ink);
+    color:var(--white);
+    padding:14px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .topbar .title-block .game-name{font-weight:900;font-size:18px;}
+  .topbar .title-block .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--gold);
+  }
+  .timer{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:24px;
+    font-weight:600;
+    background:rgba(255,255,255,.08);
+    padding:6px 16px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.18);
+  }
+  .timer.low{color:#ff8577;border-color:#ff8577;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+
+  .player-switch-bar{
+    background:var(--gold);
+    padding:12px 22px;
+    display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;
+  }
+  .psb-label{font-weight:800;font-size:14px;color:var(--ink);}
+  .player-tabs{display:flex;gap:10px;flex-wrap:wrap;}
+  .player-tab{
+    padding:10px 22px;border-radius:10px;border:2px solid var(--ink);
+    background:var(--white);color:var(--ink);font-family:'Heebo',sans-serif;font-weight:800;
+    cursor:pointer;font-size:15px;
+  }
+  .player-tab.active{background:var(--ink);color:var(--white);border-color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.2);}
+
+  .phase-tabs{
+    display:flex;gap:6px;padding:12px 22px 0;background:var(--paper-dark);
+    overflow-x:auto;
+  }
+  .phase-tab{
+    flex:1;min-width:110px;text-align:center;padding:10px 8px;border-radius:10px 10px 0 0;
+    font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink-light);
+    background:transparent;border:none;font-family:'Heebo',sans-serif;
+  }
+  .phase-tab .num{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold-deep);margin-bottom:2px;
+  }
+  .phase-tab.active{background:var(--paper);color:var(--ink);}
+  .phase-tab.done::after{content:' ✓';color:var(--sage);}
+
+  .game-body{
+    display:flex;
+    background:var(--paper);
+    min-height:460px;
+  }
+  .palette{
+    width:35%;
+    padding:20px 22px 26px;
+    border-left:2px solid var(--paper-dark);
+    max-height:560px;
+    overflow-y:auto;
+  }
+  .palette h3{font-size:17px;margin-bottom:2px;}
+  .palette .phase-hint{font-size:12.5px;color:var(--ink-light);margin-bottom:16px;}
+  .field-group{margin-bottom:18px;}
+  .field-group .field-label{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .field-group .field-label .hint{font-weight:400;color:var(--ink-light);font-size:11px;}
+  .opt-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .opt-btn{
+    border:1.5px solid var(--paper-dark);
+    background:var(--white);
+    color:var(--ink);
+    padding:8px 12px;
+    border-radius:9px;
+    font-family:'Heebo',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;align-items:center;gap:6px;
+    transition:all .12s ease;
+  }
+  .opt-btn:hover{border-color:var(--gold);}
+  .opt-btn.selected{background:var(--ink);color:var(--white);border-color:var(--ink);}
+  .swatch{width:12px;height:12px;border-radius:2px;display:inline-block;border:1px solid rgba(0,0,0,.3);}
+
+  .canvas-wrap{
+    width:65%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:18px;
+    position:relative;
+    perspective:1400px;
+  }
+  .canvas-wrap svg{width:100%;max-width:640px;height:auto;background:linear-gradient(#eaf3fb,var(--white));border-radius:12px;border:1px solid var(--paper-dark);}
+  .canvas-caption{margin-top:8px;font-size:12px;color:var(--ink-light);font-family:'IBM Plex Mono',monospace;text-align:center;}
+
+  .controls-row{
+    display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px;flex-wrap:wrap;
+  }
+  .dpad{display:grid;grid-template-columns:34px 34px 34px;grid-template-rows:34px 34px 34px;gap:3px;}
+  .dpad button{
+    border:1.5px solid var(--ink);background:var(--white);color:var(--ink);border-radius:7px;
+    font-size:14px;cursor:pointer;
+  }
+  .dpad button:active{background:var(--gold);}
+  .move-hint{font-size:11px;color:var(--ink-light);font-family:'IBM Plex Mono',monospace;text-align:center;width:100%;}
+
+  .bottombar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 22px;background:var(--paper-dark);
+  }
+  .ghost-btn{
+    background:transparent;border:1.5px solid var(--ink);color:var(--ink);
+    padding:9px 18px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Heebo',sans-serif;
+  }
+  .solid-btn{
+    background:var(--gold);border:none;color:var(--ink);
+    padding:10px 22px;border-radius:9px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:'Heebo',sans-serif;
+    box-shadow:0 6px 14px rgba(212,160,23,.35);
+  }
+
+  /* ---------- Judge screen ---------- */
+  #judge{
+    background:var(--paper);color:var(--ink);border-radius:18px;
+    padding:30px 32px 36px;box-shadow:0 30px 60px rgba(0,0,0,.35);
+    max-height:92vh;overflow-y:auto;
+  }
+  .judge-head{text-align:center;margin-bottom:22px;}
+  .judge-head .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold-deep);letter-spacing:.12em;font-weight:600;}
+  .judge-head h2{font-size:28px;font-weight:900;margin-top:6px;}
+  .houses-panel{display:flex;justify-content:center;flex-wrap:wrap;gap:24px;}
+  .house-report{
+    background:var(--white);border-radius:14px;padding:18px;width:100%;max-width:480px;
+    border:1px solid var(--paper-dark);
+  }
+  .report-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .report-head svg{width:34px;height:38px;}
+  .house-report svg.scene{width:100%;height:auto;border-radius:10px;border:1px solid var(--paper-dark);margin-bottom:12px;background:linear-gradient(#eaf3fb,var(--white));}
+  .house-report h3{font-size:16px;}
+  .cat-line{
+    display:none;
+    margin-bottom:12px;
+    opacity:0;
+    transform:translateY(6px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .cat-line.show{display:block;opacity:1;transform:translateY(0);}
+  .cat-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:4px;}
+  .cat-top .score{font-family:'IBM Plex Mono',monospace;color:var(--gold-deep);}
+  .bar-bg{background:var(--paper-dark);border-radius:6px;height:8px;overflow:hidden;margin-bottom:5px;}
+  .bar-fill{background:var(--sage);height:100%;width:0%;transition:width .7s ease;}
+  .cat-comment{font-size:11.5px;color:var(--ink-light);line-height:1.5;}
+  .total-line{
+    margin-top:16px;padding-top:14px;border-top:2px dashed var(--paper-dark);
+    display:flex;justify-content:space-between;align-items:center;
+    opacity:0;transition:opacity .5s ease;
+  }
+  .total-line.show{opacity:1;}
+  .total-line .total-score{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:700;color:var(--ink);}
+  .total-line .grade{font-size:12.5px;font-weight:700;color:var(--gold-deep);}
+  .celebrate-banner{
+    text-align:center;margin-top:18px;font-size:18px;font-weight:900;color:var(--ink);
+    opacity:0;transition:opacity .6s ease;
+  }
+  .celebrate-banner.show{opacity:1;}
+  .judge-actions{text-align:center;margin-top:26px;}
+
+  @media (max-width:760px){
+    .game-body{flex-direction:column;}
+    .palette,.canvas-wrap{width:100%;}
+    .palette{border-left:none;border-bottom:2px solid var(--paper-dark);max-height:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- SETUP SCREEN -->
+  <div id="setup">
+    <div class="eyebrow">משחק בנייה ועיצוב</div>
+    <h1>בונים בית 🏠</h1>
+    <p class="sub">בחרו דמות ובנו את הבית והמתחם הכי מושקעים — הקירות שקופות קצת, כדי שתמיד תראו מה יש בפנים.</p>
+
+    <div class="choice-row">
+      <div class="choice-label">כמה שחקנים?</div>
+      <div class="opt-row-center" id="playersRow">
+        <button class="pill-btn active" data-players="1">שחקן אחד</button>
+        <button class="pill-btn" data-players="2">שני שחקנים</button>
+      </div>
+    </div>
+
+    <div class="choice-row">
+      <div class="choice-label" id="avatar1Label">בחרו דמות</div>
+      <div class="avatar-row" id="avatarRow1"></div>
+    </div>
+
+    <div class="choice-row hidden" id="player2AvatarBlock">
+      <div class="choice-label">בחרו דמות לשחקן 2</div>
+      <div class="avatar-row" id="avatarRow2"></div>
+    </div>
+
+    <div class="choice-row">
+      <div class="choice-label">כמה זמן לבנייה?</div>
+      <div class="opt-row-center" id="timeRow"></div>
+    </div>
+
+    <button id="startBtn">בואו נבנה!</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game" class="hidden">
+    <div class="topbar">
+      <div class="title-block">
+        <div class="eyebrow">שלב הבנייה</div>
+        <div class="game-name">בונים בית</div>
+      </div>
+      <div class="timer mono" id="timerDisplay">00:00</div>
+    </div>
+
+    <div class="player-switch-bar hidden" id="playerSwitchBar">
+      <span class="psb-label">🎮 בונים עכשיו:</span>
+      <div class="player-tabs" id="playerTabs"></div>
+    </div>
+
+    <div class="phase-tabs" id="phaseTabs"></div>
+
+    <div class="game-body">
+      <div class="palette" id="palette"></div>
+      <div class="canvas-wrap">
+        <div id="svgHolder"></div>
+        <div class="canvas-caption" id="canvasCaption">הבית שלכם — תלת-ממדי וחצי-שקוף, כדי שתראו הכל בפנים</div>
+        <div class="controls-row">
+          <div class="dpad">
+            <span></span><button id="dUp">▲</button><span></span>
+            <button id="dLeft">◀</button><span></span><button id="dRight">▶</button>
+            <span></span><button id="dDown">▼</button><span></span>
+          </div>
+          <div class="move-hint">מטיילים בחצר עם החצים / WASD במקלדת, או כפתורי החיצים</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottombar">
+      <button class="ghost-btn" id="finishEarlyBtn">סיימתי — קרא לשופט</button>
+      <button class="solid-btn" id="nextPhaseBtn">שלב הבא ←</button>
+    </div>
+  </div>
+
+  <!-- JUDGE SCREEN -->
+  <div id="judge" class="hidden">
+    <div class="judge-head">
+      <div class="eyebrow">הזמן נגמר</div>
+      <h2 id="judgeTitle">השופט מגיע לסיור...</h2>
+    </div>
+    <div class="houses-panel" id="housesPanel"></div>
+    <div class="celebrate-banner" id="celebrateBanner"></div>
+    <div class="judge-actions">
+      <button class="solid-btn" id="restartBtn">שחקו שוב</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= AVATARS ================= */
+
+const AVATARS = [
+  {id:'boy', label:'ילד', kind:'human', skin:'#E8B58C', outfit:'#3B6FA0', hair:'#4A2E1E'},
+  {id:'girl', label:'ילדה', kind:'human', skin:'#E8B58C', outfit:'#D66FA0', hair:'#241209'},
+  {id:'robot', label:'רובוט', kind:'robot', body:'#B9C4CC', accent:'#5B6B76'},
+  {id:'cat', label:'חתול', kind:'cat', body:'#E7924A', accent:'#ffffff'},
+  {id:'dog', label:'כלב', kind:'dog', body:'#8B5A2B', accent:'#ffffff'},
+  {id:'dragon', label:'דרקון', kind:'dragon', body:'#4E8B5C', accent:'#2F5C3B'},
+];
+
+function avatarGroup(av, cx, feetY, s){
+  const u = 18*s;
+  const S = 1.5*s, S2 = 1*s;
+  let g = '<g>';
+  if(av.kind==='human'){
+    g += `<rect x="${cx-u*0.32}" y="${feetY-u*0.9}" width="${u*0.28}" height="${u*0.9}" fill="${av.outfit}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx+u*0.04}" y="${feetY-u*0.9}" width="${u*0.28}" height="${u*0.9}" fill="${av.outfit}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.42}" y="${feetY-u*1.7}" width="${u*0.84}" height="${u*0.85}" fill="${av.outfit}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.35}" y="${feetY-u*2.45}" width="${u*0.7}" height="${u*0.75}" fill="${av.skin}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.37}" y="${feetY-u*2.5}" width="${u*0.74}" height="${u*0.22}" fill="${av.hair}"/>`;
+  } else if(av.kind==='robot'){
+    g += `<rect x="${cx-u*0.3}" y="${feetY-u*0.85}" width="${u*0.26}" height="${u*0.85}" fill="${av.accent}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx+u*0.04}" y="${feetY-u*0.85}" width="${u*0.26}" height="${u*0.85}" fill="${av.accent}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.42}" y="${feetY-u*1.65}" width="${u*0.84}" height="${u*0.8}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.32}" y="${feetY-u*2.35}" width="${u*0.64}" height="${u*0.7}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<circle cx="${cx-u*0.14}" cy="${feetY-u*2.02}" r="${u*0.06}" fill="#2b2b2b"/>`;
+    g += `<circle cx="${cx+u*0.14}" cy="${feetY-u*2.02}" r="${u*0.06}" fill="#2b2b2b"/>`;
+  } else if(av.kind==='cat' || av.kind==='dog'){
+    g += `<rect x="${cx-u*0.4}" y="${feetY-u*0.9}" width="${u*0.8}" height="${u*0.55}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.62}" y="${feetY-u*1.35}" width="${u*0.5}" height="${u*0.5}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    if(av.kind==='cat'){
+      g += `<polygon points="${cx-u*0.6},${feetY-u*1.35} ${cx-u*0.48},${feetY-u*1.6} ${cx-u*0.4},${feetY-u*1.35}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+      g += `<polygon points="${cx-u*0.4},${feetY-u*1.35} ${cx-u*0.3},${feetY-u*1.58} ${cx-u*0.2},${feetY-u*1.35}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    } else {
+      g += `<rect x="${cx-u*0.66}" y="${feetY-u*1.5}" width="${u*0.14}" height="${u*0.2}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+      g += `<rect x="${cx-u*0.3}" y="${feetY-u*1.5}" width="${u*0.14}" height="${u*0.2}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    }
+    g += `<circle cx="${cx-u*0.42}" cy="${feetY-u*1.12}" r="${u*0.04}" fill="#1B2A4A"/>`;
+    g += `<rect x="${cx-u*0.32}" y="${feetY-u*0.4}" width="${u*0.14}" height="${u*0.4}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    g += `<rect x="${cx+u*0.18}" y="${feetY-u*0.4}" width="${u*0.14}" height="${u*0.4}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    g += `<rect x="${cx+u*0.36}" y="${feetY-u*1.1}" width="${u*0.12}" height="${u*0.5}" fill="${av.accent}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+  } else if(av.kind==='dragon'){
+    g += `<rect x="${cx-u*0.42}" y="${feetY-u*0.95}" width="${u*0.84}" height="${u*0.6}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<rect x="${cx-u*0.6}" y="${feetY-u*1.5}" width="${u*0.5}" height="${u*0.55}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S}"/>`;
+    g += `<polygon points="${cx-u*0.1},${feetY-u*0.9} ${cx+u*0.3},${feetY-u*1.5} ${cx+u*0.05},${feetY-u*0.7}" fill="${av.accent}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    g += `<polygon points="${cx-u*0.3},${feetY-u*1.5} ${cx-u*0.22},${feetY-u*1.68} ${cx-u*0.14},${feetY-u*1.5}" fill="${av.accent}"/>`;
+    g += `<rect x="${cx-u*0.3}" y="${feetY-u*0.4}" width="${u*0.14}" height="${u*0.4}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    g += `<rect x="${cx+u*0.16}" y="${feetY-u*0.4}" width="${u*0.14}" height="${u*0.4}" fill="${av.body}" stroke="#1B2A4A" stroke-width="${S2}"/>`;
+    g += `<circle cx="${cx-u*0.4}" cy="${feetY-u*1.25}" r="${u*0.05}" fill="#ffcc00"/>`;
+  }
+  g += '</g>';
+  return g;
+}
+
+/* ================= FIELD DATA ================= */
+
+const PHASES = [
+  { key:'foundation', label:'יסודות ומבנה', hint:'קבעו את הצורה, הגודל וחומר היסודות של הבית.', fields:[
+      { key:'shape', label:'צורת הבית', type:'single', options:[
+        {id:'square', label:'מרובע'}, {id:'rectWide', label:'מלבן רחב'},
+        {id:'rectTall', label:'מלבן גבוה'}, {id:'lshape', label:'צורת L'} ]},
+      { key:'size', label:'גודל הבית', type:'single', options:[
+        {id:'small', label:'קטן'}, {id:'medium', label:'בינוני'}, {id:'large', label:'גדול'} ]},
+      { key:'material', label:'חומר יסודות', type:'single', options:[
+        {id:'concrete', label:'בטון אפור', color:'#9CA3AF'},
+        {id:'stoneBase', label:'אבן טבעית', color:'#8C7A6B'},
+        {id:'brickBase', label:'לבנים', color:'#A05A45'},
+        {id:'woodBase', label:'בסיס עץ', color:'#7C5A3A'} ]},
+  ]},
+  { key:'yard', label:'מתחם, מדרכה ושער', hint:'מתחם גדול מסביב לבית — הוסיפו כל מה שבא לכם.', fields:[
+      { key:'ground', label:'סוג הקרקע', type:'single', options:[
+        {id:'grass', label:'דשא ירוק', color:'#7C9070'},
+        {id:'gravel', label:'גינת אבנים', color:'#C9C2B4'},
+        {id:'pavedYard', label:'מרוצף', color:'#B8AFA0'},
+        {id:'sand', label:'חול', color:'#E3CFA3'} ]},
+      { key:'path', label:'מדרכה', type:'single', options:[
+        {id:'stonePath', label:'אבנים משתלבות', color:'#D9B99B'},
+        {id:'concretePath', label:'בטון חלק', color:'#D8D5CC'},
+        {id:'woodPath', label:'עץ', color:'#B08553'} ]},
+      { key:'gate', label:'שער כניסה', type:'single', options:[
+        {id:'none', label:'בלי שער'},
+        {id:'woodGate', label:'שער עץ', color:'#8B5A2B'},
+        {id:'ironGate', label:'שער ברזל מעוצב', color:'#4A4A4A'} ]},
+      { key:'decorations', label:'תוספות למתחם', hint2:'(אפשר לבחור את כולן!)', type:'multi', max:8, options:[
+        {id:'tree', label:'עץ', emoji:'🌳'}, {id:'flowers', label:'ערוגת פרחים', emoji:'🌷'},
+        {id:'bench', label:'ספסל', emoji:'🪑'}, {id:'fountain', label:'מזרקה', emoji:'⛲'},
+        {id:'pool', label:'בריכה', emoji:'🏊'}, {id:'mailbox', label:'תיבת דואר', emoji:'📬'},
+        {id:'lamp', label:'פנס רחוב', emoji:'💡'}, {id:'swing', label:'נדנדה', emoji:'🛝'} ]},
+  ]},
+  { key:'walls', label:'קירות', hint:'בחרו את חומר הקירות, גימור וגג לבית.', fields:[
+      { key:'material', label:'חומר קירות', type:'single', options:[
+        {id:'plasterWhite', label:'טיח לבן', color:'#F1EADE'},
+        {id:'redBrick', label:'לבנים אדומות', color:'#A64B4B'},
+        {id:'darkBrick', label:'לבנים כהות', color:'#5C3A2E'},
+        {id:'woodWall', label:'עץ טבעי', color:'#9C7148'},
+        {id:'grayStone', label:'אבן אפורה', color:'#8B8C89'},
+        {id:'pastel', label:'צבע פסטל', color:'#BFD8D2'} ]},
+      { key:'trim', label:'עיטור קיר', type:'single', options:[
+        {id:'none', label:'ללא עיטור'},
+        {id:'cornice', label:'כרכוב דקורטיבי'},
+        {id:'shutters', label:'תריסים לחלונות'} ]},
+      { key:'roofStyle', label:'סגנון גג', type:'single', options:[
+        {id:'gable', label:'משופע קלאסי', color:'#6B4A3A'},
+        {id:'flat', label:'שטוח מודרני', color:'#5B5B5B'},
+        {id:'tile', label:'רעפים אדומים', color:'#B5533C'},
+        {id:'grassRoof', label:'גג דשא', color:'#7C9070'} ]},
+  ]},
+  { key:'openings', label:'חלונות, דלתות וויטרינה', hint:'הוסיפו פתחים לבית — הם מה שנותן לו אופי.', fields:[
+      { key:'windowStyle', label:'סגנון חלונות', type:'single', options:[
+        {id:'classic', label:'קלאסיים'}, {id:'french', label:'צרפתיים'},
+        {id:'round', label:'עגולים'}, {id:'modern', label:'גדולים ומודרניים'},
+        {id:'stained', label:'ויטראז׳ צבעוני'} ]},
+      { key:'windowCount', label:'כמות חלונות', type:'single', options:[
+        {id:'2', label:'2', val:2}, {id:'4', label:'4', val:4}, {id:'6', label:'6', val:6} ]},
+      { key:'door', label:'דלת כניסה', type:'single', options:[
+        {id:'darkWood', label:'עץ כהה', color:'#4A2E1E'},
+        {id:'colorDoor', label:'דלת צבעונית', color:'#C2543A'},
+        {id:'glassDoor', label:'זכוכית מודרנית', color:'#A9C6D8'},
+        {id:'ironDoor', label:'דלת ברזל', color:'#3A3A3A'} ]},
+      { key:'storefront', label:'ויטרינה', type:'single', options:[
+        {id:'none', label:'בלי ויטרינה'},
+        {id:'small', label:'ויטרינה קטנה'},
+        {id:'large', label:'ויטרינה גדולה'} ]},
+  ]},
+  { key:'interior', label:'פריטים בפנים', hint:'רהטו את הבית — בזכות הקירות השקופות תראו הכל מבחוץ.', fields:[
+      { key:'furniture', label:'ריהוט', hint2:'(אפשר לבחור את כולם!)', type:'multi', max:8, options:[
+        {id:'sofa', label:'ספה', emoji:'🛋️'}, {id:'table', label:'שולחן אוכל', emoji:'🍽️'},
+        {id:'bookshelf', label:'ספרייה', emoji:'📚'}, {id:'bed', label:'מיטה', emoji:'🛏️'},
+        {id:'tv', label:'טלוויזיה', emoji:'📺'}, {id:'fridge', label:'מקרר', emoji:'🧊'},
+        {id:'bathtub', label:'אמבטיה', emoji:'🛁'}, {id:'wardrobe', label:'ארון', emoji:'🗄️'} ]},
+      { key:'lighting', label:'תאורה', type:'single', options:[
+        {id:'none', label:'ללא'}, {id:'chandelier', label:'נברשת'}, {id:'wallLamps', label:'מנורות קיר'} ]},
+      { key:'wallArt', label:'קישוט קיר', type:'single', options:[
+        {id:'none', label:'ללא'}, {id:'paintings', label:'תמונות'}, {id:'clock', label:'שעון'} ]},
+      { key:'plants', label:'צמחייה פנימית', type:'single', options:[
+        {id:'no', label:'בלי צמחים'}, {id:'yes', label:'עם צמחים'} ]},
+  ]},
+];
+
+const SHAPES = {
+  square:  {w:190, h:170},
+  rectWide:{w:255, h:150},
+  rectTall:{w:180, h:195},
+  lshape:  {w:220, h:170, ell:true},
+};
+const SIZE_SCALE = { small:0.85, medium:1, large:1.15 };
+
+/* ================= STATE ================= */
+
+const TIME_OPTIONS = { 1:[3,5,8], 2:[6,10,16] };
+
+let numPlayers = 1;
+let totalSeconds = 300;
+let remaining = 300;
+let timerHandle = null;
+let currentPhaseIdx = 0;
+let currentPlayer = 0;
+let selAvatar1 = 'boy';
+let selAvatar2 = 'cat';
+
+function blankChoices(){
+  const c = {};
+  PHASES.forEach(p=>{
+    c[p.key] = {};
+    p.fields.forEach(f=>{ c[p.key][f.key] = f.type==='multi' ? [] : null; });
+  });
+  return c;
+}
+
+let players = [];
+
+/* ================= SETUP SCREEN ================= */
+
+function renderAvatarRow(containerId, selectedId, onPick){
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = AVATARS.map(a=>`
+    <button class="avatar-btn ${a.id===selectedId?'selected':''}" data-av="${a.id}">
+      <svg viewBox="0 0 80 90">${avatarGroup(a,40,78,1.7)}</svg>
+      <span>${a.label}</span>
+    </button>`).join('');
+  wrap.querySelectorAll('.avatar-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      onPick(btn.dataset.av);
+      wrap.querySelectorAll('.avatar-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+}
+renderAvatarRow('avatarRow1', selAvatar1, id=>selAvatar1=id);
+renderAvatarRow('avatarRow2', selAvatar2, id=>selAvatar2=id);
+
+function renderTimeOptions(){
+  const wrap = document.getElementById('timeRow');
+  const opts = TIME_OPTIONS[numPlayers];
+  wrap.innerHTML = opts.map((mins,i)=>
+    `<button class="pill-btn ${i===1?'active':''}" data-mins="${mins}">${mins} דקות</button>`
+  ).join('');
+  totalSeconds = opts[1]*60;
+  wrap.querySelectorAll('.pill-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      wrap.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      totalSeconds = parseInt(btn.dataset.mins,10)*60;
+    });
+  });
+}
+renderTimeOptions();
+
+document.querySelectorAll('#playersRow .pill-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#playersRow .pill-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    numPlayers = parseInt(btn.dataset.players,10);
+    document.getElementById('player2AvatarBlock').classList.toggle('hidden', numPlayers<2);
+    document.getElementById('avatar1Label').textContent = numPlayers<2 ? 'בחרו דמות' : 'בחרו דמות לשחקן 1';
+    renderTimeOptions();
+  });
+});
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+
+function startGame(){
+  players = [];
+  for(let i=0;i<numPlayers;i++){
+    players.push({
+      name: numPlayers===2 ? `שחקן ${i+1}` : 'הבית שלכם',
+      avatarId: i===0 ? selAvatar1 : selAvatar2,
+      choices: blankChoices(),
+      view: { x:50, y:82 },
+    });
+  }
+  currentPlayer = 0;
+  currentPhaseIdx = 0;
+  remaining = totalSeconds;
+
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  document.getElementById('judge').classList.add('hidden');
+
+  renderPlayerSwitchBar();
+  renderPhaseTabs();
+  renderPalette();
+  renderHouse();
+  if(numPlayers===2){
+    alert('שני שחקנים! 🎮\nמתחילים עם שחקן 1. כדי לעבור לבנות את הבית של שחקן 2, לחצו על הכפתור הצהוב "👤 שחקן 2" למעלה, מתחת לטיימר.');
+  }
+  startTimer();
+}
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+  clearInterval(timerHandle);
+  updateTimerDisplay();
+  timerHandle = setInterval(()=>{
+    remaining--;
+    updateTimerDisplay();
+    if(remaining<=0){
+      clearInterval(timerHandle);
+      goToJudge();
+    }
+  },1000);
+}
+function updateTimerDisplay(){
+  const m = Math.floor(remaining/60).toString().padStart(2,'0');
+  const s = (remaining%60).toString().padStart(2,'0');
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${m}:${s}`;
+  el.classList.toggle('low', remaining<=30);
+}
+
+/* ================= PLAYER SWITCH / PHASE TABS ================= */
+
+function renderPlayerSwitchBar(){
+  const bar = document.getElementById('playerSwitchBar');
+  const wrap = document.getElementById('playerTabs');
+  if(numPlayers<2){ bar.classList.add('hidden'); wrap.innerHTML=''; return; }
+  bar.classList.remove('hidden');
+  wrap.innerHTML = players.map((p,i)=>
+    `<button class="player-tab ${i===currentPlayer?'active':''}" data-idx="${i}">👤 ${p.name}${i===currentPlayer?' (בונה עכשיו)':''}</button>`
+  ).join('');
+  wrap.querySelectorAll('.player-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentPlayer = parseInt(btn.dataset.idx,10);
+      renderPlayerSwitchBar(); renderPhaseTabs(); renderPalette(); renderHouse();
+    });
+  });
+}
+
+function renderPhaseTabs(){
+  const wrap = document.getElementById('phaseTabs');
+  wrap.innerHTML = PHASES.map((p,i)=>{
+    const done = isPhaseTouched(players[currentPlayer].choices[p.key], p);
+    return `<button class="phase-tab ${i===currentPhaseIdx?'active':''} ${done?'done':''}" data-idx="${i}">
+      <span class="num">שלב ${i+1}</span>${p.label}
+    </button>`;
+  }).join('');
+  wrap.querySelectorAll('.phase-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentPhaseIdx = parseInt(btn.dataset.idx,10);
+      renderPhaseTabs(); renderPalette(); renderHouse();
+    });
+  });
+}
+
+function isPhaseTouched(choiceObj, phaseDef){
+  return phaseDef.fields.some(f=>{
+    const v = choiceObj[f.key];
+    return f.type==='multi' ? v.length>0 : v!==null;
+  });
+}
+
+/* ================= PALETTE ================= */
+
+function renderPalette(){
+  const phase = PHASES[currentPhaseIdx];
+  const choices = players[currentPlayer].choices[phase.key];
+  const wrap = document.getElementById('palette');
+
+  let html = `<h3>${phase.label}</h3><div class="phase-hint">${phase.hint}</div>`;
+
+  phase.fields.forEach(field=>{
+    html += `<div class="field-group">
+      <div class="field-label">${field.label} ${field.hint2?`<span class="hint">${field.hint2}</span>`:''}</div>
+      <div class="opt-row">`;
+    field.options.forEach(opt=>{
+      const isSelected = field.type==='multi'
+        ? choices[field.key].includes(opt.id)
+        : choices[field.key]===opt.id;
+      html += `<button class="opt-btn ${isSelected?'selected':''}" data-field="${field.key}" data-opt="${opt.id}" data-type="${field.type}">
+        ${opt.color?`<span class="swatch" style="background:${opt.color}"></span>`:''}${opt.emoji?opt.emoji+' ':''}${opt.label}
+      </button>`;
+    });
+    html += `</div></div>`;
+  });
+
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll('.opt-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const fKey = btn.dataset.field, oId = btn.dataset.opt, type = btn.dataset.type;
+      const field = phase.fields.find(f=>f.key===fKey);
+      if(type==='multi'){
+        const arr = choices[fKey];
+        const pos = arr.indexOf(oId);
+        if(pos>-1) arr.splice(pos,1);
+        else if(arr.length < (field.max||99)) arr.push(oId);
+      } else {
+        choices[fKey] = choices[fKey]===oId ? null : oId;
+      }
+      renderPalette();
+      renderPhaseTabs();
+      renderHouse();
+    });
+  });
+}
+
+document.getElementById('nextPhaseBtn').addEventListener('click', ()=>{
+  currentPhaseIdx = (currentPhaseIdx+1) % PHASES.length;
+  renderPhaseTabs(); renderPalette(); renderHouse();
+});
+document.getElementById('finishEarlyBtn').addEventListener('click', ()=>{
+  clearInterval(timerHandle);
+  goToJudge();
+});
+
+/* ================= MOVEMENT ================= */
+
+function moveAvatar(dx,dy){
+  const v = players[currentPlayer].view;
+  v.x = Math.min(95, Math.max(5, v.x+dx));
+  v.y = Math.min(95, Math.max(18, v.y+dy));
+  renderHouse();
+}
+document.getElementById('dUp').addEventListener('click', ()=>moveAvatar(0,-5));
+document.getElementById('dDown').addEventListener('click', ()=>moveAvatar(0,5));
+document.getElementById('dLeft').addEventListener('click', ()=>moveAvatar(-5,0));
+document.getElementById('dRight').addEventListener('click', ()=>moveAvatar(5,0));
+
+document.addEventListener('keydown', (e)=>{
+  if(document.getElementById('game').classList.contains('hidden')) return;
+  const map = {
+    ArrowUp:[0,-5], ArrowDown:[0,5], ArrowLeft:[-5,0], ArrowRight:[5,0],
+    w:[0,-5], s:[0,5], a:[-5,0], d:[5,0]
+  };
+  const mv = map[e.key];
+  if(mv){ e.preventDefault(); moveAvatar(mv[0], mv[1]); }
+});
+
+/* ================= SVG RENDERING HELPERS ================= */
+
+function getOpt(field, id){ return field.options.find(o=>o.id===id); }
+function fieldDef(phaseKey, fieldKey){ return PHASES.find(p=>p.key===phaseKey).fields.find(f=>f.key===fieldKey); }
+
+function shade(hex, amt){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const num = parseInt(hex,16);
+  let r = (num>>16)&0xff, g=(num>>8)&0xff, b=num&0xff;
+  r = Math.max(0,Math.min(255, Math.round(r*(1+amt))));
+  g = Math.max(0,Math.min(255, Math.round(g*(1+amt))));
+  b = Math.max(0,Math.min(255, Math.round(b*(1+amt))));
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+function defsBlock(){
+  return `<defs>
+    <pattern id="groundPat" width="40" height="40" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#00000012" stroke-width="1"/>
+      <line x1="0" y1="0" x2="0" y2="40" stroke="#00000012" stroke-width="1"/>
+    </pattern>
+  </defs>`;
+}
+
+function decoPin(emoji, x, y){
+  return `<g><rect x="${x-17}" y="${y-17}" width="34" height="34" fill="#ffffffdd" stroke="#1B2A4A" stroke-width="2"/>
+    <text x="${x}" y="${y+8}" font-size="20" text-anchor="middle">${emoji}</text></g>`;
+}
+
+function fenceSVG(W,H,groundY,centerX){
+  let s = '';
+  for(let yy=groundY+18; yy<H-8; yy+=34){
+    s += `<rect x="17" y="${yy}" width="7" height="20" fill="#8B5A2B" stroke="#1B2A4A" stroke-width="1.4"/>`;
+    s += `<rect x="${W-24}" y="${yy}" width="7" height="20" fill="#8B5A2B" stroke="#1B2A4A" stroke-width="1.4"/>`;
+  }
+  s += `<line x1="20" y1="${groundY+22}" x2="20" y2="${H-14}" stroke="#8B5A2B" stroke-width="3"/>`;
+  s += `<line x1="${W-20}" y1="${groundY+22}" x2="${W-20}" y2="${H-14}" stroke="#8B5A2B" stroke-width="3"/>`;
+  s += `<line x1="24" y1="${H-14}" x2="${centerX-42}" y2="${H-14}" stroke="#8B5A2B" stroke-width="3"/>`;
+  s += `<line x1="${centerX+42}" y1="${H-14}" x2="${W-24}" y2="${H-14}" stroke="#8B5A2B" stroke-width="3"/>`;
+  return s;
+}
+
+function windowSVG(cx, cy, style, lit){
+  const fill = lit ? '#FCE9AE' : '#CFE3EC';
+  let s = '';
+  const size = 26;
+  if(style==='round'){
+    s += `<circle cx="${cx}" cy="${cy}" r="${size/2}" fill="${fill}" stroke="#1B2A4A" stroke-width="2"/>`;
+    s += `<line x1="${cx-size/2}" y1="${cy}" x2="${cx+size/2}" y2="${cy}" stroke="#00000030"/>`;
+    s += `<line x1="${cx}" y1="${cy-size/2}" x2="${cx}" y2="${cy+size/2}" stroke="#00000030"/>`;
+  } else if(style==='modern'){
+    s += `<rect x="${cx-size/1.3}" y="${cy-size/1.6}" width="${size*1.5}" height="${size*1.2}" fill="${fill}" stroke="#1B2A4A" stroke-width="2"/>`;
+  } else if(style==='french'){
+    s += `<rect x="${cx-size/2}" y="${cy-size*0.9}" width="${size}" height="${size*1.8}" fill="${fill}" stroke="#1B2A4A" stroke-width="2"/>`;
+    s += `<line x1="${cx}" y1="${cy-size*0.9}" x2="${cx}" y2="${cy+size*0.9}" stroke="#00000030"/>`;
+    s += `<line x1="${cx-size/2}" y1="${cy}" x2="${cx+size/2}" y2="${cy}" stroke="#00000030"/>`;
+  } else if(style==='stained'){
+    const cols = ['#C2543A','#3B6FA0','#D4A017','#7C9070'];
+    s += `<rect x="${cx-size/2}" y="${cy-size/2}" width="${size/2}" height="${size/2}" fill="${cols[0]}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+    s += `<rect x="${cx}" y="${cy-size/2}" width="${size/2}" height="${size/2}" fill="${cols[1]}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+    s += `<rect x="${cx-size/2}" y="${cy}" width="${size/2}" height="${size/2}" fill="${cols[2]}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+    s += `<rect x="${cx}" y="${cy}" width="${size/2}" height="${size/2}" fill="${cols[3]}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+  } else {
+    s += `<rect x="${cx-size/2}" y="${cy-size/2}" width="${size}" height="${size}" fill="${fill}" stroke="#1B2A4A" stroke-width="2"/>`;
+    s += `<line x1="${cx}" y1="${cy-size/2}" x2="${cx}" y2="${cy+size/2}" stroke="#00000030"/>`;
+    s += `<line x1="${cx-size/2}" y1="${cy}" x2="${cx+size/2}" y2="${cy}" stroke="#00000030"/>`;
+  }
+  return s;
+}
+
+const FURNITURE_ICON_SLOTS_COLS = 4;
+
+/* ================= UNIFIED 3D / TRANSLUCENT SCENE ================= */
+
+const W = 800, H = 520;
+
+function houseSVG(c, opts){
+  opts = opts || {};
+  const f = c.foundation, y = c.yard, w = c.walls, o = c.openings, inte = c.interior;
+
+  const shapeDef = SHAPES[f.shape || 'square'];
+  const scale = SIZE_SCALE[f.size || 'medium'];
+  const houseW = shapeDef.w * scale;
+  const houseH = shapeDef.h * scale;
+
+  const groundY = 380;
+  const centerX = W/2;
+  const left = centerX - houseW/2;
+  const top = groundY - houseH;
+
+  // isometric-style depth offset for the pseudo-3D box
+  const depthX = houseW*0.16, depthY = -houseH*0.1;
+
+  const wallColor = w.material ? getOpt(fieldDef('walls','material'), w.material).color : '#C9CDD3';
+  const roofOpt = w.roofStyle ? getOpt(fieldDef('walls','roofStyle'), w.roofStyle) : null;
+  const roofColor = roofOpt ? roofOpt.color : '#8A8F98';
+  const groundOpt = y.ground ? getOpt(fieldDef('yard','ground'), y.ground) : null;
+  const pathOpt = y.path ? getOpt(fieldDef('yard','path'), y.path) : null;
+  const gateOpt = (y.gate && y.gate!=='none') ? getOpt(fieldDef('yard','gate'), y.gate) : null;
+  const doorOpt = o.door ? getOpt(fieldDef('openings','door'), o.door) : null;
+  const baseColor = f.material ? getOpt(fieldDef('foundation','material'), f.material).color : '#B9BEC4';
+
+  let svg = `<svg class="scene" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += defsBlock();
+  svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#F7F4EA"/>`;
+
+  // ground
+  const groundFill = groundOpt ? groundOpt.color : '#DCE7D6';
+  svg += `<rect x="0" y="${groundY}" width="${W}" height="${H-groundY}" fill="${groundFill}"/>`;
+  svg += `<rect x="0" y="${groundY}" width="${W}" height="${H-groundY}" fill="url(#groundPat)"/>`;
+
+  svg += fenceSVG(W,H,groundY,centerX);
+
+  const pathW = 50;
+  if(pathOpt){
+    svg += `<polygon points="${centerX-pathW/2},${H} ${centerX+pathW/2},${H} ${centerX+20},${groundY} ${centerX-20},${groundY}" fill="${pathOpt.color}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+  }
+  if(gateOpt){
+    svg += `<rect x="${centerX-34}" y="${H-30}" width="9" height="30" fill="${gateOpt.color}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+    svg += `<rect x="${centerX+25}" y="${H-30}" width="9" height="30" fill="${gateOpt.color}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+    svg += `<line x1="${centerX-25}" y1="${H-18}" x2="${centerX+25}" y2="${H-18}" stroke="${gateOpt.color}" stroke-width="5"/>`;
+  }
+
+  const decoOpt = fieldDef('yard','decorations');
+  const anchors = [
+    {x:44,y:groundY+34},{x:104,y:groundY+34},{x:44,y:groundY+82},{x:104,y:groundY+82},
+    {x:W-104,y:groundY+34},{x:W-44,y:groundY+34},{x:W-104,y:groundY+82},{x:W-44,y:groundY+82},
+  ];
+  (y.decorations||[]).forEach((id,i)=>{
+    const opt = getOpt(decoOpt,id);
+    const a = anchors[i % anchors.length];
+    if(opt) svg += decoPin(opt.emoji, a.x, a.y);
+  });
+
+  // foundation strip
+  svg += `<rect x="${left-4}" y="${groundY-6}" width="${houseW+8}" height="10" fill="${baseColor}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+
+  /* ---- pseudo-3D house box: side face + roof (opaque, give depth) drawn first ---- */
+  const sideColor = shade(wallColor, -0.28);
+  svg += `<polygon points="
+    ${left+houseW},${top} ${left+houseW+depthX},${top+depthY}
+    ${left+houseW+depthX},${top+depthY+houseH} ${left+houseW},${top+houseH}"
+    fill="${sideColor}" stroke="#1B2A4A" stroke-width="2"/>`;
+
+  const roofRows = 4;
+  for(let i=0;i<roofRows;i++){
+    const rowW = (houseW+16) - i*((houseW+16)/(roofRows+1));
+    const rowH = houseH*0.075;
+    const rx = centerX - rowW/2;
+    const ry = top - (i+1)*rowH;
+    svg += `<rect x="${rx}" y="${ry}" width="${rowW}" height="${rowH}" fill="${roofColor}" stroke="#1B2A4A" stroke-width="2"/>`;
+    svg += `<polygon points="${rx+rowW},${ry} ${rx+rowW+depthX*0.5},${ry+depthY*0.5} ${rx+rowW+depthX*0.5},${ry+depthY*0.5+rowH} ${rx+rowW},${ry+rowH}"
+      fill="${shade(roofColor,-0.25)}" stroke="#1B2A4A" stroke-width="1.5"/>`;
+  }
+
+  /* ---- front face: translucent so interior is visible ---- */
+  const FRONT_OPACITY = 0.5;
+  svg += `<rect x="${left}" y="${top}" width="${houseW}" height="${houseH}" fill="${wallColor}" fill-opacity="${FRONT_OPACITY}" stroke="#1B2A4A" stroke-width="2.5"/>`;
+
+  if(shapeDef.ell){
+    const exW = houseW*0.42, exH = houseH*0.55;
+    svg += `<rect x="${left+houseW-6}" y="${groundY-exH}" width="${exW}" height="${exH}" fill="${wallColor}" fill-opacity="${FRONT_OPACITY}" stroke="#1B2A4A" stroke-width="2.5"/>`;
+  }
+
+  /* ---- furniture + interior details visible through the glassy front wall ---- */
+  const contentTop = top + houseH*0.12;
+  const contentBottom = groundY - 10;
+  const contentLeft = left + houseW*0.08;
+  const contentWidth = houseW*0.84;
+  const cols = FURNITURE_ICON_SLOTS_COLS;
+  const rows = 2;
+  const cellW = contentWidth/cols;
+  const cellH = (contentBottom-contentTop)/rows;
+  const furnDef = fieldDef('interior','furniture');
+  (inte.furniture||[]).forEach((id,i)=>{
+    const opt = getOpt(furnDef,id);
+    if(!opt) return;
+    const cx = contentLeft + cellW*(i%cols) + cellW/2;
+    const cy = contentTop + cellH*Math.floor(i/cols) + cellH/2;
+    const fs = Math.max(14, Math.min(cellW,cellH)*0.55);
+    svg += `<text x="${cx}" y="${cy+fs*0.35}" font-size="${fs}" text-anchor="middle" opacity="0.96">${opt.emoji}</text>`;
+  });
+  if(inte.lighting==='chandelier'){
+    svg += `<circle cx="${centerX}" cy="${contentTop+2}" r="16" fill="#FFF3C4" opacity=".7"/>`;
+    svg += `<text x="${centerX}" y="${contentTop+8}" font-size="18" text-anchor="middle">💡</text>`;
+  } else if(inte.lighting==='wallLamps'){
+    svg += `<text x="${left+houseW*0.14}" y="${contentTop+8}" font-size="15" text-anchor="middle">💡</text>`;
+    svg += `<text x="${left+houseW*0.86}" y="${contentTop+8}" font-size="15" text-anchor="middle">💡</text>`;
+  }
+  if(inte.wallArt==='paintings'){
+    svg += `<text x="${left+houseW*0.22}" y="${contentTop+18}" font-size="16" text-anchor="middle">🖼️</text>`;
+  } else if(inte.wallArt==='clock'){
+    svg += `<text x="${left+houseW*0.78}" y="${contentTop+18}" font-size="16" text-anchor="middle">🕐</text>`;
+  }
+  if(inte.plants==='yes'){
+    svg += `<text x="${left+houseW*0.1}" y="${contentBottom-4}" font-size="17" text-anchor="middle">🪴</text>`;
+    svg += `<text x="${left+houseW*0.9}" y="${contentBottom-4}" font-size="17" text-anchor="middle">🪴</text>`;
+  }
+
+  /* ---- windows, storefront and door drawn last, on top ---- */
+  const wCountOpt = o.windowCount ? getOpt(fieldDef('openings','windowCount'), o.windowCount) : null;
+  const wCount = wCountOpt ? wCountOpt.val : 0;
+  const lit = inte.lighting && inte.lighting!=='none';
+  if(wCount>0){
+    const usableW = houseW*0.78;
+    const startX = left + houseW*0.11;
+    const gap = usableW/wCount;
+    for(let i=0;i<wCount;i++){
+      const cx = startX + gap*i + gap/2;
+      const cy = top + houseH*0.32;
+      svg += windowSVG(cx, cy, o.windowStyle, lit);
+      if(w.trim==='shutters'){
+        svg += `<rect x="${cx-21}" y="${cy-13}" width="6" height="26" fill="#6B4A3A" stroke="#1B2A4A" stroke-width="1"/>`;
+        svg += `<rect x="${cx+15}" y="${cy-13}" width="6" height="26" fill="#6B4A3A" stroke="#1B2A4A" stroke-width="1"/>`;
+      }
+    }
+  }
+
+  if(o.storefront && o.storefront!=='none'){
+    const sfW = o.storefront==='large' ? houseW*0.42 : houseW*0.26;
+    const sfH = houseH*0.34;
+    const sfX = left + houseW*0.56;
+    const sfY = groundY - sfH - 4;
+    svg += `<rect x="${sfX}" y="${sfY}" width="${sfW}" height="${sfH}" fill="${lit?'#FCE9AE':'#CFE3EC'}" fill-opacity="0.7" stroke="#1B2A4A" stroke-width="2.5"/>`;
+    svg += `<line x1="${sfX+sfW/2}" y1="${sfY}" x2="${sfX+sfW/2}" y2="${sfY+sfH}" stroke="#00000030" stroke-width="2"/>`;
+  }
+
+  const doorW = houseW*0.16, doorH = houseH*0.42;
+  const doorX = left + houseW*0.5 - doorW/2 - houseW*0.22;
+  const doorY = groundY - doorH;
+  if(doorOpt){
+    svg += `<rect x="${doorX}" y="${doorY}" width="${doorW}" height="${doorH}" fill="${doorOpt.color}" fill-opacity="0.85" stroke="#1B2A4A" stroke-width="2.5"/>`;
+    svg += `<circle cx="${doorX+doorW-6}" cy="${doorY+doorH/2}" r="1.8" fill="#00000070"/>`;
+  }
+
+  // trim (cornice)
+  if(w.trim==='cornice'){
+    svg += `<rect x="${left-6}" y="${top-4}" width="${houseW+12}" height="6" fill="#00000025"/>`;
+  }
+
+  // avatar walking in the yard
+  if(opts.avatar){
+    const av = AVATARS.find(a=>a.id===opts.avatar) || AVATARS[0];
+    const ax = (opts.view.x/100)*W;
+    const ay = groundY + (opts.view.y-60)/40*(H-groundY-20);
+    svg += avatarGroup(av, ax, Math.max(groundY+30, Math.min(H-14, ay)), 1.5);
+  }
+
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ================= RENDER DISPATCH ================= */
+
+function renderHouse(){
+  const p = players[currentPlayer];
+  const opts = { avatar:p.avatarId, view:p.view };
+  document.getElementById('svgHolder').innerHTML = houseSVG(p.choices, opts);
+
+  const touchedCount = PHASES.reduce((n,ph)=> n + (isPhaseTouched(p.choices[ph.key], ph)?1:0), 0);
+  const captions = [
+    'הבית שלכם — תלת-ממדי וחצי-שקוף',
+    'מתחילים להתעצב...',
+    'זה כבר מתחיל להיראות כמו בית!',
+    'יופי של התקדמות',
+    'כמעט מוכן לסיור השופט',
+    'בית מושלם ומוכן!'
+  ];
+  document.getElementById('canvasCaption').textContent = captions[Math.min(touchedCount, captions.length-1)];
+}
+
+/* ================= JUDGE / SCORING ================= */
+
+function hashStr(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+  return h;
+}
+function pseudoRand(seed, min, max){
+  const h = hashStr(seed);
+  const r = (h % 1000)/1000;
+  return Math.round(min + r*(max-min));
+}
+
+const CATEGORY_LABELS = {
+  foundation:'יסודות ומבנה',
+  yard:'מתחם, מדרכה ושער',
+  walls:'קירות וגג',
+  openings:'חלונות, דלתות וויטרינה',
+  interior:'פנים הבית',
+};
+
+const COMMENT_TEMPLATES = {
+  foundation:[
+    'השופט בוחן את קווי המתאר של הבית ובודק אם הבסיס יציב ומעניין.',
+    'צורת הבית והיסודות קובעים את הטון לכל השאר — כאן זה מתחיל.'
+  ],
+  yard:[
+    'השופט מטייל במתחם הגדול, בודק את השביל והתוספות שנבחרו.',
+    'מתחם מטופח עושה רושם ראשוני — ואת זה השופט תמיד שם לב אליו.'
+  ],
+  walls:[
+    'השופט מלטף בעיניים את הקירות והגג ובודק אם החומרים משתלבים יפה.',
+    'הקירות והגג נותנים לבית את האופי — קלאסי, כפרי או מודרני.'
+  ],
+  openings:[
+    'השופט סופר חלונות, בוחן את הדלת ומציץ בוויטרינה אם יש כזו.',
+    'פתחים טובים הם מה שהופך קיר סתמי לבית עם אישיות.'
+  ],
+  interior:[
+    'הודות לקירות השקופות השופט רואה ישר את כל הריהוט מבלי להיכנס.',
+    'מה שבפנים חשוב לא פחות ממה שבחוץ, והשופט לא מפספס את זה.'
+  ],
+};
+
+function scorePhase(phaseDef, choiceObj){
+  const fields = phaseDef.fields;
+  const weight = 20/fields.length;
+  let total = 0;
+  const chosenSummary = [];
+
+  fields.forEach(field=>{
+    const v = choiceObj[field.key];
+    if(field.type==='multi'){
+      const frac = Math.min(v.length,(field.max||v.length)) / (field.max||1);
+      total += weight*frac;
+      v.forEach(id=>{
+        const opt = getOpt(field, id);
+        if(opt) chosenSummary.push(opt.label);
+      });
+    } else {
+      if(v!==null){
+        const opt = getOpt(field, v);
+        const isNoneChoice = /^(none|no)$/.test(v);
+        total += weight * (isNoneChoice ? 0.45 : 1);
+        if(opt && !isNoneChoice) chosenSummary.push(opt.label);
+      }
+    }
+  });
+
+  const seed = phaseDef.key + JSON.stringify(choiceObj);
+  const bonus = pseudoRand(seed, -1, 2);
+  total = Math.max(2, Math.min(20, Math.round(total)+bonus));
+
+  return { score: total, summary: chosenSummary };
+}
+
+function buildJudgeReport(pl){
+  const reports = PHASES.map(phaseDef=>{
+    const choiceObj = pl.choices[phaseDef.key];
+    const { score, summary } = scorePhase(phaseDef, choiceObj);
+    const templates = COMMENT_TEMPLATES[phaseDef.key];
+    const baseLine = templates[pseudoRand(phaseDef.key, 0, templates.length-1)];
+    const detail = summary.length
+      ? `נבחרו: ${summary.join(', ')}.`
+      : 'השלב הזה נשאר כמעט ריק — יש כאן פוטנציאל שלא נוצל.';
+    return { key:phaseDef.key, label:CATEGORY_LABELS[phaseDef.key], score, comment: baseLine+' '+detail };
+  });
+  const total = reports.reduce((s,r)=>s+r.score,0);
+  return { reports, total };
+}
+
+function gradeLabel(total){
+  if(total>=90) return 'מושלם — בית חלומות! 🏆';
+  if(total>=75) return 'מרשים מאוד! 🌟';
+  if(total>=55) return 'בית יפה ומושקע 👍';
+  if(total>=35) return 'התחלה טובה, יש עוד לאן לצמוח 🌱';
+  return 'הבית זקוק לעוד קצת אהבה 🔧';
+}
+
+function showWinner(allReports){
+  const banner = document.getElementById('celebrateBanner');
+  if(players.length<2){
+    banner.innerHTML = `<span style="font-size:26px;display:block;margin-bottom:4px;">🎉</span>${gradeLabel(allReports[0].total)}`;
+    banner.classList.add('show');
+    return;
+  }
+  const [r0,r1] = allReports;
+  let text;
+  if(r0.total===r1.total){
+    text = `<span style="font-size:26px;display:block;margin-bottom:4px;">🤝</span>תיקו מושלם! שני הבתים באותה רמה — ${r0.total} נקודות.`;
+  } else {
+    const winnerIdx = r0.total>r1.total ? 0 : 1;
+    text = `<span style="font-size:26px;display:block;margin-bottom:4px;">👑</span>${players[winnerIdx].name} מנצח/ת עם ${allReports[winnerIdx].total} נקודות!`;
+  }
+  banner.innerHTML = text;
+  banner.classList.add('show');
+}
+
+function goToJudge(){
+  document.getElementById('game').classList.add('hidden');
+  document.getElementById('judge').classList.remove('hidden');
+  document.getElementById('celebrateBanner').classList.remove('show');
+  document.getElementById('celebrateBanner').innerHTML = '';
+
+  const panel = document.getElementById('housesPanel');
+  panel.innerHTML = players.map((p,i)=>{
+    const av = AVATARS.find(a=>a.id===p.avatarId) || AVATARS[0];
+    const extOpts = { avatar:p.avatarId, view:{x:50,y:82} };
+    return `
+    <div class="house-report" id="report-${i}">
+      <div class="report-head">
+        <svg viewBox="0 0 80 90">${avatarGroup(av,40,80,1.3)}</svg>
+        <h3>${p.name}</h3>
+      </div>
+      ${houseSVG(p.choices, extOpts)}
+      <div id="cats-${i}"></div>
+      <div class="total-line" id="total-${i}">
+        <div class="grade" id="grade-${i}"></div>
+        <div class="total-score" id="totalscore-${i}">0 / 100</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const allReports = players.map(p=>buildJudgeReport(p));
+
+  allReports.forEach((report,i)=>{
+    const catsWrap = document.getElementById(`cats-${i}`);
+    report.reports.forEach((r)=>{
+      const div = document.createElement('div');
+      div.className = 'cat-line';
+      div.innerHTML = `
+        <div class="cat-top"><span>${r.label}</span><span class="score mono">${r.score}/20</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="cat-comment">${r.comment}</div>`;
+      catsWrap.appendChild(div);
+    });
+  });
+
+  let step = 0;
+  const maxSteps = PHASES.length;
+  const seq = setInterval(()=>{
+    allReports.forEach((report,i)=>{
+      const lines = document.querySelectorAll(`#cats-${i} .cat-line`);
+      if(lines[step]){
+        lines[step].classList.add('show');
+        const fill = lines[step].querySelector('.bar-fill');
+        requestAnimationFrame(()=>{ fill.style.width = (report.reports[step].score/20*100)+'%'; });
+      }
+    });
+    step++;
+    if(step>=maxSteps){
+      clearInterval(seq);
+      setTimeout(()=>{
+        allReports.forEach((report,i)=>{
+          document.getElementById(`total-${i}`).classList.add('show');
+          document.getElementById(`totalscore-${i}`).textContent = `${report.total} / 100`;
+          document.getElementById(`grade-${i}`).textContent = gradeLabel(report.total);
+        });
+        showWinner(allReports);
+      }, 400);
+    }
+  }, 650);
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  document.getElementById('judge').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
