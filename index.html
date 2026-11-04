@@ -130,6 +130,23 @@
   footer { text-align: center; margin-top: 54px; font-weight: 700; }
   footer p { display: inline-block; background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; padding: 10px 22px; box-shadow: 4px 4px 0 var(--ink); margin: 0; }
 
+  /* מונה מבקרים: מדבקה קבועה בצד ימין */
+  .visitors {
+    position: fixed; right: max(10px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%) rotate(2deg);
+    z-index: 20; min-width: 92px; text-align: center;
+    background: var(--sun); color: var(--ink);
+    border: 4px solid var(--ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--ink);
+    padding: 10px 12px 12px;
+  }
+  .visitors small { display: block; font-weight: 700; font-size: .85rem; }
+  .visitors b { display: block; font-family: var(--display); font-weight: 400; font-size: 2.1rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .visitors[hidden] { display: none; }
+  @media (max-width: 700px) {
+    .visitors { top: auto; bottom: max(10px, env(safe-area-inset-bottom, 0px)); transform: rotate(2deg); min-width: 0; padding: 6px 12px 8px; border-width: 3px; border-radius: 16px; box-shadow: 3px 3px 0 var(--ink); }
+    .visitors b { font-size: 1.5rem; }
+    body { padding-bottom: 96px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -151,6 +168,12 @@
 
   <footer><p>עוד משחקים בדרך, ליב יוצרת כל הזמן!</p></footer>
 </div>
+
+<!-- מונה מבקרים: מוצג רק אחרי שהמספר מגיע מהשירות -->
+<aside class="visitors" id="visitors" hidden aria-live="polite">
+  <small>מבקרים באתר</small>
+  <b id="visitorCount">0</b>
+</aside>
 
 <script>
   document.documentElement.lang = "he";
@@ -206,6 +229,32 @@
     grid.appendChild(card);
   });
   document.getElementById("count").textContent = ready + " משחקים";
+
+  // ===== מונה מבקרים =====
+  // שירות חינמי (abacus.jasoncameron.dev) סופר ביקורים. כל דפדפן נספר פעם אחת בלבד:
+  // בכניסה הראשונה מוסיפים 1, ובכניסות הבאות רק קוראים את המספר.
+  // אם השירות לא עונה, המונה פשוט לא מוצג והאתר ממשיך לעבוד.
+  (function () {
+    var base = "https://abacus.jasoncameron.dev/", path = "ozcarmel-liv-games/visits";
+    var counted = false;
+    try { counted = localStorage.getItem("livGamesCounted") === "1"; } catch (e) {}
+    function show(n) {
+      if (typeof n !== "number") return;
+      document.getElementById("visitorCount").textContent = n.toLocaleString("he-IL");
+      document.getElementById("visitors").hidden = false;
+    }
+    function call(action) {
+      return fetch(base + action + "/" + path).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      });
+    }
+    var first = counted ? call("get").catch(function () { return call("hit"); }) : call("hit");
+    first.then(function (d) {
+      show(d.value);
+      if (!counted) { try { localStorage.setItem("livGamesCounted", "1"); } catch (e) {} }
+    }).catch(function () {});
+  })();
 </script>
 </body>
 </html>
