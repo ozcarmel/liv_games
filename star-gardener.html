@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הגנן של הכוכבים</title>
+<style>
+/* basic reset (the standalone page needs its own) */
+body{margin:0}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Fredoka:wght@400;500;600&display=swap">
+<style>
+/* Layout: the 3D stage fills the screen; quiet panels float on its edges —
+   resources on top, the seed tray (or the star map hint) at the bottom. One dark look, on purpose: it is space. */
+:root{
+  --space:#0d1524; --panel:rgba(22,33,56,.86); --panel-solid:#16213a; --line:#34466b;
+  --ink:#f4eddb; --dim:#aab6cf; --leaf:#7fd18b; --gold:#f2c35b; --water:#6fc3ea; --energy:#f09a6a; --sad:#e0a08d;
+  --display:'Amatic SC','Fredoka','Arial Hebrew',Arial,sans-serif;
+  --body:'Fredoka','Rubik','Arial Hebrew',Arial,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--space);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;overflow:hidden}
+*{box-sizing:border-box}
+#app{position:relative;height:100%;overflow:hidden;user-select:none;-webkit-user-select:none}
+#stage{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.btn{background:var(--panel-solid);border:1px solid var(--line);border-radius:12px;padding:8px 16px;font-weight:500}
+.btn:hover:not(:disabled){border-color:var(--dim)}
+.btn.go{background:var(--leaf);border-color:var(--leaf);color:#0d2415;font-weight:600}
+.btn.small{padding:5px 12px;font-size:14px}
+
+.top{position:absolute;top:0;left:0;right:0;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:10px 16px;pointer-events:none}
+.top>*{pointer-events:auto}
+h1{font-family:var(--display);font-size:36px;line-height:1;margin:0;letter-spacing:.5px;margin-inline-end:auto}
+.chip{display:flex;gap:6px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.chip svg{width:16px;height:16px;flex:none}
+.chip small{color:var(--dim);font-size:13px;font-weight:400}
+
+#toast{position:absolute;top:64px;left:50%;transform:translateX(-50%);max-width:min(92%,460px);background:var(--panel-solid);border:1px solid var(--gold);border-radius:12px;padding:8px 16px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.on{opacity:1}
+
+.bottom{position:absolute;bottom:0;left:0;right:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;pointer-events:none;background:linear-gradient(to top,rgba(13,21,36,.92) 55%,rgba(13,21,36,0))}
+.bottom>*{pointer-events:auto}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.pname{font-family:var(--display);font-size:32px;line-height:1;margin:0}
+.hint{color:var(--dim);font-size:14px;margin:0;min-width:0;flex:1 1 220px}
+.bottom>.hint{flex:none}
+.meter{flex:1 1 160px;min-width:120px;height:14px;border-radius:999px;background:var(--panel-solid);border:1px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--leaf);width:0;transition:width .5s}
+.meterlabel{font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap}
+#info{background:var(--panel-solid);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+#info p{margin:0;flex:1 1 200px;min-width:0;font-size:14px}
+#info .sadtxt{color:var(--sad)}
+#info .oktxt{color:var(--leaf)}
+#tray{display:flex;gap:8px;overflow-x:auto;padding:3px}
+.seed{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:104px;background:var(--panel-solid);border:2px solid var(--line);border-radius:12px;padding:6px 10px;text-align:start}
+.seed b{font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px}
+.seed span{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.seed[aria-pressed="true"]{border-color:var(--gold);background:#22304f}
+.sw{width:11px;height:11px;border-radius:50%;flex:none;display:inline-block}
+.empty{color:var(--dim);font-size:14px;margin:0;padding:6px 0}
+
+#labels{position:absolute;inset:0;pointer-events:none}
+.plabel{position:absolute;left:0;top:0;pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px 10px;text-align:center;white-space:nowrap;line-height:1.25}
+.plabel b{display:block;font-family:var(--display);font-size:22px;line-height:1.05}
+.plabel span{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.plabel.alive{border-color:var(--leaf)}
+.plabel.alive span{color:var(--leaf)}
+
+#modal{position:absolute;inset:0;background:rgba(6,10,20,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--panel-solid);border:1px solid var(--line);border-radius:18px;padding:20px;width:min(100%,540px);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.card h2{font-family:var(--display);font-size:38px;line-height:1;margin:0;text-wrap:balance}
+.card p{margin:0}
+.card .dim{color:var(--dim);font-size:14px}
+.steps{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:6px}
+.packlist{display:flex;flex-direction:column;gap:6px}
+.pack{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+.pack .txt{flex:1;min-width:0}
+.pack .txt b{display:flex;gap:6px;align-items:center;font-weight:600}
+.pack .txt span{display:block;font-size:13px;color:var(--dim)}
+.stepper{display:flex;align-items:center;gap:6px;flex:none}
+.stepper button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--space);font-size:20px;line-height:1;padding:0}
+.stepper output{min-width:20px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.book{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.entry{border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:3px}
+.entry b{display:flex;gap:6px;align-items:center}
+.entry span{font-size:13px;color:var(--dim)}
+.entry em{font-style:normal;font-size:12.5px;color:var(--leaf)}
+.entry.unknown{border-style:dashed;color:var(--dim)}
+@media (max-width:520px){#toast{top:128px}h1{font-size:30px;flex-basis:100%}.pname{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.meter i,#toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="app" dir="rtl" lang="he">
+  <canvas id="stage" aria-label="חלל המשחק"></canvas>
+  <div id="labels"></div>
+
+  <div class="top">
+    <h1>הגנן של הכוכבים</h1>
+    <div class="chip" title="מים"><svg viewBox="0 0 16 16"><path d="M8 1.5C5.5 5 3.5 7.4 3.5 10a4.5 4.5 0 0 0 9 0C12.5 7.4 10.5 5 8 1.5z" fill="var(--water)"/></svg><span id="c-water">8</span><small>מים</small></div>
+    <div class="chip" title="אנרגיה"><svg viewBox="0 0 16 16"><path d="M9.5 1 3 9h4l-1 6 6.5-8h-4z" fill="var(--energy)"/></svg><span id="c-energy">4</span><small>אנרגיה</small></div>
+    <div class="chip"><small>יום</small><span id="c-day">1</span></div>
+    <button class="btn small" id="b-book">ספר הצמחים</button>
+    <button class="btn small" id="b-help">איך משחקים</button>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <section class="bottom" id="map-ui">
+    <div class="row">
+      <p class="hint" id="map-hint">בחרו כוכב כדי לטוס אליו.</p>
+      <button class="btn" id="b-rest">לנוח יום ולהיטען</button>
+    </div>
+  </section>
+
+  <section class="bottom" id="planet-ui" hidden>
+    <div class="row">
+      <h2 class="pname" id="p-name"></h2>
+      <div class="meter" aria-hidden="true"><i id="p-bar"></i></div>
+      <span class="meterlabel" id="p-life"></span>
+      <button class="btn go" id="b-takeoff">המראה</button>
+    </div>
+    <p class="hint" id="p-hint"></p>
+    <div class="row" id="info" hidden>
+      <p id="info-text"></p>
+      <button class="btn small" id="b-dig">לעקור</button>
+      <button class="btn small" id="b-closeinfo">סגור</button>
+    </div>
+    <div id="tray"></div>
+  </section>
+
+  <div id="modal" hidden><div class="card" id="card" role="dialog" aria-modal="true"></div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+
+/* ---------- game data ---------- */
+var SPECIES={
+  grass:{name:'עשב כוכבים',cost:1,pts:1,likes:[],gives:null,hates:null,sw:'#7fd18b',desc:'צמח פשוט וחזק. טוב להתחלה.'},
+  moon:{name:'פרח ירח',cost:2,pts:2,likes:[],gives:null,hates:null,sw:'#cfd8ff',desc:'פרח עדין שזוהר בלילה.'},
+  tree:{name:'עץ מטרייה',cost:3,pts:2,likes:['sun'],gives:'shade',hates:null,sw:'#3fae7a',desc:'אוהב שמש חזקה, ונותן צל לצמחים שלידו.'},
+  bush:{name:'שיח סבך',cost:2,pts:1,likes:['wind'],gives:'windbreak',hates:null,sw:'#2f8f5b',desc:'עבה וחזק. עוצר את הרוח בשביל השכנים שלו.'},
+  cactus:{name:'קקטוס זכוכית',cost:1,pts:2,likes:['sun'],gives:null,hates:'rain',sw:'#7fe0d0',desc:'אוהב חום ושותה מעט. לא סובל גשם.'},
+  shroom:{name:'פטריית להבה',cost:2,pts:1,likes:['cold','sun'],gives:'warmth',hates:null,sw:'#ff7a45',desc:'חמה כמו מדורה קטנה. מחממת את מי שלידה.'},
+  sponge:{name:'אצת ספוג',cost:1,pts:1,likes:['rain'],gives:'drain',hates:null,sw:'#e6c84a',desc:'שותה מים בלי הפסקה, ומייבשת את האדמה סביבה.'},
+  feather:{name:'נוצת רוח',cost:2,pts:3,likes:['wind'],gives:null,hates:null,sw:'#ffc4dc',desc:'רוקדת ברוח. ככל שהרוח חזקה יותר, היא שמחה יותר.'},
+  bell:{name:'פעמון קרח',cost:2,pts:3,likes:['cold'],gives:null,hates:'sun',sw:'#a8e4ff',desc:'פורח רק בקור. בחום הוא נמס.'},
+  rose:{name:'שושנת גשם',cost:2,pts:3,likes:['rain'],gives:null,hates:null,sw:'#e85aa0',desc:'פורחת רק כשיורד עליה גשם בלי הפסקה.'}
+};
+var ORDER=['grass','moon','tree','bush','cactus','shroom','sponge','feather','bell','rose'];
+var WEATHER={
+  mild:{label:'מזג אוויר נעים',hint:'מזג אוויר נעים. כל צמח גדל כאן בשמחה.',need:null},
+  sun:{label:'שתי שמשות',hint:'חם מאוד. רוב הצמחים צריכים עץ מטרייה קרוב שייתן להם צל.',need:'shade',helper:'tree',why:'חם לו מדי',ring:'#3fae7a'},
+  wind:{label:'סערות רוח',hint:'רוח חזקה. רוב הצמחים צריכים שיח סבך קרוב שיעצור אותה.',need:'windbreak',helper:'bush',why:'הרוח חזקה מדי בשבילו',ring:'#9fe0b0'},
+  cold:{label:'קור וקרח',hint:'קר מאוד. רוב הצמחים צריכים פטריית להבה קרובה שתחמם אותם.',need:'warmth',helper:'shroom',why:'קר לו מדי',ring:'#ff9a6a'},
+  rain:{label:'גשם בלי הפסקה',hint:'גשם כל הזמן, אז שתילה לא עולה מים. רוב הצמחים צריכים אצת ספוג קרובה שתייבש את האדמה.',need:'drain',helper:'sponge',why:'יש לו יותר מדי מים',ring:'#e6c84a'}
+};
+var PLANETS=[
+  {id:'p1',name:'גרגיר',weather:'mild',target:6,cost:1,seed:1.3,dead:'#8d8078',alive:'#62bf6f',pods:[['tree',[0.45,0.5,0.74]],['bush',[-0.6,-0.3,-0.74]]]},
+  {id:'p2',name:'תאומי השמש',weather:'sun',target:10,cost:2,seed:4.1,dead:'#b07d52',alive:'#a3cc58',pods:[['cactus',[-0.5,0.4,0.77]],['shroom',[0.3,-0.6,-0.74]]]},
+  {id:'p3',name:'שורקת',weather:'wind',target:12,cost:3,seed:7.7,dead:'#7f8996',alive:'#58c4a2',pods:[['sponge',[0.7,-0.2,0.68]],['feather',[-0.4,0.7,-0.59]]]},
+  {id:'p4',name:'כפור',weather:'cold',target:14,cost:4,seed:2.9,dead:'#a3b6ca',alive:'#80d8c2',pods:[['bell',[-0.2,-0.5,-0.84]]]},
+  {id:'p5',name:'טפטוף',weather:'rain',target:16,cost:6,seed:9.4,dead:'#5f6884',alive:'#52b27e',pods:[['rose',[0.1,0.3,-0.95]]]}
+];
+var MIN=0.3, RANGE=0.55, R=2;
+var KEY='star-gardener-v1';
+
+/* ---------- saved state ---------- */
+function fresh(){
+  var s={water:8,energy:4,day:1,known:['grass','moon'],grown:[],planets:{},at:null,won:false,intro:false};
+  PLANETS.forEach(function(p){s.planets[p.id]={plants:[],pods:[],revived:false,life:0}});
+  return s;
+}
+var S=fresh();
+try{var raw=localStorage.getItem(KEY); if(raw){var o=JSON.parse(raw); if(o&&o.planets&&o.known){S=Object.assign(fresh(),o); PLANETS.forEach(function(p){if(!S.planets[p.id])S.planets[p.id]={plants:[],pods:[],revived:false,life:0}})}}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+function revCount(){return PLANETS.filter(function(p){return S.planets[p.id].revived}).length}
+function slots(){return 5+revCount()}
+function waterMax(){return 8+4*revCount()}
+function energyMax(){return 4+2*revCount()}
+function income(){
+  var r=revCount(), w=2+3*r, e=1+2*r;
+  var w0=S.water,e0=S.energy;
+  S.water=Math.min(waterMax(),S.water+w); S.energy=Math.min(energyMax(),S.energy+e); S.day++;
+  return {w:S.water-w0,e:S.energy-e0};
+}
+
+/* ---------- small UI helpers ---------- */
+var toastT;
+function toast(msg,ms){var t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on')},ms||3600)}
+function sw(id){return '<i class="sw" style="background:'+SPECIES[id].sw+'"></i>'}
+function openModal(html){$('#card').innerHTML=html; $('#modal').hidden=false; var b=$('#card').querySelector('[data-focus]')||$('#card').querySelector('button'); if(b)b.focus()}
+function closeModal(){$('#modal').hidden=true; $('#card').innerHTML=''}
+function updateChips(){
+  $('#c-water').textContent=S.water+'/'+waterMax();
+  $('#c-energy').textContent=S.energy+'/'+energyMax();
+  $('#c-day').textContent=S.day;
+}
+
+/* ---------- three.js stage ---------- */
+var app=$('#app'), canvas=$('#stage'), renderer;
+try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true})}catch(e){
+  openModal('<h2>המשחק לא נפתח</h2><p>הדפדפן הזה לא מצליח להציג תלת ממד. נסו לפתוח את המשחק בדפדפן אחר או במחשב אחר.</p>'); return;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+var scene=new THREE.Scene(); scene.background=new THREE.Color('#0d1524');
+var camera=new THREE.PerspectiveCamera(45,1,0.1,200);
+scene.add(new THREE.HemisphereLight(0xdfe8ff,0x1a2033,0.8));
+var sunLight=new THREE.DirectionalLight(0xfff1d6,1); sunLight.position.set(4,5,6); scene.add(sunLight);
+var sunLight2=new THREE.DirectionalLight(0xffb070,0); sunLight2.position.set(-6,3,4); scene.add(sunLight2);
+
+function rnd(x){var v=Math.sin(x*127.1)*43758.5453; return v-Math.floor(v)}
+(function stars(){
+  var n=700,a=new Float32Array(n*3);
+  for(var i=0;i<n;i++){var u=rnd(i+1)*2-1,th=rnd(i+9.3)*6.283,r=60+rnd(i+3.7)*40,s=Math.sqrt(1-u*u); a[i*3]=r*s*Math.cos(th); a[i*3+1]=r*u; a[i*3+2]=r*s*Math.sin(th)}
+  var g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(a,3));
+  scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xdfe6ff,size:0.45,sizeAttenuation:true})));
+})();
+
+function bump(x,y,z,s){return Math.sin(x*3.1+s)*Math.sin(y*3.7+s*1.7)*Math.sin(z*2.9+s*0.6)*0.5+Math.sin(x*7+y*5+s)*0.25}
+function surf(d,pl){return 1+0.035*bump(d.x,d.y,d.z,pl.seed)}
+function planetGeo(pl,detail){
+  var g=new THREE.IcosahedronGeometry(1,detail), p=g.attributes.position, v=new THREE.Vector3();
+  for(var i=0;i<p.count;i++){v.fromBufferAttribute(p,i).normalize(); v.multiplyScalar(surf(v,pl)); p.setXYZ(i,v.x,v.y,v.z)}
+  g.setAttribute('color',new THREE.BufferAttribute(new Float32Array(p.count*3),3));
+  g.computeVertexNormals(); return g;
+}
+function paint(geo,pl,happy,revived,base){
+  var p=geo.attributes.position,c=geo.attributes.color,dead=new THREE.Color(pl.dead),alive=new THREE.Color(pl.alive),col=new THREE.Color(),cen=new THREE.Vector3(),a=new THREE.Vector3();
+  for(var f=0;f<p.count;f+=3){
+    cen.set(0,0,0); for(var k=0;k<3;k++){a.fromBufferAttribute(p,f+k); cen.add(a)} cen.normalize();
+    var g=revived?1:base;
+    if(!revived)for(var h=0;h<happy.length;h++){var dd=cen.distanceTo(happy[h]); if(dd<0.5)g=Math.max(g,Math.min(1,(0.5-dd)/0.28))}
+    col.copy(dead).lerp(alive,g).multiplyScalar(0.86+0.26*rnd(f*0.37+pl.seed));
+    for(k=0;k<3;k++)c.setXYZ(f+k,col.r,col.g,col.b);
+  }
+  c.needsUpdate=true;
+}
+function planetMat(){return new THREE.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:0.9,metalness:0})}
+
+/* map */
+var mapGroup=new THREE.Group(); scene.add(mapGroup);
+var mapPlanets=PLANETS.map(function(pl){
+  var m=new THREE.Mesh(planetGeo(pl,2),planetMat()); m.userData.pl=pl; mapGroup.add(m);
+  var b=document.createElement('button'); b.className='plabel'; b.type='button'; b.addEventListener('click',function(){openPack(pl)}); $('#labels').appendChild(b);
+  return {pl:pl,mesh:m,label:b};
+});
+var pathLine=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:0x7f93bd,transparent:true,opacity:0.35})); mapGroup.add(pathLine);
+var ship=new THREE.Mesh(new THREE.ConeGeometry(0.09,0.26,5),new THREE.MeshStandardMaterial({color:0xf2c35b,flatShading:true,emissive:0x8a5a10})); mapGroup.add(ship);
+function refreshMap(){
+  mapPlanets.forEach(function(mp){
+    var st=S.planets[mp.pl.id];
+    paint(mp.mesh.geometry,mp.pl,[],st.revived,Math.min(0.75,(st.life||0)/mp.pl.target*0.75));
+    mp.label.className='plabel'+(st.revived?' alive':'');
+    mp.label.innerHTML='<b>'+mp.pl.name+'</b><span>'+(st.revived?'חי וירוק':'חיים: '+(st.life||0)+' מתוך '+mp.pl.target)+'</span>';
+    mp.label.setAttribute('aria-label','לטוס אל '+mp.pl.name);
+  });
+  var r=revCount();
+  $('#map-hint').textContent=r===PLANETS.length?'כל הכוכבים חיים. אפשר לחזור לכל כוכב ולהמשיך לשתול.':'בחרו כוכב כדי לטוס אליו. בכל יום מקבלים '+(2+3*r)+' מים ו-'+(1+2*r)+' אנרגיה.';
+}
+function layoutMap(){
+  var visH=2*camera.position.z*Math.tan(22.5*Math.PI/180), visW=visH*camera.aspect, pts=[];
+  mapPlanets.forEach(function(mp,i){
+    var s;
+    if(camera.aspect<1){s=0.45; mp.mesh.position.set((i%2?1:-1)*Math.min(0.9,visW*0.16),(2-i)*1.75+0.45,0)}
+    else{var step=Math.min(2.4,visW*0.19); s=Math.min(0.58,step*0.3); mp.mesh.position.set((i-2)*step,(i%2?-0.45:0.55),0)}
+    mp.mesh.scale.setScalar(s); mp.scale=s; pts.push(mp.mesh.position.clone());
+  });
+  pathLine.geometry.setFromPoints(pts);
+}
+
+/* planet view */
+var globe=new THREE.Group(); scene.add(globe);
+var viewMesh=null, plantsGroup=new THREE.Group(), podsGroup=new THREE.Group(); globe.add(plantsGroup); globe.add(podsGroup);
+var fx=new THREE.Group(); scene.add(fx);
+var rainPts=null, rainVel=new THREE.Vector3();
+var mode='map', cur=null, live=[], pods=[], cargo={}, selSeed=null, selPlant=null;
+
+function mk(geo,color,extra){
+  var o={color:color,flatShading:true,roughness:0.8}; if(extra)for(var k in extra)o[k]=extra[k];
+  var m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial(o)); m.userData.base=new THREE.Color(color); m.userData.em=o.emissiveIntensity||0; return m;
+}
+function model(t){
+  var g=new THREE.Group(),m,i,a;
+  if(t==='grass'){for(i=0;i<5;i++){m=mk(new THREE.ConeGeometry(0.028,0.24,4),'#7fd18b'); a=i*1.26; m.position.set(Math.cos(a)*0.05,0.11,Math.sin(a)*0.05); m.rotation.set(Math.sin(a)*0.35,0,-Math.cos(a)*0.35); g.add(m)}}
+  else if(t==='moon'){m=mk(new THREE.CylinderGeometry(0.014,0.018,0.26,5),'#6fae7c'); m.position.y=0.13; g.add(m); m=mk(new THREE.IcosahedronGeometry(0.085,0),'#cfd8ff',{emissive:'#8fa0ff',emissiveIntensity:0.45}); m.position.y=0.3; g.add(m)}
+  else if(t==='tree'){m=mk(new THREE.CylinderGeometry(0.03,0.045,0.46,6),'#8a6a4a'); m.position.y=0.23; g.add(m); m=mk(new THREE.ConeGeometry(0.3,0.16,8),'#3fae7a'); m.position.y=0.5; g.add(m)}
+  else if(t==='bush'){[[0,0.09,0,0.12],[0.1,0.07,0.04,0.09],[-0.09,0.07,-0.05,0.095]].forEach(function(p){m=mk(new THREE.IcosahedronGeometry(p[3],0),'#2f8f5b'); m.position.set(p[0],p[1],p[2]); g.add(m)})}
+  else if(t==='cactus'){m=mk(new THREE.CylinderGeometry(0.055,0.06,0.32,6),'#7fe0d0',{transparent:true,opacity:0.88}); m.position.y=0.16; g.add(m); m=mk(new THREE.CylinderGeometry(0.03,0.03,0.14,5),'#7fe0d0',{transparent:true,opacity:0.88}); m.position.set(0.085,0.2,0); g.add(m)}
+  else if(t==='shroom'){m=mk(new THREE.CylinderGeometry(0.035,0.045,0.14,6),'#f1e3c8'); m.position.y=0.07; g.add(m); m=mk(new THREE.SphereGeometry(0.13,8,4,0,6.283,0,1.5708),'#ff7a45',{emissive:'#ff4a10',emissiveIntensity:0.6}); m.position.y=0.13; g.add(m)}
+  else if(t==='sponge'){[[0,0.07,0,0.09],[0.08,0.05,0.03,0.065],[-0.06,0.05,0.06,0.07],[0,0.05,-0.08,0.06]].forEach(function(p){m=mk(new THREE.IcosahedronGeometry(p[3],0),'#e6c84a'); m.position.set(p[0],p[1],p[2]); g.add(m)})}
+  else if(t==='feather'){m=mk(new THREE.ConeGeometry(0.05,0.52,4),'#ffc4dc'); m.position.y=0.26; m.rotation.z=0.18; g.add(m); m=mk(new THREE.ConeGeometry(0.035,0.36,4),'#fff0f6'); m.position.set(0.06,0.18,0.02); m.rotation.z=-0.3; g.add(m)}
+  else if(t==='bell'){m=mk(new THREE.CylinderGeometry(0.013,0.016,0.28,5),'#7fb5c9'); m.position.y=0.14; g.add(m); m=mk(new THREE.ConeGeometry(0.1,0.15,6),'#a8e4ff',{emissive:'#5fb8ff',emissiveIntensity:0.3}); m.position.y=0.32; g.add(m)}
+  else{m=mk(new THREE.CylinderGeometry(0.014,0.018,0.22,5),'#4f9a68'); m.position.y=0.11; g.add(m); m=mk(new THREE.IcosahedronGeometry(0.075,0),'#e85aa0'); m.position.y=0.26; g.add(m); for(i=0;i<5;i++){a=i*1.257; m=mk(new THREE.IcosahedronGeometry(0.05,0),'#f48cbe'); m.position.set(Math.cos(a)*0.085,0.24,Math.sin(a)*0.085); g.add(m)}}
+  return g;
+}
+var UP=new THREE.Vector3(0,1,0), WILT=new THREE.Color('#6b5a4e');
+function addLive(rec,instant){
+  var dir=new THREE.Vector3(rec.d[0],rec.d[1],rec.d[2]).normalize(), r=R*surf(dir,cur);
+  var outer=new THREE.Group(); outer.position.copy(dir).multiplyScalar(r-0.01); outer.quaternion.setFromUnitVectors(UP,dir);
+  var inner=model(rec.t); inner.rotation.y=rnd(dir.x*9+dir.y*5)*6.28; inner.scale.setScalar(instant?1.6:0.016); outer.add(inner);
+  var ang=2*Math.asin(RANGE/2), rr=R*1.035;
+  var ring=new THREE.Mesh(new THREE.TorusGeometry(rr*Math.sin(ang),0.013,5,56),new THREE.MeshBasicMaterial({color:'#ffffff',transparent:true,opacity:0.6}));
+  ring.rotation.x=Math.PI/2; ring.position.y=rr*Math.cos(ang)-r; ring.raycast=function(){}; ring.visible=false; outer.add(ring);
+  var L={rec:rec,dir:dir,outer:outer,inner:inner,ring:ring,happy:true,why:'',scale:instant?1:0.01,tilt:0};
+  outer.userData.kind='plant'; outer.userData.L=L;
+  plantsGroup.add(outer); live.push(L); return L;
+}
+function moodOf(L){
+  var sp=SPECIES[L.rec.t], w=cur.weather, W=WEATHER[w];
+  if(!W.need)return {ok:true};
+  if(sp.hates===w)return {ok:false,why:w==='rain'?'הוא לא סובל גשם. בכוכב הזה הוא לא יצליח.':'הוא נמס בחום. בכוכב הזה הוא לא יצליח.'};
+  if(sp.likes.indexOf(w)>=0)return {ok:true};
+  for(var i=0;i<live.length;i++){var q=live[i]; if(q!==L&&SPECIES[q.rec.t].gives===W.need&&q.dir.distanceTo(L.dir)<=RANGE)return {ok:true}}
+  return {ok:false,why:W.why+'. שתלו לידו '+SPECIES[W.helper].name+'.'};
+}
+function evaluate(){
+  var st=S.planets[cur.id], W=WEATHER[cur.weather], life=0, happy=[];
+  live.forEach(function(L){
+    var m=moodOf(L), sp=SPECIES[L.rec.t]; L.happy=m.ok; L.why=m.why||'';
+    if(m.ok){life+=sp.pts; happy.push(L.dir); if(S.grown.indexOf(L.rec.t)<0)S.grown.push(L.rec.t)}
+    L.inner.traverse(function(o){if(o.isMesh){o.material.color.copy(o.userData.base); if(!m.ok)o.material.color.lerp(WILT,0.72); if(o.material.emissive)o.material.emissiveIntensity=m.ok?o.userData.em:0}});
+    L.ring.visible=!!(W.need&&sp.gives===W.need); if(L.ring.visible)L.ring.material.color.set(W.ring);
+  });
+  st.life=life;
+  var just=false; if(!st.revived&&life>=cur.target){st.revived=true; just=true}
+  paint(viewMesh.geometry,cur,happy,st.revived,0);
+  updatePlanetUI(); updateChips(); save();
+  if(just)onRevive();
+}
+function onRevive(){
+  var all=revCount()===PLANETS.length;
+  if(all&&!S.won){S.won=true; save();
+    openModal('<h2>הגלקסיה חזרה לחיים</h2><p>כל חמשת הכוכבים ירוקים שוב, בזכותך.</p><p class="dim">מצאת '+S.known.length+' מתוך '+ORDER.length+' צמחים, וגידלת '+S.grown.length+' מהם. אפשר להמשיך לשתול ולהשלים את ספר הצמחים.</p><button class="btn go" data-close data-focus>ממשיכים לגנן</button>');
+  }else{
+    openModal('<h2>'+cur.name+' חזר לחיים</h2><p>מעכשיו הכוכב הזה נותן לך בכל יום עוד 3 מים ועוד 2 אנרגיה.</p><p class="dim">גם החללית גדלה: יש בה מקום ל-'+slots()+' זרעים, '+waterMax()+' מים ו-'+energyMax()+' אנרגיה.</p><button class="btn go" data-close data-focus>יופי</button>');
+  }
+}
+
+function buildFx(w){
+  while(fx.children.length)fx.remove(fx.children[0]); rainPts=null; sunLight2.intensity=0; sunLight.color.set(0xfff1d6);
+  if(w==='sun'){
+    sunLight2.intensity=0.9; sunLight.color.set(0xffe2a8);
+    [[-7,5.5,-8,1.1,'#ffd27a'],[-4.6,6.4,-8,0.7,'#ff9d5c']].forEach(function(s){var m=new THREE.Mesh(new THREE.SphereGeometry(s[3],16,12),new THREE.MeshBasicMaterial({color:s[4]})); m.position.set(s[0],s[1],s[2]); fx.add(m)});
+    return;
+  }
+  if(w==='mild')return;
+  var n=w==='wind'?160:260, a=new Float32Array(n*3);
+  for(var i=0;i<n*3;i++)a[i]=(rnd(i+w.length*7.7)*2-1)*4.2;
+  var g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(a,3));
+  rainPts=new THREE.Points(g,new THREE.PointsMaterial({color:w==='rain'?0x8fd3f5:w==='cold'?0xffffff:0xd9c9a3,size:w==='cold'?0.07:0.05,transparent:true,opacity:0.8}));
+  rainVel.set(w==='wind'?4.5:w==='cold'?0.25:0,w==='rain'?-4:w==='cold'?-0.6:0.15,0);
+  fx.add(rainPts);
+}
+
+function land(pl){
+  cur=pl; mode='planet'; S.at=pl.id; S.energy-=pl.cost; selPlant=null;
+  var st=S.planets[pl.id];
+  if(viewMesh){globe.remove(viewMesh); viewMesh.geometry.dispose()}
+  viewMesh=new THREE.Mesh(planetGeo(pl,4),planetMat()); viewMesh.scale.setScalar(R); viewMesh.userData.kind='planet'; globe.add(viewMesh);
+  while(plantsGroup.children.length)plantsGroup.remove(plantsGroup.children[0]);
+  while(podsGroup.children.length)podsGroup.remove(podsGroup.children[0]);
+  live=[]; pods=[]; globe.quaternion.set(0,0,0,1);
+  st.plants.forEach(function(rec){addLive(rec,true)});
+  pl.pods.forEach(function(pd){
+    if(st.pods.indexOf(pd[0])>=0||S.known.indexOf(pd[0])>=0)return;
+    var dir=new THREE.Vector3(pd[1][0],pd[1][1],pd[1][2]).normalize(), g=new THREE.Group();
+    g.position.copy(dir).multiplyScalar(R*surf(dir,pl)+0.22);
+    g.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.09,0),new THREE.MeshStandardMaterial({color:'#f2c35b',emissive:'#f2a020',emissiveIntensity:0.9,flatShading:true})));
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(0.22,10,8),new THREE.MeshBasicMaterial({color:'#f2c35b',transparent:true,opacity:0.18,depthWrite:false})));
+    g.userData.kind='pod'; g.userData.id=pd[0]; podsGroup.add(g); pods.push(g);
+  });
+  buildFx(pl.weather);
+  mapGroup.visible=false; globe.visible=true; fx.visible=true;
+  $('#labels').hidden=true; $('#map-ui').hidden=true; $('#planet-ui').hidden=false; $('#info').hidden=true;
+  selSeed=null; ORDER.forEach(function(id){if(!selSeed&&cargo[id]>0)selSeed=id});
+  resize(); evaluate(); renderTray();
+  toast(pods.length?'נחתנו. סובבו את הכוכב וחפשו נקודות זוהרות: שם מסתתרים זרעים חדשים.':'נחתנו על '+pl.name+'.',4200);
+}
+function takeoff(){
+  var inc=income(); cargo={}; mode='map'; cur=null; selPlant=null;
+  globe.visible=false; fx.visible=false; mapGroup.visible=true; sunLight2.intensity=0; sunLight.color.set(0xfff1d6);
+  $('#labels').hidden=false; $('#map-ui').hidden=false; $('#planet-ui').hidden=true;
+  resize(); refreshMap(); updateChips(); save();
+  toast('עבר יום. קיבלת '+inc.w+' מים ו-'+inc.e+' אנרגיה.');
+}
+
+/* ---------- planet UI ---------- */
+function updatePlanetUI(){
+  if(!cur)return; var st=S.planets[cur.id];
+  $('#p-name').textContent=cur.name;
+  $('#p-bar').style.width=Math.min(100,(st.revived?1:st.life/cur.target)*100)+'%';
+  $('#p-life').textContent=st.revived?'הכוכב חי':'חיים: '+st.life+' מתוך '+cur.target;
+  $('#p-hint').textContent=WEATHER[cur.weather].hint;
+}
+function costHere(id){return cur&&cur.weather==='rain'?0:SPECIES[id].cost}
+function renderTray(){
+  var ids=ORDER.filter(function(id){return cargo[id]!==undefined}), t=$('#tray');
+  if(!ids.length){t.innerHTML='<p class="empty">אין זרעים בחללית. אפשר לחפש זרעים זוהרים על הכוכב, או להמריא ולקחת זרעים בטיסה הבאה.</p>'; return}
+  t.innerHTML=ids.map(function(id){var sp=SPECIES[id];
+    return '<button class="seed" type="button" data-seed="'+id+'" aria-pressed="'+(selSeed===id)+'"'+(cargo[id]>0?'':' disabled')+'><b>'+sw(id)+sp.name+'</b><span>נשארו '+cargo[id]+' · '+costHere(id)+' מים · '+sp.pts+' חיים</span></button>'}).join('');
+}
+function showInfo(L){
+  selPlant=L; var sp=SPECIES[L.rec.t];
+  $('#info-text').innerHTML='<b>'+sp.name+'</b> · '+(L.happy?'<span class="oktxt">שמח וגדל</span>. '+sp.desc:'<span class="sadtxt">עצוב</span>: '+L.why);
+  $('#info').hidden=false;
+}
+function hideInfo(){selPlant=null; $('#info').hidden=true}
+function tryPlant(point){
+  var total=0; for(var k in cargo)total+=cargo[k];
+  if(!total){toast('לא נשארו זרעים בחללית. המריאו כדי לקחת עוד.'); return}
+  if(!selSeed||!(cargo[selSeed]>0)){toast('בחרו זרע מהמגש למטה.'); return}
+  var c=costHere(selSeed);
+  if(S.water<c){toast('אין מספיק מים. המריאו, ומחר יהיו עוד.'); return}
+  var dir=globe.worldToLocal(point.clone()).normalize();
+  for(var i=0;i<live.length;i++)if(live[i].dir.distanceTo(dir)<MIN){toast('צפוף מדי כאן. שתלו קצת יותר רחוק.'); return}
+  var rec={t:selSeed,d:[+dir.x.toFixed(4),+dir.y.toFixed(4),+dir.z.toFixed(4)]};
+  S.planets[cur.id].plants.push(rec); S.water-=c; cargo[selSeed]--;
+  var L=addLive(rec,false); hideInfo(); evaluate();
+  if(!L.happy)toast(SPECIES[rec.t].name+' עצוב: '+L.why,4600);
+  if(cargo[selSeed]<=0){selSeed=null; ORDER.forEach(function(id){if(!selSeed&&cargo[id]>0)selSeed=id})}
+  renderTray();
+}
+function dig(){
+  if(!selPlant)return; var L=selPlant, st=S.planets[cur.id];
+  st.plants.splice(st.plants.indexOf(L.rec),1); live.splice(live.indexOf(L),1); plantsGroup.remove(L.outer);
+  hideInfo(); evaluate(); toast('הצמח נעקר. אפשר לשתול במקומו משהו אחר.');
+}
+function collect(g){
+  var id=g.userData.id, sp=SPECIES[id];
+  S.known.push(id); S.planets[cur.id].pods.push(id); podsGroup.remove(g); pods.splice(pods.indexOf(g),1);
+  cargo[id]=(cargo[id]||0)+1; selSeed=id; renderTray(); save();
+  openModal('<h2>מצאת זרע חדש</h2><p><b>'+sw(id)+' '+sp.name+'</b></p><p>'+sp.desc+'</p><p class="dim">זרע אחד כבר אצלך במגש, ומעכשיו אפשר לקחת אותו לכל טיסה. הוא נכנס גם לספר הצמחים.</p><button class="btn go" data-close data-focus>יופי</button>');
+}
+
+/* ---------- modals ---------- */
+var pack=null;
+function openPack(pl){
+  if(mode!=='map')return;
+  pack={pl:pl,c:{}}; drawPack();
+}
+function drawPack(){
+  var pl=pack.pl, st=S.planets[pl.id], W=WEATHER[pl.weather], used=0, k; for(k in pack.c)used+=pack.c[k];
+  var can=S.energy>=pl.cost, rain=pl.weather==='rain';
+  var rows=ORDER.filter(function(id){return S.known.indexOf(id)>=0}).map(function(id){var sp=SPECIES[id], n=pack.c[id]||0;
+    return '<div class="pack"><div class="txt"><b>'+sw(id)+sp.name+'</b><span>'+sp.desc+' '+(rain?0:sp.cost)+' מים · '+sp.pts+' חיים</span></div><div class="stepper"><button type="button" data-step="-1" data-id="'+id+'" aria-label="פחות '+sp.name+'"'+(n?'':' disabled')+'>−</button><output>'+n+'</output><button type="button" data-step="1" data-id="'+id+'" aria-label="עוד '+sp.name+'"'+(used<slots()?'':' disabled')+'>+</button></div></div>'}).join('');
+  openModal('<h2>'+pl.name+'</h2><p><b>'+W.label+'.</b> '+W.hint+'</p>'+
+    '<p class="dim">'+(st.revived?'הכוכב כבר חי וירוק.':'חיים: '+(st.life||0)+' מתוך '+pl.target+'.')+' הטיסה עולה '+pl.cost+' אנרגיה, ויש לך '+S.energy+'.</p>'+
+    '<p><b>מה לוקחים בחללית?</b> <span class="dim">'+used+' מתוך '+slots()+' מקומות. יש לך '+S.water+' מים.</span></p><div class="packlist">'+rows+'</div>'+
+    (can?'':'<p class="dim">אין מספיק אנרגיה לטיסה הזאת. חזרו למפה ונוחו יום כדי להיטען.'+(pl.cost>energyMax()?' המכל עדיין קטן מדי: החיו כוכב אחד והוא יגדל.':'')+'</p>')+
+    '<div class="row"><button class="btn go" data-land'+(can?'':' disabled')+'>'+(used?'נוחתים':'נוחתים בלי זרעים')+'</button><button class="btn" data-close>חזרה למפה</button></div>');
+}
+function openBook(){
+  var html=ORDER.map(function(id){var sp=SPECIES[id];
+    if(S.known.indexOf(id)<0)return '<div class="entry unknown"><b>???</b><span>זרע שעוד לא מצאת. הוא מסתתר על אחד הכוכבים.</span></div>';
+    return '<div class="entry"><b>'+sw(id)+sp.name+'</b><span>'+sp.desc+'</span><span>'+sp.cost+' מים · '+sp.pts+' חיים</span>'+(S.grown.indexOf(id)>=0?'<em>כבר גידלת אותו</em>':'<span>עוד לא גידלת אותו</span>')+'</div>'}).join('');
+  openModal('<h2>ספר הצמחים</h2><p class="dim">מצאת '+S.known.length+' מתוך '+ORDER.length+' צמחים, וגידלת '+S.grown.length+'.</p><div class="book">'+html+'</div><button class="btn" data-close data-focus>סגור</button>');
+}
+function openHelp(first){
+  openModal('<h2>'+(first?'שלום, גנן':'איך משחקים')+'</h2><p>הגלקסיה מתה, ורק לך יש חללית שהיא גם חממה. המטרה: להחזיר חיים לכל חמשת הכוכבים, ולמצוא את כל עשרת הצמחים.</p>'+
+    '<ol class="steps"><li>בחרו כוכב במפה, והחליטו אילו זרעים לקחת. המקום בחללית מוגבל.</li><li>על הכוכב: גררו כדי לסובב אותו, ולחצו על האדמה כדי לשתול. כל שתילה עולה מים.</li><li>לכל כוכב יש מזג אוויר משלו. צמחים עוזרים זה לזה: עץ נותן צל, שיח עוצר רוח. העיגול סביב צמח מראה עד לאן הוא עוזר.</li><li>נקודות זוהרות על הכוכב הן זרעים חדשים. לחצו עליהן כדי לאסוף.</li><li>כשמד החיים מתמלא, הכוכב חוזר לחיים ונותן לך מים ואנרגיה בכל יום.</li></ol>'+
+    '<p class="dim">אי אפשר להפסיד. צמח עצוב רק מחכה לשכן מתאים, ואפשר תמיד לעקור ולנסות שוב. המשחק נשמר לבד בדפדפן הזה.</p>'+
+    '<div class="row"><button class="btn go" data-close data-focus>'+(first?'מתחילים':'סגור')+'</button>'+(first?'':'<button class="btn" data-reset>להתחיל משחק חדש</button>')+'</div>');
+}
+$('#card').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  if(b.dataset.step){var id=b.dataset.id; pack.c[id]=Math.max(0,(pack.c[id]||0)+(+b.dataset.step)); if(!pack.c[id])delete pack.c[id]; drawPack(); var again=$('#card').querySelector('[data-id="'+id+'"][data-step="'+b.dataset.step+'"]'); if(again&&!again.disabled)again.focus(); return}
+  if(b.hasAttribute('data-land')){cargo=pack.c; var pl=pack.pl; pack=null; closeModal(); land(pl); return}
+  if(b.hasAttribute('data-reset')){openModal('<h2>להתחיל מחדש?</h2><p>כל הגינות והזרעים שמצאת יימחקו.</p><div class="row"><button class="btn" data-reset-yes>כן, למחוק ולהתחיל מחדש</button><button class="btn go" data-close data-focus>לא, להמשיך לשחק</button></div>'); return}
+  if(b.hasAttribute('data-reset-yes')){S=fresh(); S.intro=true; save(); closeModal(); if(mode==='planet'){S.day=0; takeoff(); S.water=8; S.energy=4; S.day=1; save()} refreshMap(); updateChips(); toast('משחק חדש התחיל.'); return}
+  if(b.hasAttribute('data-close')){pack=null; closeModal()}
+});
+$('#b-book').addEventListener('click',openBook);
+$('#b-help').addEventListener('click',function(){openHelp(false)});
+$('#b-rest').addEventListener('click',function(){var inc=income(); updateChips(); refreshMap(); save(); toast(inc.w||inc.e?'נחת יום. קיבלת '+inc.w+' מים ו-'+inc.e+' אנרגיה.':'המכלים כבר מלאים. אפשר לצאת לדרך.')});
+$('#b-takeoff').addEventListener('click',takeoff);
+$('#b-dig').addEventListener('click',dig);
+$('#b-closeinfo').addEventListener('click',hideInfo);
+$('#tray').addEventListener('click',function(e){var b=e.target.closest('[data-seed]'); if(!b||b.disabled)return; selSeed=b.dataset.seed; renderTray()});
+
+/* ---------- pointer: drag to spin, tap to act ---------- */
+var ray=new THREE.Raycaster(), ndc=new THREE.Vector2(), drag=null, AX=new THREE.Vector3(1,0,0), q=new THREE.Quaternion();
+canvas.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY,moved:false}; try{canvas.setPointerCapture(e.pointerId)}catch(_){}});
+canvas.addEventListener('pointermove',function(e){
+  if(!drag)return; var dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY;
+  if(Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy)>7)drag.moved=true;
+  if(mode==='planet'&&drag.moved){q.setFromAxisAngle(UP,dx*0.007); globe.quaternion.premultiply(q); q.setFromAxisAngle(AX,dy*0.007); globe.quaternion.premultiply(q)}
+});
+canvas.addEventListener('pointerup',function(e){
+  var d=drag; drag=null; if(!d||d.moved)return;
+  var r=canvas.getBoundingClientRect(); ndc.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(ndc,camera);
+  if(mode==='map'){var h=ray.intersectObjects(mapPlanets.map(function(m){return m.mesh})); if(h.length)openPack(h[0].object.userData.pl); return}
+  var hits=ray.intersectObjects([viewMesh].concat(podsGroup.children,plantsGroup.children),true);
+  if(!hits.length){hideInfo(); return}
+  var o=hits[0].object; while(o&&!o.userData.kind)o=o.parent;
+  if(!o)return;
+  if(o.userData.kind==='pod')collect(o); else if(o.userData.kind==='plant')showInfo(o.userData.L); else tryPlant(hits[0].point);
+});
+canvas.addEventListener('pointercancel',function(){drag=null});
+
+/* ---------- frame loop ---------- */
+function resize(){
+  var w=app.clientWidth||1,h=app.clientHeight||1; renderer.setSize(w,h,false); camera.aspect=w/h;
+  if(mode==='map'){camera.position.set(0,0,camera.aspect<1?14:12); layoutMap()}
+  else{camera.position.set(0,0,Math.max(8.2,6.6/camera.aspect)); globe.position.y=camera.aspect<1?1.1:0.75}
+  camera.lookAt(0,0,0); camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',resize);
+var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var last=performance.now(), T=0, tmp=new THREE.Vector3();
+function frame(now){
+  var dt=Math.min(0.05,(now-last)/1000); last=now; T+=dt;
+  if(mode==='map'){
+    var w=app.clientWidth,h=app.clientHeight;
+    mapPlanets.forEach(function(mp){
+      if(!still)mp.mesh.rotation.y+=dt*0.25;
+      tmp.copy(mp.mesh.position); tmp.y-=mp.scale*1.25; tmp.project(camera);
+      mp.label.style.transform='translate(-50%,0) translate('+((tmp.x+1)/2*w).toFixed(1)+'px,'+((1-tmp.y)/2*h).toFixed(1)+'px)';
+    });
+    var home=mapPlanets.filter(function(m){return m.pl.id===S.at})[0]||mapPlanets[0], a=still?0.8:T*0.9;
+    ship.position.copy(home.mesh.position).add(tmp.set(Math.cos(a)*home.scale*1.7,Math.sin(a*0.7)*0.15,Math.sin(a)*home.scale*1.7));
+    ship.rotation.z=-a;
+  }else{
+    for(var i=0;i<live.length;i++){var L=live[i], ts=L.happy?1:0.78, tt=L.happy?0:0.4, k=Math.min(1,dt*6);
+      L.scale+=(ts-L.scale)*k; L.tilt+=(tt-L.tilt)*k; L.inner.scale.setScalar(L.scale*1.6); L.inner.rotation.z=L.tilt}
+    for(i=0;i<pods.length;i++){pods[i].children[1].scale.setScalar(1+0.25*Math.sin(T*3+i)); if(!still)pods[i].children[0].rotation.y+=dt*2}
+    if(rainPts&&!still){var p=rainPts.geometry.attributes.position;
+      for(i=0;i<p.count;i++){var x=p.getX(i)+rainVel.x*dt, y=p.getY(i)+rainVel.y*dt; if(x>4.2)x-=8.4; if(y<-4.2)y+=8.4; if(y>4.2)y-=8.4; p.setXY(i,x,y)}
+      p.needsUpdate=true}
+  }
+  renderer.render(scene,camera); requestAnimationFrame(frame);
+}
+
+/* ---------- start ---------- */
+document.documentElement.lang='he';
+globe.visible=false; fx.visible=false;
+resize(); refreshMap(); updateChips();
+requestAnimationFrame(frame);
+if(!S.intro){S.intro=true; save(); openHelp(true)}
+})();
+</script>
+</body>
+</html>
