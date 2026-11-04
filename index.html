@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אתר המשחקים של ליב</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* קונספט: מגרש משחקים. רקע שמיים עם נקודות, כרטיסים כמו מדבקות עם מסגרת עבה וצל קשיח */
+  :root {
+    --sky: #6fd3ff;
+    --sun: #ffd23f;
+    --pink: #ff5fa2;
+    --grape: #7a5cff;
+    --mint: #2fd1a0;
+    --ink: #1d1b4b;
+    --paper: #ffffff;
+    --display: "Secular One", "Arial Rounded MT Bold", Arial, sans-serif;
+    --body: "Rubik", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    direction: rtl;
+    background-color: var(--sky);
+    background-image: radial-gradient(rgba(255,255,255,.55) 3px, transparent 3.5px);
+    background-size: 34px 34px;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    padding-block: 0 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    overflow-x: hidden;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+
+  /* כותרת */
+  header { text-align: center; padding: 40px 0 28px; position: relative; }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 9vw, 5rem);
+    line-height: 1.1;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    -webkit-text-stroke: 3px var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 4px 5px 0 var(--ink);
+  }
+  h1 span { display: inline-block; }
+  h1 span.bounce { animation: hop 2.4s ease-in-out infinite; }
+  @keyframes hop { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-14px) rotate(-4deg); } }
+  .tagline {
+    display: inline-block;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    padding: 8px 22px;
+    font-weight: 700;
+    box-shadow: 4px 4px 0 var(--ink);
+    margin: 0;
+  }
+
+  /* ציורים צפים ברקע הכותרת */
+  .blob { position: absolute; border: 3px solid var(--ink); z-index: 0; }
+  .b1 { width: 54px; height: 54px; border-radius: 50%; background: var(--sun); top: 22px; right: 2%; animation: float 5s ease-in-out infinite; }
+  .b2 { width: 46px; height: 46px; background: var(--pink); top: 70px; left: 3%; transform: rotate(18deg); border-radius: 10px; animation: float 6s ease-in-out infinite reverse; }
+  .b3 { width: 0; height: 0; border: 0; border-left: 26px solid transparent; border-right: 26px solid transparent; border-bottom: 46px solid var(--grape); top: 6px; left: 18%; animation: float 7s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+  header > *:not(.blob) { position: relative; z-index: 1; }
+
+  /* כותרת קטע */
+  .section-title {
+    font-family: var(--display);
+    font-size: 2rem;
+    margin: 12px 0 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .count {
+    background: var(--sun); border: 3px solid var(--ink); border-radius: 999px;
+    font-family: var(--body); font-weight: 700; font-size: 1rem; padding: 2px 14px;
+  }
+
+  /* רשת הכרטיסים */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 30px 26px; padding: 6px; }
+  .card {
+    --c: var(--pink);
+    display: flex; flex-direction: column;
+    min-width: 0;
+    background: var(--paper);
+    border: 4px solid var(--ink);
+    border-radius: 26px;
+    box-shadow: 8px 8px 0 var(--c);
+    overflow: hidden;
+    text-decoration: none; color: inherit;
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .card:nth-child(4n+1) { --c: var(--pink);  --tilt: -1.6deg; }
+  .card:nth-child(4n+2) { --c: var(--grape); --tilt: 1.4deg; }
+  .card:nth-child(4n+3) { --c: var(--mint);  --tilt: -1deg; }
+  .card:nth-child(4n+4) { --c: var(--sun);   --tilt: 1.8deg; }
+  .card:hover, .card:focus-visible { transform: rotate(0deg) translateY(-8px) scale(1.03); box-shadow: 12px 14px 0 var(--c); outline: none; }
+  .card:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
+  .thumb { border-bottom: 4px solid var(--ink); background: var(--c); }
+  .thumb img { display: block; width: 100%; aspect-ratio: 400 / 260; object-fit: cover; }
+  .info { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .info h3 { font-family: var(--display); font-weight: 400; font-size: 1.55rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+  .by { margin: 0; font-weight: 500; opacity: .8; }
+  .by b { color: var(--ink); opacity: 1; }
+  .play {
+    margin-top: 12px; align-self: flex-start;
+    background: var(--c); color: var(--ink); border: 3px solid var(--ink); border-radius: 999px;
+    font-family: var(--display); font-size: 1.2rem; padding: 6px 22px;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .card:hover .play { animation: wiggle .5s ease; }
+  @keyframes wiggle { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+
+  /* כרטיס "בקרוב" */
+  .soon { background: rgba(255,255,255,.65); border-style: dashed; box-shadow: none; cursor: default; }
+  .soon:hover { transform: rotate(var(--tilt)); box-shadow: none; }
+  .soon .thumb { display: grid; place-items: center; aspect-ratio: 400 / 260; background: transparent; }
+  .soon .q { font-family: var(--display); font-size: 5rem; color: var(--grape); line-height: 1; }
+  .soon .play { background: var(--paper); box-shadow: none; }
+
+  footer { text-align: center; margin-top: 54px; font-weight: 700; }
+  footer p { display: inline-block; background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; padding: 10px 22px; box-shadow: 4px 4px 0 var(--ink); margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    <h1 id="title" aria-label="אתר המשחקים של ליב">אתר המשחקים של ליב</h1>
+    <p class="tagline">משחקים שאנחנו יוצרים. בחרו אחד ותתחילו לשחק!</p>
+  </header>
+
+  <main>
+    <h2 class="section-title">המשחקים שלנו <span class="count" id="count"></span></h2>
+    <div class="grid" id="games"></div>
+  </main>
+
+  <footer><p>עוד משחקים בדרך, ליב יוצרת כל הזמן!</p></footer>
+</div>
+
+<script>
+  document.documentElement.lang = "he";
+  document.documentElement.dir = "rtl";
+
+  // ===== רשימת המשחקים =====
+  // כדי להוסיף משחק: מעתיקים בלוק אחד (מ-{ עד },) ומשנים את הפרטים.
+  //   name    = שם המשחק       creator = מי יצר אותו
+  //   image   = התמונה הקטנה    url     = הדף של המשחק
+  //   soon: true = כרטיס "בקרוב" שעוד אי אפשר לפתוח
+  var games = [
+    { name: "החנות של לונה",     creator: "ליב", image: "luna-game.svg",     url: "luna-game.html" },
+    { name: "מגן החלל",          creator: "ליב", image: "space-shooter.svg", url: "space-shooter.html" },
+    { name: "הרפתקת הקוביות",    creator: "ליב", image: "cube-adventure.svg", url: "cube-adventure.html" },
+    { name: "משחק פנדה",         creator: "ליב", image: "panda.svg",         url: "panda.html" },
+    { name: "שוטרים וגנבים",     creator: "ליב", soon: true },
+    { name: "דוכן לימונדה",      creator: "ליב", soon: true }
+  ];
+
+  // ===== הכותרת הצבעונית: כל אות בצבע אחר =====
+  var colors = ["#ffd23f", "#ff5fa2", "#ffffff", "#7a5cff", "#2fd1a0"];
+  var title = document.getElementById("title");
+  var text = title.textContent, i = 0;
+  title.textContent = "";
+  title.setAttribute("aria-label", text);
+  text.split("").forEach(function (ch, n) {
+    var s = document.createElement("span");
+    s.textContent = ch === " " ? " " : ch;
+    s.setAttribute("aria-hidden", "true");
+    if (ch !== " ") { s.style.color = colors[i++ % colors.length]; }
+    if (n % 3 === 0) { s.className = "bounce"; s.style.animationDelay = (n * 0.12) + "s"; }
+    title.appendChild(s);
+  });
+
+  // ===== ציור הכרטיסים =====
+  var grid = document.getElementById("games");
+  var ready = 0;
+  games.forEach(function (g) {
+    var card = document.createElement(g.soon ? "div" : "a");
+    card.className = "card" + (g.soon ? " soon" : "");
+    if (!g.soon) { card.href = g.url; card.target = "_blank"; card.rel = "noopener"; ready++; }
+    var thumb = g.soon
+      ? '<div class="thumb"><span class="q">?</span></div>'
+      : '<div class="thumb"><img src="' + g.image + '" alt="" loading="lazy"></div>';
+    card.innerHTML = thumb +
+      '<div class="info"><h3></h3><p class="by">נוצר על ידי <b></b></p>' +
+      '<span class="play">' + (g.soon ? "בקרוב" : "שחקו!") + '</span></div>';
+    card.querySelector("h3").textContent = g.name;
+    card.querySelector("b").textContent = g.creator;
+    grid.appendChild(card);
+  });
+  document.getElementById("count").textContent = ready + " משחקים";
+</script>
+</body>
+</html>

@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>החנות של לונה</title>
+  <style>
+/* Cozy, soft look for Luna's game */
+:root {
+  --cream: #fff6e5;
+  --peach: #ffd9b8;
+  --pink: #ff9eb5;
+  --green: #7cc47f;
+  --ink: #4a3b47;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(#ffeccf, #f9d5e5);
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 62px 16px 16px;
+}
+
+.screen { display: none; text-align: center; }
+.screen.active { display: block; }
+
+h1 { font-size: 2.4rem; margin: 8px 0; }
+h2 { margin: 8px 0 12px; }
+.big { font-size: 5rem; }
+.hint { font-size: 0.9rem; opacity: 0.7; }
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.btn {
+  font-size: 1.1rem;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--pink);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #d9738f;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:disabled { background: #ccc; box-shadow: 0 3px 0 #aaa; cursor: default; }
+.btn.soft { background: var(--green); box-shadow: 0 3px 0 #55a058; }
+
+#muteBtn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 20;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  background: var(--cream);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ico { width: 30px; height: 30px; vertical-align: middle; margin: 0 2px; }
+#shopCv, #titleCv { margin-bottom: 8px; }
+
+.canvasWrap { position: relative; }
+canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  touch-action: none;
+}
+
+#storyText { white-space: pre-line; }
+#storyText .grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 8px; }
+#storyText .cell { width: 110px; font-size: 0.85rem; line-height: 1.3; }
+#storyText .cell img { width: 54px; height: 54px; }
+#storyText .cell.locked img { filter: brightness(0); opacity: 0.2; }
+#storyText .quest { text-align: right; margin: 6px 0; }
+#storyText .quest.done { opacity: 0.55; text-decoration: line-through; }
+#story .card { max-height: 90vh; overflow-y: auto; }
+
+#hud, .hud {
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+#toast, .toast {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 14px;
+  max-width: 90%;
+  font-size: 1.05rem;
+}
+
+/* shop */
+.panel {
+  background: var(--cream);
+  border-radius: 18px;
+  padding: 18px;
+  margin: 10px 0;
+}
+.recipe { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; }
+.customer .face { font-size: 4.5rem; }
+.customer .line { font-size: 1.2rem; }
+
+/* story pop-up */
+#story {
+  position: fixed;
+  inset: 0;
+  background: rgba(40, 25, 50, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 10;
+}
+#story .card {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 520px;
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+</style>
+</head>
+<body>
+  <button id="muteBtn" title="צליל">🔊</button>
+  <main id="app">
+
+    <!-- Title screen -->
+    <section id="title" class="screen active">
+      <canvas id="titleCv" width="800" height="300"></canvas>
+      <h1>החנות של לונה</h1>
+      <p>הרפתקה קטנה בהכפר הקטן וביער הקסום</p>
+      <div id="titleButtons" class="row"></div>
+    </section>
+
+    <!-- Forest screen: the canvas is where Luna walks -->
+    <section id="forest" class="screen">
+      <div id="hud"></div>
+      <div class="canvasWrap">
+        <canvas id="cv" width="800" height="500"></canvas>
+        <div id="toast" hidden></div>
+      </div>
+      <div class="row">
+        <button id="backBtn" class="btn" hidden>חזרה לחנות 🏪</button>
+      </div>
+      <p class="hint">כדי ללכת: חיצים במקלדת, או ללחוץ על המקום שרוצים להגיע אליו.</p>
+    </section>
+
+    <!-- The big world of chapter 2 -->
+    <section id="world" class="screen">
+      <div id="whud" class="hud"></div>
+      <div class="canvasWrap">
+        <canvas id="wcv" width="800" height="500"></canvas>
+        <div id="wtoast" class="toast" hidden></div>
+      </div>
+      <div class="row">
+        <button id="actBtn" class="btn" hidden></button>
+        <button id="questBtn" class="btn soft">📜 משימות</button>
+        <button id="albumBtn" class="btn soft">📖 אלבום האוצרות</button>
+      </div>
+      <p class="hint">ללכת: חיצים או לחיצה על המסך. לפעולה: הכפתור הוורוד, או מקש E או רווח.</p>
+    </section>
+
+    <!-- Shop screen: a picture of the shop on top, buttons below -->
+    <section id="shop" class="screen">
+      <canvas id="shopCv" width="800" height="300"></canvas>
+      <div id="shopUi"></div>
+    </section>
+
+    <!-- Story pop-up -->
+    <div id="story" hidden>
+      <div class="card">
+        <p id="storyText"></p>
+        <div id="storyButtons" class="row"></div>
+      </div>
+    </div>
+
+  </main>
+  <script>
+'use strict';
+
+/* All the drawings in the game are made here with code: shapes, colours and a little maths.
+   Every function draws on a canvas "c". x,y is where the thing STANDS (its feet), s is its size. */
+const Art = (() => {
+  const TAU = Math.PI * 2;
+
+  /* ---------- tiny helpers ---------- */
+  function ell(c, x, y, rx, ry, fill, rot) {
+    c.fillStyle = fill;
+    c.beginPath();
+    c.ellipse(x, y, rx, ry, rot || 0, 0, TAU);
+    c.fill();
+  }
+  function tri(c, x1, y1, x2, y2, x3, y3, fill) {
+    c.fillStyle = fill;
+    c.beginPath();
+    c.moveTo(x1, y1); c.lineTo(x2, y2); c.lineTo(x3, y3);
+    c.closePath();
+    c.fill();
+  }
+  function shadow(c, rx) { ell(c, 0, 0, rx, rx * 0.3, 'rgba(0,0,0,0.18)'); }
+  function at(c, x, y, s, fn) {
+    c.save(); c.translate(x, y); c.scale(s, s); fn(); c.restore();
+  }
+  function eyes(c, lx, rx, y, t, r) {
+    const blink = (Math.floor(t) % 220) < 6;
+    [lx, rx].forEach(x => {
+      ell(c, x, y, r, blink ? 0.8 : r * 1.25, '#2b2230');
+      if (!blink) ell(c, x - r * 0.3, y - r * 0.5, r * 0.35, r * 0.35, '#fff');
+    });
+  }
+
+  /* ---------- Luna the cat ---------- */
+  function cat(c, x, y, s, o) {
+    const t = o.t || 0, walk = !!o.walking;
+    const sw = walk ? Math.sin(t * 0.5) * 5 : 0;                    // leg swing
+    const bob = walk ? Math.abs(Math.sin(t * 0.5)) * 2 : Math.sin(t * 0.08) * 0.8;
+    const tw = Math.sin(t * (walk ? 0.3 : 0.12)) * 8;                // tail wag
+    at(c, x, y, s, () => {
+      c.scale(o.dir || 1, 1);
+      shadow(c, 26);
+      // tail
+      c.strokeStyle = '#d97f35'; c.lineWidth = 8; c.lineCap = 'round';
+      c.beginPath();
+      c.moveTo(-18, -22 - bob);
+      c.quadraticCurveTo(-40, -22 + tw, -36 + tw * 0.5, -50 + tw);
+      c.stroke();
+      // back legs, body, belly, front legs
+      ell(c, -12 + sw, -6, 7, 8, '#d97f35');
+      ell(c, 8 - sw, -6, 7, 8, '#d97f35');
+      ell(c, 0, -26 - bob, 23, 16, '#f0a259');
+      ell(c, 3, -20 - bob, 13, 8, '#fbe3c0');
+      ell(c, -4 - sw, -6, 7, 8, '#f0a259');
+      ell(c, 16 + sw, -6, 7, 8, '#f0a259');
+      // head
+      const hx = 16, hy = -46 - bob;
+      tri(c, hx - 16, hy - 4, hx - 13, hy - 27, hx - 1, hy - 13, '#f0a259');
+      tri(c, hx + 16, hy - 4, hx + 13, hy - 27, hx + 1, hy - 13, '#f0a259');
+      tri(c, hx - 13, hy - 8, hx - 12, hy - 21, hx - 5, hy - 12, '#ffb5c5');
+      tri(c, hx + 13, hy - 8, hx + 12, hy - 21, hx + 5, hy - 12, '#ffb5c5');
+      ell(c, hx, hy, 18, 15, '#f0a259');
+      ell(c, hx, hy + 6, 11, 7, '#fbe3c0');
+      c.strokeStyle = '#d97f35'; c.lineWidth = 2.5;
+      [-5, 0, 5].forEach(d => { c.beginPath(); c.moveTo(hx + d, hy - 15); c.lineTo(hx + d, hy - 9); c.stroke(); });
+      eyes(c, hx - 8, hx + 8, hy - 1, t, 3);
+      tri(c, hx - 2.5, hy + 3, hx + 2.5, hy + 3, hx, hy + 6.5, '#ff8aa5');
+      c.strokeStyle = '#7a4a2a'; c.lineWidth = 1.3;
+      c.beginPath(); c.arc(hx - 2.5, hy + 7, 2.5, 0, Math.PI); c.stroke();
+      c.beginPath(); c.arc(hx + 2.5, hy + 7, 2.5, 0, Math.PI); c.stroke();
+      c.strokeStyle = 'rgba(80,50,30,0.5)'; c.lineWidth = 1;
+      [[-10, 5, -27, 2], [-10, 7, -27, 9], [10, 5, 27, 2], [10, 7, 27, 9]].forEach(w => {
+        c.beginPath(); c.moveTo(hx + w[0], hy + w[1]); c.lineTo(hx + w[2], hy + w[3]); c.stroke();
+      });
+    });
+  }
+
+  /* ---------- Friends of the forest (head and shoulders) ---------- */
+  const BODY = { bunny: '#f4efe9', owl: '#a07650', bear: '#8f633f', bird: '#6fb3e8', fox: '#e8793a', hedgehog: '#7a5a3d' };
+  const HEAD = { bunny: '#f8f4ee', owl: '#b08560', bear: '#a3734a', bird: '#86c4f0', fox: '#f08a4b', hedgehog: '#f0d2a8' };
+  const BELLY = { bunny: '#ffffff', owl: '#e8d2b0', bear: '#c99a6e', bird: '#d8efff', fox: '#fff1e0', hedgehog: '#f0d2a8' };
+
+  function animal(c, kind, x, y, s, t) {
+    const bob = Math.sin(t * 0.07) * 1.5;
+    at(c, x, y + bob, s, () => {
+      shadow(c, 34);
+
+      // things behind the head
+      if (kind === 'bunny') {
+        const sw = Math.sin(t * 0.05) * 3;
+        ell(c, -11 - sw, -100, 7, 24, HEAD.bunny, -0.1); ell(c, -11 - sw, -98, 3.5, 17, '#ffc2d1', -0.1);
+        ell(c, 11 + sw, -100, 7, 24, HEAD.bunny, 0.1);   ell(c, 11 + sw, -98, 3.5, 17, '#ffc2d1', 0.1);
+      } else if (kind === 'hedgehog') {
+        for (let i = 0; i < 15; i++) {
+          const a = Math.PI + (i + 0.5) * Math.PI / 15, a2 = a + 0.2, a1 = a - 0.2;
+          tri(c, Math.cos(a1) * 27, -60 + Math.sin(a1) * 27, Math.cos(a2) * 27, -60 + Math.sin(a2) * 27,
+            Math.cos(a) * 44, -60 + Math.sin(a) * 44, '#4a3524');
+        }
+      } else if (kind === 'owl') {
+        tri(c, -26, -76, -16, -98, -8, -80, BODY.owl);
+        tri(c, 26, -76, 16, -98, 8, -80, BODY.owl);
+      } else if (kind === 'fox') {
+        tri(c, -26, -74, -20, -100, -6, -82, HEAD.fox); tri(c, -22, -80, -20, -95, -13, -83, '#3b2a22');
+        tri(c, 26, -74, 20, -100, 6, -82, HEAD.fox);    tri(c, 22, -80, 20, -95, 13, -83, '#3b2a22');
+      } else if (kind === 'bear') {
+        ell(c, -21, -83, 10, 10, HEAD.bear); ell(c, -21, -83, 5, 5, '#d7a37a');
+        ell(c, 21, -83, 10, 10, HEAD.bear);  ell(c, 21, -83, 5, 5, '#d7a37a');
+      } else if (kind === 'bird') {
+        c.strokeStyle = HEAD.bird; c.lineWidth = 4; c.lineCap = 'round';
+        [-6, 0, 6].forEach(d => { c.beginPath(); c.moveTo(d, -84); c.lineTo(d * 1.6, -97 + Math.abs(d) * 0.6); c.stroke(); });
+      }
+
+      // body and head
+      ell(c, 0, -22, 30, 24, BODY[kind]);
+      if (kind !== 'hedgehog') ell(c, 0, -17, 18, 16, BELLY[kind]);
+      if (kind === 'bird') {
+        const fl = Math.sin(t * 0.1) * 0.15;
+        ell(c, -31, -26, 8, 18, '#5aa0d8', 0.3 + fl); ell(c, 31, -26, 8, 18, '#5aa0d8', -0.3 - fl);
+      }
+      if (kind === 'owl') {
+        c.strokeStyle = '#b79a72'; c.lineWidth = 2;
+        [[-8, -26], [8, -26], [0, -18], [-9, -12], [9, -12]].forEach(p => {
+          c.beginPath(); c.arc(p[0], p[1], 5, 0.1, Math.PI - 0.1); c.stroke();
+        });
+      }
+      ell(c, 0, -62, kind === 'owl' ? 28 : 27, 24, HEAD[kind]);
+
+      // face
+      if (kind === 'owl') {
+        ell(c, -12, -64, 11, 11, '#f6ecd8'); ell(c, 12, -64, 11, 11, '#f6ecd8');
+        eyes(c, -12, 12, -64, t, 4.5);
+        tri(c, -4.5, -57, 4.5, -57, 0, -47, '#f2a33a');
+      } else {
+        eyes(c, -10, 10, -65, t, 3.6);
+      }
+      if (kind === 'fox') {
+        ell(c, -12, -52, 13, 9, '#fff1e0'); ell(c, 12, -52, 13, 9, '#fff1e0');
+        ell(c, 0, -54, 4.5, 3.2, '#2b2230');
+      } else if (kind === 'bear') {
+        ell(c, 0, -54, 12, 9, '#d7a37a');
+        ell(c, 0, -58, 4.5, 3.2, '#3b2a22');
+      } else if (kind === 'bunny') {
+        ell(c, 0, -57, 3.5, 2.5, '#ff9fb4');
+        c.fillStyle = '#fff'; c.strokeStyle = '#d8c8c0'; c.lineWidth = 1;
+        c.fillRect(-3, -53, 6, 6); c.strokeRect(-3, -53, 6, 6);
+      } else if (kind === 'hedgehog') {
+        ell(c, 0, -56, 18, 14, '#f0d2a8');
+        ell(c, 0, -57, 4.5, 3.5, '#2b2230');
+        eyes(c, -10, 10, -65, t, 3.6);
+      } else if (kind === 'bird') {
+        tri(c, -6, -60, 6, -60, 0, -49, '#f6a93b');
+      }
+      if (kind === 'bunny' || kind === 'bear' || kind === 'bird') {
+        c.fillStyle = 'rgba(255,130,150,0.35)';
+        c.beginPath(); c.arc(-19, -56, 5, 0, TAU); c.arc(19, -56, 5, 0, TAU); c.fill();
+      }
+    });
+  }
+
+  /* ---------- Forest things ---------- */
+  function tree(c, x, y, s, t, seed, kind) {
+    const sway = Math.sin(t * 0.025 + seed) * 2.5;
+    at(c, x, y, s, () => {
+      shadow(c, 32);
+      if (kind === 'pine') {
+        c.fillStyle = '#7a5230'; c.fillRect(-5, -18, 10, 18);
+        const cols = ['#2f7a52', '#3a8d5c', '#48a06a'];
+        for (let i = 0; i < 3; i++) {
+          const by = -14 - i * 26, w = 44 - i * 9;
+          tri(c, -w, by, w, by, sway * (i + 1) * 0.6, by - 46, cols[i]);
+        }
+      } else {
+        c.fillStyle = '#8a5a34'; c.fillRect(-7, -42, 14, 42);
+        ell(c, sway * 0.6, -64, 32, 28, '#3f9a55');
+        ell(c, -24 + sway * 0.6, -50, 22, 20, '#459f5b');
+        ell(c, 24 + sway * 0.6, -50, 22, 20, '#459f5b');
+        ell(c, sway * 1.1, -82, 22, 19, '#58b96e');
+        ell(c, -8 + sway, -88, 9, 6, 'rgba(255,255,255,0.18)');
+      }
+    });
+  }
+
+  function bush(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 24);
+      ell(c, -12, -12, 14, 12, '#3f9a55'); ell(c, 12, -12, 14, 12, '#3f9a55'); ell(c, 0, -18, 15, 13, '#4aa862');
+    });
+  }
+
+  function flower(c, x, y, s, t, seed) {
+    const sw = Math.sin((t || 0) * 0.05 + (seed || 0)) * 3;
+    at(c, x, y, s, () => {
+      shadow(c, 10);
+      c.strokeStyle = '#4d9a52'; c.lineWidth = 3; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(0, -12, sw, -22); c.stroke();
+      ell(c, -5, -9, 5, 2.5, '#5cae60', -0.5);
+      for (let i = 0; i < 5; i++) {
+        const a = i * TAU / 5;
+        ell(c, sw + Math.cos(a) * 6.5, -24 + Math.sin(a) * 6.5, 5.5, 5.5, '#ff8fb1');
+      }
+      ell(c, sw, -24, 4, 4, '#ffd84d');
+    });
+  }
+
+  function berry(c, x, y, s, t, seed) {
+    const sw = Math.sin((t || 0) * 0.04 + (seed || 0)) * 1.5;
+    at(c, x, y, s, () => {
+      shadow(c, 14);
+      ell(c, -8, -8, 8, 5, '#4aa862', -0.4); ell(c, 8, -8, 8, 5, '#4aa862', 0.4); ell(c, 0, -10, 7, 5, '#5cae60');
+      [[-6, -14], [7, -13], [0, -19]].forEach(p => {
+        const px = p[0] + sw, py = p[1];
+        c.fillStyle = '#e8394d';
+        c.beginPath(); c.moveTo(px - 6, py - 4); c.quadraticCurveTo(px, py - 8, px + 6, py - 4);
+        c.quadraticCurveTo(px + 4, py + 6, px, py + 8); c.quadraticCurveTo(px - 4, py + 6, px - 6, py - 4); c.fill();
+        c.fillStyle = '#ffe9a0';
+        [[-2, -2], [2, 0], [-1, 3]].forEach(d => c.fillRect(px + d[0], py + d[1], 1.3, 1.3));
+        ell(c, px, py - 6, 5, 2, '#3f9a55');
+      });
+    });
+  }
+
+  function mushroom(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 13);
+      c.fillStyle = '#f7ead2'; c.beginPath();
+      c.moveTo(-5, 0); c.lineTo(-4, -12); c.lineTo(4, -12); c.lineTo(5, 0); c.closePath(); c.fill();
+      c.fillStyle = '#e0483f'; c.beginPath();
+      c.ellipse(0, -13, 14, 11, 0, Math.PI, TAU); c.closePath(); c.fill();
+      [[-6, -17, 2.5], [4, -20, 2.2], [8, -15, 1.8], [-1, -14, 1.8]].forEach(d => ell(c, d[0], d[1], d[2], d[2], '#fff'));
+    });
+  }
+
+  function firefly(c, x, y, t) {
+    const pulse = 0.75 + Math.sin(t * 0.12) * 0.25;
+    const g = c.createRadialGradient(x, y, 2, x, y, 48);
+    g.addColorStop(0, 'rgba(255,240,130,' + (0.9 * pulse) + ')');
+    g.addColorStop(1, 'rgba(255,240,130,0)');
+    c.fillStyle = g;
+    c.beginPath(); c.arc(x, y, 48, 0, TAU); c.fill();
+    const flap = Math.sin(t * 0.7) * 0.4;
+    ell(c, x - 6, y - 5, 7, 3.5, 'rgba(255,255,255,0.7)', -0.6 + flap);
+    ell(c, x + 6, y - 5, 7, 3.5, 'rgba(255,255,255,0.7)', 0.6 - flap);
+    ell(c, x, y, 3.5, 5, '#fff7b0');
+  }
+
+  /* ---------- Shop food ---------- */
+  function potion(c, x, y, s, t) {
+    at(c, x, y, s, () => {
+      shadow(c, 13);
+      ell(c, 0, -12, 11, 11, '#ff9ed2');
+      ell(c, 0, -9, 9, 6, '#ff6fb8');
+      ell(c, -4, -16, 3, 4, 'rgba(255,255,255,0.7)', 0.5);
+      c.fillStyle = 'rgba(200,230,255,0.85)'; c.fillRect(-3.5, -30, 7, 12);
+      c.fillStyle = '#a86b3c'; c.fillRect(-4.5, -34, 9, 5);
+    });
+  }
+  function cake(c, x, y, s) {
+    at(c, x, y, s, () => {
+      ell(c, 0, -1, 16, 4, '#f4f4ff');
+      c.fillStyle = '#f6d7a7'; c.fillRect(-11, -14, 22, 12);
+      c.fillStyle = '#fff'; c.beginPath(); c.ellipse(0, -14, 12, 4, 0, 0, TAU); c.fill();
+      c.fillStyle = '#ffd9e6'; c.fillRect(-11, -9, 22, 2.5);
+      ell(c, 0, -19, 5, 5, '#e8394d'); ell(c, 0, -23, 3.5, 1.8, '#3f9a55');
+    });
+  }
+  function soup(c, x, y, s, t) {
+    at(c, x, y, s, () => {
+      shadow(c, 15);
+      ell(c, 0, -13, 13, 4, '#e8a05a');
+      c.fillStyle = '#8fb8e0'; c.beginPath();
+      c.ellipse(0, -13, 14, 14, 0, 0, Math.PI); c.closePath(); c.fill();
+      ell(c, 0, -13, 13, 3.8, '#f0b068');
+      ell(c, -4, -14, 3, 1.8, '#e0483f'); ell(c, 3, -13, 2.5, 1.6, '#f7ead2');
+      c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineWidth = 2; c.lineCap = 'round';
+      [-4, 4].forEach((d, i) => {
+        const w = Math.sin((t || 0) * 0.08 + i) * 2;
+        c.beginPath(); c.moveTo(d, -20); c.bezierCurveTo(d + 4 + w, -26, d - 4 + w, -30, d, -36); c.stroke();
+      });
+    });
+  }
+
+  /* ---------- Chapter 2: treasures, fish and pieces of the big world ---------- */
+  function star(c, r, fill) {
+    c.fillStyle = fill;
+    c.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r;
+      c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    c.closePath(); c.fill();
+  }
+  function shard(c, x, y, s, t) {
+    at(c, x, y, s, () => {
+      const p = 0.7 + Math.sin((t || 0) * 0.1) * 0.3;
+      const g = c.createRadialGradient(0, -14, 2, 0, -14, 26);
+      g.addColorStop(0, 'rgba(255,240,140,' + p + ')'); g.addColorStop(1, 'rgba(255,240,140,0)');
+      c.fillStyle = g; c.beginPath(); c.arc(0, -14, 26, 0, TAU); c.fill();
+      c.translate(0, -14); star(c, 13, '#ffd84d'); star(c, 7, '#fff3a8');
+    });
+  }
+  function feather(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 12);
+      c.translate(0, -12); c.rotate(-0.6);
+      ell(c, 0, 0, 5, 14, '#6fb3e8');
+      c.strokeStyle = '#3f86c0'; c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(0, -14); c.lineTo(0, 16); c.stroke();
+    });
+  }
+  function shell(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 12);
+      c.translate(0, -9);
+      ell(c, 0, 0, 13, 10, '#ffb8c8');
+      c.strokeStyle = '#e88aa0'; c.lineWidth = 1.5;
+      for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(i * 2, 8); c.lineTo(i * 5, -7); c.stroke(); }
+    });
+  }
+  function coin(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 11);
+      ell(c, 0, -11, 11, 11, '#e8b93a'); ell(c, 0, -11, 8, 8, '#f7d46a');
+      c.fillStyle = '#e8b93a'; c.fillRect(-1.5, -16, 3, 10);
+    });
+  }
+  function fish(c, x, y, s, t) {
+    at(c, x, y, s, () => {
+      shadow(c, 14);
+      const w = Math.sin((t || 0) * 0.2) * 2;
+      ell(c, 0, -10, 14, 7, '#7fb6e8'); ell(c, 0, -8, 10, 4, '#d8ecff');
+      tri(c, 12, -10, 22, -17 + w, 22, -3 - w, '#5a9fd8');
+      ell(c, -8, -12, 1.8, 1.8, '#2b2230');
+    });
+  }
+  function plank(c, x, y, s) {
+    at(c, x, y, s, () => {
+      shadow(c, 16);
+      c.fillStyle = '#b9824a'; c.fillRect(-16, -9, 32, 9);
+      c.strokeStyle = '#8a5a34'; c.lineWidth = 1.5; c.strokeRect(-16, -9, 32, 9);
+      c.beginPath(); c.moveTo(-8, -9); c.lineTo(-8, 0); c.moveTo(8, -9); c.lineTo(8, 0); c.stroke();
+    });
+  }
+  function pie(c, x, y, s, t) {
+    at(c, x, y, s, () => {
+      shadow(c, 15);
+      ell(c, 0, -8, 15, 8, '#f4f4ff'); ell(c, 0, -10, 13, 7, '#e9b45f'); ell(c, 0, -12, 9, 4, '#f3cc7a');
+      c.strokeStyle = '#c98d3a'; c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(-8, -14); c.lineTo(8, -8); c.moveTo(-8, -8); c.lineTo(8, -14); c.stroke();
+    });
+  }
+  // blinking sparkles that show a hidden spot
+  function sparkle(c, x, y, t) {
+    for (let i = 0; i < 3; i++) {
+      const a = Math.sin(t * 0.08 + i * 2);
+      if (a < 0) continue;
+      c.save(); c.translate(x + (i - 1) * 10, y - 6 - i * 4); c.globalAlpha = a;
+      star(c, 5 + i, '#fff7b0'); c.restore();
+    }
+  }
+
+  function house(c, x, y, s, roof, sign, t) {
+    at(c, x, y, s, () => {
+      shadow(c, 80);
+      c.fillStyle = '#f3e2c3'; c.fillRect(-60, -80, 120, 80);
+      c.fillStyle = 'rgba(120,80,40,0.15)';
+      for (let i = -60; i < 60; i += 20) c.fillRect(i, -80, 2, 80);
+      c.fillStyle = '#8a5a34'; c.fillRect(38, -124, 12, 30);
+      tri(c, -76, -78, 0, -132, 76, -78, roof);
+      c.fillStyle = '#8a5a34'; c.fillRect(-12, -44, 24, 44); ell(c, 0, -44, 12, 8, '#8a5a34'); ell(c, 7, -22, 2, 2, '#f7d46a');
+      c.fillStyle = '#bfe5ff'; c.fillRect(-48, -60, 22, 22); c.fillRect(26, -60, 22, 22);
+      c.strokeStyle = '#8a5a34'; c.lineWidth = 3; c.strokeRect(-48, -60, 22, 22); c.strokeRect(26, -60, 22, 22);
+      if (sign) {
+        c.fillStyle = '#fff3d6'; c.fillRect(-20, -78, 40, 26); c.strokeRect(-20, -78, 40, 26);
+        potion(c, 0, -54, 0.65, t);
+      }
+    });
+  }
+
+  function waterRect(c, x0, y0, x1, y1, t) {
+    const g = c.createLinearGradient(x0, 0, x1, 0);
+    g.addColorStop(0, '#5fb4e4'); g.addColorStop(0.5, '#4aa3dc'); g.addColorStop(1, '#5fb4e4');
+    c.fillStyle = g; c.fillRect(x0, y0, x1 - x0, y1 - y0);
+    c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2; c.lineCap = 'round';
+    const span = y1 - y0;
+    for (let i = 0; i < span / 45; i++) {
+      const yy = y0 + ((i * 45 + t * 0.9) % span), xx = x0 + 15 + ((i * 37) % Math.max(1, x1 - x0 - 30));
+      c.beginPath(); c.moveTo(xx, yy); c.quadraticCurveTo(xx + 8, yy - 4, xx + 16, yy); c.stroke();
+    }
+    c.fillStyle = 'rgba(255,255,255,0.55)'; c.fillRect(x0 - 3, y0, 3, y1 - y0); c.fillRect(x1, y0, 3, y1 - y0);
+  }
+  function lake(c, cx, cy, rx, ry, t) {
+    ell(c, cx, cy, rx + 9, ry + 9, 'rgba(255,255,255,0.55)');
+    const g = c.createLinearGradient(0, cy - ry, 0, cy + ry);
+    g.addColorStop(0, '#76c8ee'); g.addColorStop(1, '#3f95d0');
+    ell(c, cx, cy, rx, ry, g);
+    c.strokeStyle = 'rgba(255,255,255,0.45)'; c.lineWidth = 2;
+    for (let i = 0; i < 8; i++) {
+      const x = cx + Math.cos(i * 1.3) * rx * 0.6, y = cy + Math.sin(i * 2.1) * ry * 0.55, w = 16 + Math.sin(t * 0.03 + i) * 5;
+      c.beginPath(); c.ellipse(x, y, w, w * 0.3, 0, 0, TAU); c.stroke();
+    }
+  }
+  function dock(c, x, y) {
+    c.fillStyle = '#a56b3a'; c.fillRect(x - 34, y - 36, 68, 62);
+    c.strokeStyle = '#7a4a2a'; c.lineWidth = 2;
+    for (let i = -34; i <= 34; i += 17) { c.beginPath(); c.moveTo(x + i, y - 36); c.lineTo(x + i, y + 26); c.stroke(); }
+    c.fillStyle = '#7a4a2a'; c.fillRect(x - 38, y - 36, 6, 8); c.fillRect(x + 32, y - 36, 6, 8);
+  }
+  function bridge(c, x0, x1, y0, y1, fixed) {
+    const broken = [3, 4, 5];
+    for (let i = 0, px = x0; px < x1; i++, px += 16) {
+      if (!fixed && broken.indexOf(i) >= 0) continue;
+      c.fillStyle = i % 2 ? '#b07a44' : '#bf8a50';
+      c.fillRect(px, y0, 15, y1 - y0);
+      c.strokeStyle = '#7a4a2a'; c.lineWidth = 1; c.strokeRect(px, y0, 15, y1 - y0);
+    }
+    c.fillStyle = '#7a4a2a';
+    c.fillRect(x0, y0 - 6, x1 - x0, 5); c.fillRect(x0, y1 + 1, x1 - x0, 5);
+    [x0, x0 + (x1 - x0) / 2, x1 - 6].forEach(px => { c.fillRect(px, y0 - 14, 6, 14); c.fillRect(px, y1 + 1, 6, 14); });
+  }
+
+  const wdecor = [];
+  for (let i = 0; i < 520; i++) {
+    wdecor.push({ x: Math.random() * 1800, y: Math.random() * 1000, k: Math.random() < 0.8 ? 'tuft' : 'dot', seed: Math.random() * 6 });
+  }
+  const WPATH = [[250, 360], [330, 420], [500, 470], [760, 520], [1000, 580], [1110, 600], [1300, 600], [1450, 585]];
+
+  function worldGround(c, cx, cy, W, H, t) {
+    c.fillStyle = '#9ad98d'; c.fillRect(cx, cy, W, H);
+    c.fillStyle = 'rgba(40,110,60,0.16)'; c.fillRect(520, 300, 520, 700);
+    c.fillStyle = 'rgba(255,240,150,0.14)'; c.fillRect(1205, 0, 600, 1000);
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    [[52, '#d9bf86'], [40, '#ecd7a3']].forEach(p => {
+      c.strokeStyle = p[1]; c.lineWidth = p[0];
+      c.beginPath(); c.moveTo(WPATH[0][0], WPATH[0][1]);
+      for (let i = 1; i < WPATH.length; i++) c.lineTo(WPATH[i][0], WPATH[i][1]);
+      c.stroke();
+    });
+    wdecor.forEach(d => {
+      if (d.x < cx - 20 || d.x > cx + W + 20 || d.y < cy - 20 || d.y > cy + H + 20) return;
+      const sw = Math.sin(t * 0.04 + d.seed) * 2;
+      if (d.k === 'tuft') {
+        c.strokeStyle = '#5fae60'; c.lineWidth = 2;
+        [-4, 0, 4].forEach(o => { c.beginPath(); c.moveTo(d.x + o, d.y); c.lineTo(d.x + o * 1.6 + sw, d.y - 9); c.stroke(); });
+      } else {
+        ell(c, d.x, d.y, 3, 3, d.seed > 3 ? '#fff' : '#ffe27a');
+      }
+    });
+  }
+
+  const THINGS = { flower, berry, mushroom, potion, cake, soup, shard, feather, shell, coin, fish, plank, pie };
+  const iconCache = {};
+  function icon(kind) {
+    if (!iconCache[kind]) {
+      const cv = document.createElement('canvas');
+      cv.width = 44; cv.height = 44;
+      THINGS[kind](cv.getContext('2d'), 22, 40, 1.15, 0, 0);
+      iconCache[kind] = cv.toDataURL();
+    }
+    return iconCache[kind];
+  }
+
+  /* ---------- The forest floor ---------- */
+  const decor = [];
+  for (let i = 0; i < 70; i++) {
+    decor.push({ x: Math.random() * 800, y: Math.random() * 500, k: Math.random() < 0.8 ? 'tuft' : 'dot', seed: Math.random() * 6 });
+  }
+  const PATH = [[-20, 430], [180, 390], [360, 310], [560, 270], [820, 190]];
+
+  function ground(c, W, H, t, lost) {
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, lost ? '#4a7a52' : '#c6edb8');
+    g.addColorStop(1, lost ? '#2f5538' : '#8fcf8a');
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // winding dirt path
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    [[56, '#d9bf86'], [44, '#ecd7a3']].forEach(p => {
+      c.strokeStyle = p[1]; c.lineWidth = p[0];
+      c.beginPath(); c.moveTo(PATH[0][0], PATH[0][1]);
+      for (let i = 1; i < PATH.length; i++) c.lineTo(PATH[i][0], PATH[i][1]);
+      c.stroke();
+    });
+    // grass tufts and tiny flowers
+    decor.forEach(d => {
+      const sw = Math.sin(t * 0.04 + d.seed) * 2;
+      if (d.k === 'tuft') {
+        c.strokeStyle = lost ? '#3d7646' : '#5fae60'; c.lineWidth = 2; c.lineCap = 'round';
+        [-4, 0, 4].forEach(o => { c.beginPath(); c.moveTo(d.x + o, d.y); c.lineTo(d.x + o * 1.6 + sw, d.y - 9); c.stroke(); });
+      } else {
+        ell(c, d.x, d.y, 3, 3, d.seed > 3 ? '#fff' : '#ffe27a');
+      }
+    });
+    if (lost) { c.fillStyle = 'rgba(15,35,45,0.3)'; c.fillRect(0, 0, W, H); }
+  }
+
+  /* ---------- The inside of the shop ---------- */
+  const JARS = [[330, 100, '#ffb3c7'], [372, 100, '#b9e6a8'], [414, 100, '#ffe08a'], [456, 100, '#c9b6ff'],
+                [510, 100, '#9fd8ff'], [560, 100, '#ffc799'], [620, 170, '#ffb3c7'], [664, 170, '#b9e6a8'], [706, 170, '#9fd8ff']];
+
+  function shopScene(c, W, H, t, st) {
+    // wall
+    const wg = c.createLinearGradient(0, 0, 0, H);
+    wg.addColorStop(0, '#dcae78'); wg.addColorStop(1, '#bd8a55');
+    c.fillStyle = wg; c.fillRect(0, 0, W, H);
+    c.strokeStyle = 'rgba(90,50,20,0.15)'; c.lineWidth = 2;
+    for (let x = 0; x < W; x += 56) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
+
+    // window
+    const sky = c.createLinearGradient(0, 30, 0, 140);
+    if (st.evening) { sky.addColorStop(0, '#4b3d7a'); sky.addColorStop(1, '#f19a6b'); }
+    else { sky.addColorStop(0, '#8fd3ff'); sky.addColorStop(1, '#e6f6ff'); }
+    c.fillStyle = sky; c.fillRect(50, 30, 150, 110);
+    if (st.evening) {
+      ell(c, 160, 62, 12, 12, '#fff6c8');
+      [[80, 50], [110, 70], [140, 45], [95, 95]].forEach((p, i) => ell(c, p[0], p[1], 1.6, 1.6, 'rgba(255,255,255,' + (0.5 + 0.5 * Math.sin(t * 0.05 + i)) + ')'));
+    } else {
+      ell(c, 150, 70, 14, 14, '#ffe27a'); ell(c, 100, 90, 20, 8, 'rgba(255,255,255,0.9)'); ell(c, 118, 86, 14, 8, 'rgba(255,255,255,0.9)');
+    }
+    c.strokeStyle = '#7a4a2a'; c.lineWidth = 8; c.strokeRect(50, 30, 150, 110);
+    c.lineWidth = 5; c.beginPath(); c.moveTo(125, 30); c.lineTo(125, 140); c.moveTo(50, 85); c.lineTo(200, 85); c.stroke();
+
+    // shelves with jars
+    c.fillStyle = '#8a5a34';
+    c.fillRect(310, 128, 270, 10); c.fillRect(600, 198, 140, 10);
+    JARS.forEach(j => {
+      const jy = j[1] + 28;
+      ell(c, j[0], jy - 12, 13, 15, j[2]);
+      c.fillStyle = '#a86b3c'; c.fillRect(j[0] - 7, jy - 31, 14, 6);
+      ell(c, j[0] - 4, jy - 16, 3, 5, 'rgba(255,255,255,0.5)');
+    });
+
+    // hanging lantern with flickering glow
+    const fl = 0.8 + Math.sin(t * 0.13) * 0.1 + Math.sin(t * 0.31) * 0.05;
+    c.strokeStyle = '#4a3b47'; c.lineWidth = 2; c.beginPath(); c.moveTo(450, 0); c.lineTo(450, 28); c.stroke();
+    const lg = c.createRadialGradient(450, 50, 4, 450, 50, 120);
+    lg.addColorStop(0, 'rgba(255,220,120,' + (0.7 * fl) + ')'); lg.addColorStop(1, 'rgba(255,220,120,0)');
+    c.fillStyle = lg; c.beginPath(); c.arc(450, 50, 120, 0, TAU); c.fill();
+    c.fillStyle = '#4a3b47'; c.fillRect(440, 26, 20, 6);
+    ell(c, 450, 44, 10, 14, '#ffe9a0');
+    c.fillStyle = '#4a3b47'; c.fillRect(440, 56, 20, 5);
+
+    // Luna behind the counter, and the customer in front of it
+    const base = H - 86;
+    cat(c, 210, base + 18, 1.5, { dir: 1, t: t, walking: false });
+    if (st.kind) {
+      const k = Math.min(1, st.arrive || 1);
+      animal(c, st.kind, 690 + (1 - k) * 160, base + 20, 1.6, t);
+    }
+
+    // counter
+    c.fillStyle = '#7a4a2a'; c.fillRect(0, H - 86, W, 86);
+    c.fillStyle = '#a56b3a'; c.fillRect(0, H - 92, W, 12);
+    c.fillStyle = 'rgba(255,255,255,0.15)'; c.fillRect(0, H - 92, W, 3);
+    const inv = st.inv || {};
+    for (let i = 0; i < Math.min(3, inv.potion || 0); i++) potion(c, 330 + i * 36, H - 80, 1.5, t);
+    for (let i = 0; i < Math.min(3, inv.cake || 0); i++) cake(c, 450 + i * 40, H - 80, 1.5);
+    for (let i = 0; i < Math.min(3, inv.soup || 0); i++) soup(c, 580 + i * 40, H - 80, 1.5, t);
+
+    // hearts floating up when a customer is happy
+    if (st.happy > 0) {
+      for (let i = 0; i < 4; i++) {
+        const p = 1 - st.happy / 90;
+        const hx = 640 + i * 28 + Math.sin(p * 6 + i) * 8, hy = 120 - p * 80 - i * 10;
+        c.fillStyle = 'rgba(255,90,130,' + (1 - p) + ')';
+        c.font = '22px sans-serif'; c.textAlign = 'center';
+        c.fillText('♥', hx, hy);
+      }
+    }
+  }
+
+  return {
+    cat, animal, tree, bush, flower, berry, mushroom, firefly, potion, cake, soup, icon, ground, shopScene, ell,
+    shard, feather, shell, coin, fish, plank, pie, sparkle, house, waterRect, lake, dock, bridge, worldGround,
+  };
+})();
+
+</script>
+  <script>
+'use strict';
+
+/* Sounds and music made with code (no sound files needed).
+   Browsers only allow sound after the first click or key press, so init() runs then. */
+const Sound = (() => {
+  let ac = null, master = null, timer = null, drone = null;
+  let muted = false, mode = 'calm', tick = 0;
+
+  const CALM = [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3];   // gentle, happy notes
+  const TENSE = [110.0, 130.8, 146.8, 155.6, 98.0];                  // low, worried notes
+
+  function init() {
+    if (ac) { if (ac.state === 'suspended') ac.resume(); return; }
+    try {
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) { return; }
+    master = ac.createGain();
+    master.gain.value = muted ? 0 : 0.5;
+    master.connect(ac.destination);
+    restart();
+  }
+
+  // One soft note
+  function tone(freq, when, dur, type, vol) {
+    if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    const t0 = ac.currentTime + (when || 0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(master);
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+
+  function stopDrone() {
+    if (drone) { try { drone.stop(); } catch (e) { /* already stopped */ } drone = null; }
+  }
+
+  function startDrone() {
+    stopDrone();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine'; o.frequency.value = 55;
+    g.gain.value = 0.09;
+    o.connect(g); g.connect(master); o.start();
+    drone = o;
+  }
+
+  function restart() {
+    clearInterval(timer);
+    if (!ac) return;
+    tick = 0;
+    if (mode === 'tense') startDrone(); else stopDrone();
+    timer = setInterval(() => {
+      tick++;
+      if (mode === 'calm') {
+        if (Math.random() < 0.65) tone(CALM[Math.floor(Math.random() * CALM.length)], 0, 1.8, 'triangle', 0.09);
+        if (tick % 8 === 0) tone(CALM[0] / 2, 0, 3, 'sine', 0.08);
+      } else {
+        tone(TENSE[Math.floor(Math.random() * TENSE.length)], 0, 1.4, 'sine', 0.14);
+        if (tick % 5 === 0) tone(740 + Math.random() * 60, 0, 0.6, 'sine', 0.03);
+      }
+    }, mode === 'calm' ? 600 : 900);
+  }
+
+  function setMode(m) {
+    if (m === mode) return;
+    mode = m;
+    restart();
+  }
+
+  // Short sound effects
+  function play(name) {
+    if (!ac) return;
+    switch (name) {
+      case 'pick':   tone(660, 0, 0.18, 'triangle', 0.2); tone(880, 0.09, 0.25, 'triangle', 0.2); break;
+      case 'craft':  tone(392, 0, 0.15, 'sine', 0.2); tone(523, 0.1, 0.15, 'sine', 0.2); tone(659, 0.2, 0.3, 'sine', 0.2); break;
+      case 'serve':  [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.1, 0.4, 'triangle', 0.2)); break;
+      case 'soft':   tone(440, 0, 0.3, 'sine', 0.15); tone(392, 0.15, 0.4, 'sine', 0.15); break;
+      case 'spark':  [880, 1175, 1568, 2093].forEach((f, i) => tone(f, i * 0.07, 0.35, 'sine', 0.12)); break;
+      case 'whoosh': tone(300, 0, 0.5, 'sawtooth', 0.05); tone(150, 0.1, 0.6, 'sawtooth', 0.05); break;
+      case 'lost':   tone(196, 0, 1.2, 'sine', 0.2); tone(185, 0.4, 1.4, 'sine', 0.2); tone(147, 0.9, 1.8, 'sine', 0.2); break;
+      case 'win':    [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.18, 0.9, 'triangle', 0.18)); break;
+      case 'click':  tone(520, 0, 0.08, 'triangle', 0.1); break;
+    }
+  }
+
+  function toggleMute() {
+    muted = !muted;
+    if (master) master.gain.value = muted ? 0 : 0.5;
+    return muted;
+  }
+
+  return { init, play, setMode, toggleMute };
+})();
+
+</script>
+  <script>
+'use strict';
+
+/* ================= Data ================= */
+const W = 800, H = 500;
+
+const ITEMS = {
+  flower:   { n: 'פרח' },
+  berry:    { n: 'תות' },
+  mushroom: { n: 'פטרייה' },
+};
+
+const RECIPES = {
+  potion: { n: 'שיקוי פרחים', cost: { flower: 2 } },
+  cake:   { n: 'עוגת תות',   cost: { berry: 2, flower: 1 } },
+  soup:   { n: 'מרק פטריות', cost: { mushroom: 2, berry: 1 } },
+  pie:    { n: 'פשטידת דגים', cost: { fish: 2 }, chapter: 2 },   // only from chapter 2
+};
+
+const KIND = { 'נוני': 'bunny', 'בובו': 'owl', 'דובי': 'bear', 'ציפי': 'bird', 'גילי': 'fox', 'מוקה': 'hedgehog' };
+
+// Three customers each evening, days 1-3. Their "thanks" lines hint at the story.
+const CUSTOMERS = [
+  [
+    { who: 'נוני', want: 'potion', line: 'שלום לונה! אפשר שיקוי פרחים? הוא עושה לי חיוך בכל הגוף.', thanks: 'תודה! אגב, לאחרונה רואים ביער אורות קטנים שמרצדים בלילה.' },
+    { who: 'בובו', want: 'soup',   line: 'הו הו, מרק פטריות חם, בבקשה.', thanks: 'פעם היער היה זוהר כולו. עכשיו הוא קצת פחות.' },
+    { who: 'דובי', want: 'cake',   line: 'עוגת תות! אני מחכה לה כל היום.', thanks: 'יאמי! את הכי טובה בכפר הקטן.' },
+  ],
+  [
+    { who: 'ציפי', want: 'cake',   line: 'היי לונה! עוגת תות בבקשה, לכבוד יום ההולדת של אחותי.', thanks: 'שמעתי שבעומק היער יש עץ ענק שמאיר. אף אחד לא ראה אותו כבר הרבה זמן.' },
+    { who: 'גילי', want: 'soup',   line: 'קר לי היום. אפשר מרק פטריות?', thanks: 'היער נהיה שקט מדי, את שמה לב?' },
+    { who: 'מוקה', want: 'potion', line: 'שיקוי פרחים, בבקשה. אם אפשר, עם הרבה ריח טוב.', thanks: 'אם תלכי רחוק ביער, תישארי על השביל, טוב?' },
+  ],
+  [
+    { who: 'דובי', want: 'potion', line: 'היום אני מתפנק בשיקוי.', thanks: 'מחר אולי אבוא איתך ליער... אם לא אתעצל.' },
+    { who: 'נוני', want: 'cake',   line: 'עוגה! ואת מרגישה בסדר, לונה?', thanks: 'תיזהרי. לפעמים הערפל מגיע בלי להזהיר.' },
+    { who: 'בובו', want: 'soup',   line: 'הו הו, עוד מרק, בבקשה.', thanks: 'הלילה נושבת מהיער רוח מוזרה. היא לא מוצאת חן בעיניי.' },
+  ],
+];
+
+// Evening customers in chapter 2 (they talk about the stars that are fading)
+const CUSTOMERS2 = [
+  [
+    { who: 'נוני', want: 'potion', line: 'לונה, ראית? הכוכבים בשמיים הולכים ומתמעטים.', thanks: 'אני דואג. בלי הכוכבים היער נהיה חשוך.' },
+    { who: 'גילי', want: 'pie',    line: 'אפשר פשטידת דגים? שמעתי שהתחלת לדוג!', thanks: 'מדהים! אגב, ראיתי הלילה אור מוזר מעבר לנהר.' },
+    { who: 'מוקה', want: 'soup',   line: 'מרק פטריות חם, כדי להתחמם מהרוח.', thanks: 'אמא שלי אמרה שפעם כוכבים נפלו ביער ונשארו מהם שברים קטנים.' },
+  ],
+  [
+    { who: 'דובי', want: 'cake',   line: 'עוגת תות, כי אני קצת עצוב היום.', thanks: 'הכוכבים היו הדבר הכי יפה בלילה...' },
+    { who: 'בובו', want: 'pie',    line: 'הו הו, פשטידת דגים, בבקשה.', thanks: 'אם תמצאי שברי כוכבים, אולי הם יחזירו את האור.' },
+    { who: 'גילי', want: 'potion', line: 'שיקוי פרחים, בבקשה. הוא מרגיע אותי.', thanks: 'לונה, את גיבורה, את יודעת?' },
+  ],
+  [
+    { who: 'נוני', want: 'cake',   line: 'עוגה! אני צריך כוח לחפש כוכבים.', thanks: 'אני מאמין שאת תמצאי את כולם.' },
+    { who: 'דובי', want: 'pie',    line: 'עוד פשטידה, בבקשה, היא הכי טובה בעולם.', thanks: 'מחר אולי אבוא איתך לנהר.' },
+    { who: 'מוקה', want: 'potion', line: 'שיקוי פרחים, בבקשה, ואם אפשר עם חיוך.', thanks: 'השמיים כמעט ריקים. תמהרי, לונה.' },
+  ],
+];
+
+const FRIEND_LINES = [
+  'נוני: בוקר טוב לונה! היום היער נראה יפה במיוחד.',
+  'נוני: שמעת? בלילה יש אורות קטנים שמרצדים בין העצים.',
+  'נוני: היום היער שקט... קצת יותר מדי שקט.',
+  'נוני: לונה, היום אני מרגיש מוזר. תישארי קרוב לשביל.',
+];
+
+/* ================= Saved state ================= */
+function fresh() {
+  return {
+    chapter: 1, day: 1, coins: 0,
+    inv: { flower: 0, berry: 0, mushroom: 0, potion: 0, cake: 0, soup: 0, pie: 0, fish: 0 },
+    q: { scarf: 0, fish: 0, bridge: 0, potion: 0 },   // 0 = not asked, 1 = on it, 2 = done
+    planks: 0, plankGot: [false, false, false], bridge: false,
+    scarfFound: false, digFound: false, treasures: {}, ch2done: false,
+  };
+}
+function load() {
+  const base = fresh();
+  try {
+    const s = JSON.parse(localStorage.getItem('luna'));
+    if (s && s.day) {
+      // fill in anything a saved game from an older version does not have yet
+      return Object.assign(base, s, {
+        inv: Object.assign(base.inv, s.inv), q: Object.assign(base.q, s.q),
+        treasures: Object.assign({}, s.treasures),
+      });
+    }
+  } catch (e) { /* no saved game */ }
+  return base;
+}
+function save() {
+  try { localStorage.setItem('luna', JSON.stringify(S)); } catch (e) { /* ignore */ }
+}
+let S = load();
+
+/* ================= Small helpers ================= */
+const $ = id => document.getElementById(id);
+const rand = (a, b) => a + Math.random() * (b - a);
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const ico = k => '<img class="ico" alt="" src="' + Art.icon(k) + '">';
+
+function el(tag, text, cls) {
+  const x = document.createElement(tag);
+  if (text) x.textContent = text;
+  if (cls) x.className = cls;
+  return x;
+}
+function button(label, fn, cls, disabled) {
+  const b = el('button', label, 'btn' + (cls ? ' ' + cls : ''));
+  b.disabled = !!disabled;
+  b.addEventListener('click', () => { Sound.play('click'); fn(); });
+  return b;
+}
+
+let currentScreen = 'title';
+function show(name) {
+  currentScreen = name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === name));
+}
+
+// Pop-up with text and buttons: story('...', [{label, fn}]). With html=true the text may contain our own HTML.
+function story(text, buttons, html) {
+  if (html) $('storyText').innerHTML = text; else $('storyText').textContent = text;
+  const row = $('storyButtons');
+  row.innerHTML = '';
+  buttons.forEach(b => row.append(button(b.label, () => { $('story').hidden = true; b.fn(); })));
+  $('story').hidden = false;
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $(currentScreen === 'world' ? 'wtoast' : 'toast');
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 4000);
+}
+
+/* ----- Sound: starts on the first click or key press ----- */
+['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, () => Sound.init()));
+$('muteBtn').addEventListener('click', () => {
+  Sound.init();
+  $('muteBtn').textContent = Sound.toggleMute() ? '🔇' : '🔊';
+});
+
+/* ================= Title ================= */
+const titleCtx = $('titleCv').getContext('2d');
+let titleT = 0;
+
+function showTitle() {
+  show('title');
+  Sound.setMode('calm');
+  const row = $('titleButtons');
+  row.innerHTML = '';
+  if (S.day > 1) {
+    row.append(button('להמשיך מיום ' + S.day + (S.chapter >= 2 ? ' (פרק 2)' : ''), startDay));
+    row.append(button('להתחיל מחדש', () => { S = fresh(); save(); startDay(); }, 'soft'));
+  } else {
+    row.append(button('מתחילים!', startDay));
+  }
+}
+
+function drawTitle() {
+  const c = titleCtx;
+  titleT++;
+  const sky = c.createLinearGradient(0, 0, 0, 300);
+  sky.addColorStop(0, '#ffd9e6'); sky.addColorStop(1, '#fff0c9');
+  c.fillStyle = sky; c.fillRect(0, 0, 800, 300);
+  Art.ell(c, 640, 70, 34, 34, '#fff3b0');
+  Art.ell(c, 180, 60, 50, 16, 'rgba(255,255,255,0.8)');
+  Art.ell(c, 215, 52, 34, 14, 'rgba(255,255,255,0.8)');
+  Art.ell(c, 200, 330, 380, 110, '#a8dc9a');
+  Art.ell(c, 640, 340, 330, 110, '#8fcf8a');
+  Art.tree(c, 110, 250, 1.4, titleT, 1, 'oak');
+  Art.tree(c, 700, 255, 1.3, titleT, 2, 'pine');
+  Art.tree(c, 610, 270, 1.0, titleT, 3, 'pine');
+  Art.bush(c, 280, 280, 1.2);
+  Art.flower(c, 520, 285, 1.4, titleT, 1);
+  Art.flower(c, 560, 275, 1.3, titleT, 2);
+  Art.berry(c, 250, 288, 1.4, titleT, 1);
+  Art.cat(c, 400, 285, 2.3, { dir: 1, t: titleT, walking: false });
+  Art.animal(c, 'bunny', 490, 292, 0.8, titleT);
+}
+
+/* ================= A new day ================= */
+function startDay() {
+  if (S.chapter >= 2) {
+    const n = S.day - 4;
+    story(S.ch2done
+      ? 'בוקר חדש בהכפר הקטן. השמיים כבר זוהרים קצת יותר, ולונה יוצאת לעוד יום של טיולים, דיג ועזרה לחברים.'
+      : 'יום ' + n + ' בפרק השני. לונה מתעוררת ומסתכלת בחלון. בשמיים נשארו עוד פחות כוכבים מאתמול... היום היא ממשיכה לחפש.',
+    [{ label: 'יוצאים להרפתקה 🌍', fn: () => startWorld(false) }]);
+    return;
+  }
+  const texts = [
+    'בוקר טוב בהכפר הקטן! לונה פותחת את החלון, מתמתחת, לוקחת סל ויוצאת אל היער הקסום.',
+    'יום שני בהכפר הקטן. השמש זורחת, ולונה יוצאת שוב אל היער הקסום לאסוף דברים טובים.',
+    'עוד בוקר יפה. לונה כבר מכירה כל פינה ביער הקסום, והיא יוצאת עם חיוך.',
+    'הבוקר נראה בדיוק כמו תמיד... אבל משהו באוויר מרגיש מוזר. לונה לוקחת סל ויוצאת אל היער הקסום.',
+  ];
+  story(texts[S.day - 1], [{ label: 'יוצאים ליער 🌲', fn: startForest }]);
+}
+
+/* ================= Forest ================= */
+const cv = $('cv'), ctx = cv.getContext('2d');
+const keys = {};
+let F = null;     // the forest state, rebuilt each morning
+
+addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code.startsWith('Arrow')) e.preventDefault();
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+cv.addEventListener('pointerdown', e => {
+  if (!F) return;
+  const r = cv.getBoundingClientRect();
+  F.target = { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height };
+});
+
+function startForest() {
+  show('forest');
+  Sound.setMode('calm');
+  F = {
+    luna: { x: W / 2, y: H / 2 + 20 }, target: null, dir: 1, moving: false,
+    items: [], trees: [], bushes: [], leaves: [], friend: null,
+    collected: 0, t: 0, paused: false,
+    lost: false, step: 0, lantern: 0, fire: null, waiting: 0,
+  };
+  for (let i = 0; i < 20; i++) {
+    F.trees.push({ x: rand(20, W - 20), y: rand(90, H - 5), s: rand(0.8, 1.2), seed: rand(0, 6), kind: Math.random() < 0.5 ? 'pine' : 'oak' });
+  }
+  for (let i = 0; i < 8; i++) F.bushes.push({ x: rand(20, W - 20), y: rand(80, H - 10), s: rand(0.9, 1.3) });
+  for (let i = 0; i < 14; i++) F.leaves.push({ x0: rand(0, W), y0: rand(0, H), sp: rand(0.25, 0.6), ph: rand(0, 6) });
+  const spawn = { flower: 5, berry: 4, mushroom: 3 };
+  for (const type in spawn) {
+    for (let i = 0; i < spawn[type]; i++) F.items.push({ type, x: rand(40, W - 40), y: rand(70, H - 30), seed: rand(0, 6) });
+  }
+  F.friend = { x: rand(120, W - 120), y: rand(130, H - 60), talked: false };
+  $('backBtn').hidden = true;
+  $('toast').hidden = true;
+  updateHud();
+}
+
+function updateHud() {
+  let html = '☀️ יום ' + S.day + ' &nbsp;|&nbsp; ';
+  for (const k in ITEMS) html += ico(k) + ' ' + S.inv[k] + ' &nbsp; ';
+  if (F && F.lost) html += ' &nbsp;|&nbsp; 🏪 בחנות מחכים ללונה: ' + F.waiting;
+  $('hud').innerHTML = html;
+}
+
+function update() {
+  if (F.paused) return;
+  F.t++;
+  const L = F.luna;
+
+  // Movement from keys, or toward the clicked spot
+  let dx = 0, dy = 0;
+  if (keys.ArrowLeft || keys.KeyA) dx -= 1;
+  if (keys.ArrowRight || keys.KeyD) dx += 1;
+  if (keys.ArrowUp || keys.KeyW) dy -= 1;
+  if (keys.ArrowDown || keys.KeyS) dy += 1;
+  if (dx || dy) {
+    F.target = null;
+  } else if (F.target) {
+    const d = dist(L, F.target);
+    if (d < 4) F.target = null;
+    else { dx = (F.target.x - L.x) / d; dy = (F.target.y - L.y) / d; }
+  }
+  const len = Math.hypot(dx, dy);
+  if (len > 1) { dx /= len; dy /= len; }
+  F.moving = len > 0.05;
+  if (dx > 0.1) F.dir = 1;
+  if (dx < -0.1) F.dir = -1;
+  L.x += dx * 3.2;
+  L.y += dy * 3.2;
+
+  // Edges: a wall in the daytime; when lost, the forest "moves the path"
+  if (L.x < 8 || L.x > W - 8 || L.y < 55 || L.y > H - 8) {
+    if (F.lost) {
+      L.x = rand(100, W - 100); L.y = rand(120, H - 60); F.target = null;
+      Sound.play('whoosh');
+      toast('השביל זז! היער משנה צורה...');
+    } else {
+      L.x = Math.min(W - 8, Math.max(8, L.x));
+      L.y = Math.min(H - 8, Math.max(55, L.y));
+    }
+  }
+
+  // Pick up things
+  for (let i = F.items.length - 1; i >= 0; i--) {
+    const it = F.items[i];
+    if (dist(L, it) < 30) {
+      F.items.splice(i, 1);
+      S.inv[it.type]++;
+      F.collected++;
+      save();
+      updateHud();
+      Sound.play('pick');
+      toast('+1 ' + ITEMS[it.type].n);
+      if (S.day < 4 && F.collected >= 3) $('backBtn').hidden = false;
+      if (S.day === 4 && !F.lost && F.collected >= 2) { startLost(); return; }
+    }
+  }
+
+  // Chat with the bunny
+  if (F.friend && !F.friend.talked && dist(L, F.friend) < 50) {
+    F.friend.talked = true;
+    toast(FRIEND_LINES[S.day - 1]);
+  }
+
+  // Follow the fireflies
+  if (F.lost && F.fire && dist(L, F.fire) < 34) caught();
+}
+
+/* ----- The day Luna gets lost ----- */
+function startLost() {
+  F.paused = true;
+  Sound.setMode('tense');
+  Sound.play('lost');
+  story('פתאום יורד ערפל. כל השבילים נראים אותו דבר... לונה מסתובבת ומסתובבת, ואין שום דרך חזרה. היא הלכה לאיבוד ביער הקסום. 😿',
+    [{ label: 'ממשיכה ללכת', fn: () => {
+      F.paused = false; F.lost = true; F.items = []; F.friend = null;
+      F.waiting = 1; newFirefly(); $('backBtn').hidden = true; updateHud();
+    } }]);
+}
+
+function newFirefly() {
+  let p;
+  do { p = { x: rand(70, W - 70), y: rand(110, H - 50) }; } while (dist(p, F.luna) < 220);
+  F.fire = p;
+}
+
+function caught() {
+  F.step++;
+  F.lantern = F.step;
+  F.waiting += 2;
+  updateHud();
+  Sound.play('spark');
+  const s = F.step;
+  const next = () => { F.paused = false; newFirefly(); };
+
+  if (s === 1) {
+    toast('בובו: עקבי אחרי האורות, לונה! 🦉');
+    newFirefly();
+  } else if (s === 2) {
+    F.paused = true;
+    story('🏪 בחנות של לונה: השמש שוקעת. נוני הארנב דופק בדלת ושואל: "לונה? את שם?" אבל החנות חשוכה. כמה לקוחות מתאספים ומתלחשים בדאגה.',
+      [{ label: 'חוזרים ללונה', fn: next }]);
+  } else if (s === 3) {
+    toast('מרחוק נדלק פנס! הכפר מאיר לך את הדרך 🏮');
+    newFirefly();
+  } else if (s === 4) {
+    F.paused = true;
+    story('🏘️ הכפר הקטן: בובו הינשוף מספר לכולם שלונה לא חזרה מהיער. כולם יוצאים עם פנסים לחפש. דובי אומר: "נדליק אור גדול, שהיא תראה אותנו מרחוק!"',
+      [{ label: 'חוזרים ללונה', fn: next }]);
+  } else {
+    F.fire = null;
+    F.paused = true;
+    finale();
+  }
+}
+
+function finale() {
+  story('בעומק היער לונה מוצאת עץ ענק ושקט. זה עץ הכוכבים, שמדליק את כל האורות של היער. הוא דעך כי כבר הרבה זמן אף אחד לא בא לומר לו תודה.',
+    [{ label: 'לחבק את העץ 💛', fn: () => {
+      Sound.setMode('calm');
+      Sound.play('win');
+      story('לונה מחבקת אותו וממלמלת תודה. העץ מתחיל לזרוח, והערפל מתפזר! שביל זוהר נפתח מולה, כל הדרך עד הכפר הקטן.',
+        [{ label: 'הולכים הביתה 🏡', fn: () => {
+          story('בהכפר הקטן כולם מחכים עם פנסים וחיבוקים. דובי מרים את לונה באוויר, ונוני רוקד מרוב שמחה. החנות של לונה נפתחת מחדש, והפעם יש בה גם קסם של היער. 🌟',
+            [{ label: 'סוף פרק 1 💛', fn: () => {
+              S.chapter = 2; S.day = 5; save();
+              story('פרק 2: האגם והנהר. כמה ימים אחרי, לונה מרימה את מבטה בלילה ורואה שמשהו לא בסדר: הכוכבים בשמיים הולכים ונעלמים אחד אחרי השני. היא חייבת לגלות למה. הפעם היער הוא רק חלק קטן מהעולם: יש גם אגם, נהר, וגשר שנשבר...',
+                [{ label: 'מתחילים את פרק 2 🌍', fn: startDay }]);
+            } }]);
+        } }]);
+    } }]);
+}
+
+/* ----- Drawing the forest ----- */
+function drawForest() {
+  const t = F.t, L = F.luna;
+  Art.ground(ctx, W, H, t, F.lost);
+
+  // Everything tall is drawn from back to front, so Luna can walk behind trees
+  const things = [];
+  F.bushes.forEach(b => things.push({ y: b.y, draw: () => Art.bush(ctx, b.x, b.y, b.s) }));
+  F.trees.forEach(tr => things.push({ y: tr.y, draw: () => Art.tree(ctx, tr.x, tr.y, tr.s, t, tr.seed, tr.kind) }));
+  if (F.friend) things.push({ y: F.friend.y, draw: () => Art.animal(ctx, 'bunny', F.friend.x, F.friend.y, 0.6, t) });
+  const lunaDraw = () => Art.cat(ctx, L.x, L.y, 0.95, { dir: F.dir, t: t, walking: F.moving });
+  if (!F.lost) things.push({ y: L.y, draw: lunaDraw });
+  things.sort((a, b) => a.y - b.y).forEach(o => o.draw());
+
+  // Things to collect are drawn on top so trees never hide them
+  F.items.forEach(it => Art[it.type](ctx, it.x, it.y, 1.2, t, it.seed));
+
+  if (F.target) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(F.target.x, F.target.y, 8 + Math.sin(t * 0.2) * 2, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  if (!F.lost) {
+    // autumn leaves drifting by
+    F.leaves.forEach(lf => {
+      const x = (lf.x0 + t * lf.sp * 0.6 + Math.sin(t * 0.03 + lf.ph) * 20) % W;
+      const y = (lf.y0 + t * lf.sp) % H;
+      Art.ell(ctx, x, y, 4, 2, lf.ph > 3 ? '#f2b24d' : '#e8794d', t * 0.05 + lf.ph);
+    });
+    return;
+  }
+
+  // Fog: slow white clouds, then darkness everywhere except around Luna.
+  // Every lantern the village lights makes her little circle of light bigger.
+  for (let i = 0; i < 7; i++) {
+    const wx = (i * 150 + t * 0.35) % (W + 200) - 100, wy = 90 + ((i * 97) % 340);
+    const wg = ctx.createRadialGradient(wx, wy, 5, wx, wy, 130);
+    wg.addColorStop(0, 'rgba(230,240,255,0.28)'); wg.addColorStop(1, 'rgba(230,240,255,0)');
+    ctx.fillStyle = wg; ctx.fillRect(wx - 130, wy - 130, 260, 260);
+  }
+  const cx = L.x, cy = L.y - 30;
+  const r = 130 + F.lantern * 40 + Math.sin(t / 20) * 7;
+  const fog = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, r);
+  fog.addColorStop(0, 'rgba(8,8,30,0)');
+  fog.addColorStop(1, 'rgba(8,8,30,0.95)');
+  ctx.fillStyle = fog;
+  ctx.fillRect(0, 0, W, H);
+  lunaDraw();
+  if (F.fire) Art.firefly(ctx, F.fire.x, F.fire.y + Math.sin(t * 0.06) * 6, t);
+}
+
+$('backBtn').addEventListener('click', () => { Sound.play('click'); openShop(); });
+
+/* ================= Shop ================= */
+const shopCtx = $('shopCv').getContext('2d');
+const SH = { t: 0, evening: false, kind: null, arrive: 1, happy: 0 };
+
+function drawShop() {
+  SH.t++;
+  if (SH.arrive < 1) SH.arrive = Math.min(1, SH.arrive + 0.03);
+  if (SH.happy > 0) SH.happy--;
+  Art.shopScene(shopCtx, 800, 300, SH.t, { evening: SH.evening, inv: S.inv, kind: SH.kind, arrive: SH.arrive, happy: SH.happy });
+}
+
+function can(r) {
+  return Object.keys(r.cost).every(k => S.inv[k] >= r.cost[k]);
+}
+
+function openShop() {
+  show('shop');
+  Sound.setMode('calm');
+  SH.evening = false; SH.kind = null; SH.arrive = 1;
+  const box = $('shopUi');
+  box.innerHTML = '';
+  box.append(el('h2', 'החנות של לונה · יום ' + S.day));
+
+  const stock = el('div', '', 'panel');
+  let line = 'במזווה: ';
+  for (const k in ITEMS) line += ico(k) + ' ' + S.inv[k] + ' &nbsp; ';
+  if (S.chapter >= 2) line += ico('fish') + ' ' + S.inv.fish + ' &nbsp; ';
+  line += '<br>מוכן למכירה: ';
+  for (const k in RECIPES) if ((RECIPES[k].chapter || 1) <= S.chapter) line += ico(k) + ' ' + S.inv[k] + ' &nbsp; ';
+  if (S.chapter >= 2) line += '<br>🪙 מטבעות: ' + S.coins;
+  stock.innerHTML = line;
+  box.append(stock);
+
+  const rec = el('div', '', 'panel');
+  rec.append(el('p', 'מה להכין?'));
+  for (const k in RECIPES) {
+    const r = RECIPES[k];
+    if ((r.chapter || 1) > S.chapter) continue;
+    const need = Object.keys(r.cost).map(i => r.cost[i] + ' ' + ico(i)).join(' + ');
+    const row = el('div', '', 'recipe');
+    const label = el('span');
+    label.innerHTML = ico(k) + ' ' + r.n + ' &nbsp;(' + need + ')';
+    row.append(label);
+    row.append(button('להכין', () => {
+      for (const i in r.cost) S.inv[i] -= r.cost[i];
+      S.inv[k]++;
+      save();
+      Sound.play('craft');
+      openShop();
+    }, 'soft', !can(r)));
+    rec.append(row);
+  }
+  box.append(rec);
+
+  const row = el('div', '', 'row');
+  row.append(button('🌙 לפתוח את החנות לערב', () => evening(0)));
+  if (S.chapter >= 2) row.append(button('🚪 לצאת החוצה', () => startWorld(true), 'soft'));
+  box.append(row);
+}
+
+function evening(i) {
+  const list = S.chapter >= 2 ? CUSTOMERS2[(S.day - 5) % CUSTOMERS2.length] : CUSTOMERS[S.day - 1];
+  const c = list[i];
+  SH.evening = true; SH.kind = KIND[c.who]; SH.arrive = 0;
+  const box = $('shopUi');
+  box.innerHTML = '';
+  box.append(el('h2', 'ערב בחנות · לקוח ' + (i + 1) + ' מתוך ' + list.length));
+
+  const card = el('div', '', 'panel customer');
+  card.append(el('h3', c.who));
+  card.append(el('p', c.line, 'line'));
+  box.append(card);
+
+  const r = RECIPES[c.want];
+  const row = el('div', '', 'row');
+  const isLast = i === list.length - 1;
+  const after = () => (isLast ? endDay() : evening(i + 1));
+
+  const reply = (msg) => {
+    row.innerHTML = '';
+    card.append(el('p', msg, 'line'));
+    row.append(button(isLast ? 'לילה טוב 🌙' : 'הלקוח הבא', after));
+  };
+
+  if (S.inv[c.want] > 0) {
+    const b = button('', () => {
+      S.inv[c.want]--;
+      if (S.chapter >= 2) S.coins += 10;
+      save();
+      SH.happy = 90;
+      Sound.play('serve');
+      reply(c.who + ': ' + c.thanks);
+    });
+    b.innerHTML = 'להגיש ' + ico(c.want) + ' ' + r.n + (S.chapter >= 2 ? ' (+10 🪙)' : '');
+    row.append(b);
+  }
+  row.append(button('סליחה, אכין לך מחר 💛', () => {
+    Sound.play('soft');
+    reply(c.who + ': אין שום בעיה, לונה! ' + c.thanks);
+  }, 'soft'));
+  box.append(row);
+}
+
+function endDay() {
+  S.day++;
+  save();
+  if (S.chapter >= 2) { chapter2Night(); return; }
+  story('הלילה יורד על הכפר הקטן. לונה מכבה את האור, מתכרבלת במיטה ונרדמת עם חיוך.',
+    [{ label: 'בוקר חדש ☀️', fn: startDay }]);
+}
+
+/* ================= Main loop: draws whichever screen is showing ================= */
+function frame() {
+  if (currentScreen === 'forest' && F) { update(); drawForest(); }
+  else if (currentScreen === 'world' && WR) { updateWorld(); drawWorld(); }
+  else if (currentScreen === 'shop') drawShop();
+  else if (currentScreen === 'title') drawTitle();
+  requestAnimationFrame(frame);
+}
+
+showTitle();
+frame();
+
+</script>
+  <script>
+'use strict';
+
+/* Chapter 2: the big world. A map larger than the screen, with a village, a forest,
+   a lake, a river with a broken bridge, friends who ask for help, fishing and treasures. */
+
+const WW = 1800, WH = 1000;
+const wcv = $('wcv'), wctx = wcv.getContext('2d');
+let WR = null;     // the world state, rebuilt each morning
+
+/* ---------- Places ---------- */
+const HOUSES = [
+  { x: 250, y: 335, s: 1.3, roof: '#c45a5a', shop: true },
+  { x: 90,  y: 300, s: 1.1, roof: '#5a8ac4' },
+  { x: 440, y: 290, s: 1.1, roof: '#c49a4a' },
+  { x: 100, y: 660, s: 1.1, roof: '#8a5ac4' },
+  { x: 390, y: 720, s: 1.2, roof: '#5ac48a' },
+];
+const LAKE = { x: 820, y: 190, rx: 220, ry: 105 };
+const STREAM = { x0: 1030, y0: 170, x1: 1125, y1: 215 };
+const RIVER = { x0: 1115, x1: 1205 };
+const BRIDGE = { y0: 560, y1: 640 };
+const DOCK = { x: 820, y: 330 };
+const BOBBER = { x: 820, y: 275 };
+const SCARF_SPOT = { x: 590, y: 250 };
+const DIG_SPOT = { x: 1600, y: 800 };
+const BRIDGE_SPOT = { x: 1085, y: 600 };
+const PLANK_SPOTS = [[700, 720], [900, 430], [620, 420]];
+const PATH = [[250, 360], [330, 420], [500, 470], [760, 520], [1000, 580], [1110, 600], [1300, 600], [1450, 585]];
+
+const FRIENDS = {
+  noni:  { x: 430,  y: 430, kind: 'bunny', name: 'נוני' },
+  dobi:  { x: 180,  y: 540, kind: 'bear',  name: 'דובי' },
+  bobo:  { x: 1040, y: 520, kind: 'owl',   name: 'בובו' },
+  tzipi: { x: 1450, y: 540, kind: 'bird',  name: 'ציפי' },
+};
+
+const TREASURES = {
+  shard1:  { n: 'שבר כוכב ראשון', icon: 'shard', d: 'פיסה קטנה של כוכב שנפל מהשמיים. היא מנצנצת ומחממת את הידיים.' },
+  shard2:  { n: 'שבר כוכב שני', icon: 'shard', d: 'עוד פיסה של כוכב! היא רוטטת כשהיא קרובה לשבר הראשון.' },
+  shard3:  { n: 'שבר כוכב שלישי', icon: 'shard', d: 'השבר האחרון! עכשיו אפשר לנסות להחזיר את הכוכב לשמיים.' },
+  feather: { n: 'נוצה כחולה', icon: 'feather', d: 'נוצה רכה וכחולה, בצבע של שמיים בבוקר.' },
+  shell:   { n: 'צדף נוצץ', icon: 'shell', d: 'אם מקרבים אותו לאוזן, שומעים בו את האגם שר.' },
+  coin:    { n: 'מטבע עתיק', icon: 'coin', d: 'מטבע זהב ישן מאוד. מי השאיר אותו כאן?' },
+};
+
+function shardCount() {
+  return ['shard1', 'shard2', 'shard3'].filter(k => S.treasures[k]).length;
+}
+
+/* ---------- Walls: water, houses ---------- */
+function blocked(x, y) {
+  if (((x - LAKE.x) / LAKE.rx) ** 2 + ((y - LAKE.y) / LAKE.ry) ** 2 < 1) return true;
+  if (x > STREAM.x0 && x < STREAM.x1 && y > STREAM.y0 && y < STREAM.y1) return true;
+  if (x > RIVER.x0 && x < RIVER.x1 && !(S.bridge && y > BRIDGE.y0 && y < BRIDGE.y1)) return true;
+  for (const h of HOUSES) {
+    if (Math.abs(x - h.x) < 62 * h.s && y < h.y && y > h.y - 70 * h.s) return true;
+  }
+  return false;
+}
+
+function pathY(x) {
+  for (let i = 1; i < PATH.length; i++) {
+    const a = PATH[i - 1], b = PATH[i];
+    if (x >= a[0] && x <= b[0]) return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]);
+  }
+  return null;
+}
+
+// True when (x, y) is close to somewhere Luna needs to reach, so no tree should grow there
+function nearSpot(x, y) {
+  const spots = [DOCK, SCARF_SPOT, DIG_SPOT, BRIDGE_SPOT, BOBBER, { x: 250, y: 385 }]
+    .concat(Object.values(FRIENDS), PLANK_SPOTS.map(p => ({ x: p[0], y: p[1] })));
+  return spots.some(s => Math.abs(s.x - x) < 85 && Math.abs(s.y - y) < 85);
+}
+
+/* ---------- Start a day in the world ---------- */
+function startWorld(resume) {
+  show('world');
+  Sound.setMode('calm');
+  if (resume && WR) {
+    WR.luna.x = 250; WR.luna.y = 385; WR.target = null; WR.fishing = null;
+  } else {
+    newWorldDay();
+  }
+  updateWorldHud();
+}
+
+function newWorldDay() {
+  const w = WR = {
+    luna: { x: 250, y: 385 }, target: null, dir: 1, moving: false, stuck: 0,
+    t: 0, items: [], trees: [], act: null, actLabel: '', fishing: null,
+    cam: { x: 0, y: 0 },
+  };
+  const zones = [[520, 1010, 330, 960, 26], [1235, 1770, 60, 960, 18], [20, 500, 800, 980, 5]];
+  zones.forEach(z => {
+    for (let i = 0, tries = 0; i < z[4] && tries < 400; tries++) {
+      const x = rand(z[0], z[1]), y = rand(z[2], z[3]), py = pathY(x);
+      if (blocked(x, y) || (py !== null && Math.abs(y - py) < 60) || nearSpot(x, y)) continue;
+      w.trees.push({ x, y, s: rand(0.8, 1.2), seed: rand(0, 6), kind: Math.random() < 0.5 ? 'pine' : 'oak' });
+      i++;
+    }
+  });
+  const spawn = { flower: 5, berry: 4, mushroom: 3 };
+  for (const type in spawn) {
+    for (let i = 0, tries = 0; i < spawn[type] && tries < 400; tries++) {
+      const x = rand(540, 1000), y = rand(340, 940);
+      if (blocked(x, y)) continue;
+      w.items.push({ type, x, y, seed: rand(0, 6) });
+      i++;
+    }
+  }
+}
+
+function updateWorldHud() {
+  let h = '☀️ יום ' + (S.day - 4) + ' · 🪙 ' + S.coins + ' &nbsp;|&nbsp; ';
+  ['flower', 'berry', 'mushroom', 'fish', 'potion'].forEach(k => { h += ico(k) + ' ' + S.inv[k] + ' &nbsp; '; });
+  if (S.q.bridge === 1 && !S.bridge) h += ico('plank') + ' ' + S.planks + '/3 &nbsp; ';
+  h += '&nbsp;|&nbsp; ' + ico('shard') + ' ' + shardCount() + '/3';
+  $('whud').innerHTML = h;
+}
+
+/* ---------- Things Luna can do ---------- */
+function interactables() {
+  const list = [];
+  list.push({ x: 250, y: 365, r: 55, label: 'להיכנס לחנות 🏪', fn: () => { Sound.play('click'); openShop(); } });
+  for (const key in FRIENDS) {
+    const f = FRIENDS[key];
+    list.push({ x: f.x, y: f.y + 10, r: 60, label: 'לדבר עם ' + f.name + ' 💬', fn: () => talk(key) });
+  }
+  list.push({ x: DOCK.x, y: DOCK.y, r: 40, label: '🎣 לדוג', fn: startFishing });
+  if (S.q.scarf === 1 && !S.scarfFound) list.push({ x: SCARF_SPOT.x, y: SCARF_SPOT.y, r: 45, label: '🔍 לחפש כאן', fn: findScarf });
+  if (S.q.bridge === 1 && S.planks >= 3 && !S.bridge) list.push({ x: BRIDGE_SPOT.x, y: BRIDGE_SPOT.y, r: 60, label: '🔨 לתקן את הגשר', fn: repairBridge });
+  if (S.q.potion === 2 && !S.digFound) list.push({ x: DIG_SPOT.x, y: DIG_SPOT.y, r: 50, label: '⛏️ לחפור כאן', fn: dig });
+  return list;
+}
+
+function doAct() {
+  const w = WR;
+  if (!w || !$('story').hidden) return;
+  if (w.fishing) {
+    if (w.fishing.phase === 'bite') catchFish();
+    else { w.fishing = null; toast('מוקדם מדי! הדג נבהל. נסי שוב.'); }
+    return;
+  }
+  if (w.act) w.act.fn();
+}
+
+function reward(coins) {
+  S.coins += coins;
+  save();
+  updateWorldHud();
+  toast('+' + coins + ' 🪙');
+}
+
+function addTreasure(id, then) {
+  S.treasures[id] = true;
+  save();
+  updateWorldHud();
+  Sound.play('win');
+  const t = TREASURES[id];
+  story('✨ נמצא אוצר חדש! ✨<br><img src="' + Art.icon(t.icon) + '" style="width:64px;height:64px" alt=""><br><b>' + t.n + '</b><br>' + t.d,
+    [{ label: 'איזה יופי!', fn: then || (() => {}) }], true);
+}
+
+/* ---------- Fishing ---------- */
+function startFishing() {
+  WR.fishing = { phase: 'wait', timer: Math.floor(rand(70, 190)) };
+  WR.target = null;
+  toast('לונה זורקת את החכה... מחכים שדג יתפוס.');
+}
+
+function catchFish() {
+  WR.fishing = null;
+  if (!S.treasures.shell && Math.random() < 0.2) {
+    addTreasure('shell');
+  } else {
+    S.inv.fish++;
+    save();
+    updateWorldHud();
+    Sound.play('craft');
+    toast('תפסת דג! 🐟');
+  }
+}
+
+/* ---------- Finding things ---------- */
+function findScarf() {
+  S.scarfFound = true;
+  save();
+  Sound.play('pick');
+  story('לונה מוצאת את הצעיף האדום תקוע בין הקנים ליד האגם! עכשיו צריך להחזיר אותו לנוני.', [{ label: 'יופי', fn: () => {} }]);
+}
+
+function repairBridge() {
+  S.bridge = true;
+  S.q.bridge = 2;
+  save();
+  Sound.play('win');
+  story('בום, בום, בום! לונה מסמרת את הקרשים, והגשר חזק שוב. עכשיו אפשר לעבור אל הצד השני של הנהר!',
+    [{ label: 'מעולה!', fn: () => reward(20) }]);
+}
+
+function dig() {
+  S.digFound = true;
+  save();
+  Sound.play('pick');
+  story('לונה חופרת ומחפרת... ופתאום משהו נוצץ בעפר!',
+    [{ label: 'לראות מה זה', fn: () => addTreasure('shard3', () => addTreasure('coin', () => {
+      toast('שלושה שברי כוכב! כדאי לחזור לחנות ולסיים את היום.');
+    })) }]);
+}
+
+/* ---------- Talking to friends and quests ---------- */
+function say(name, text, buttons) {
+  story(name + ': ' + text, buttons || [{ label: 'אוקיי', fn: () => {} }]);
+}
+function accept(key, msg) {
+  return { label: 'בטח, אעזור!', fn: () => { S.q[key] = 1; save(); updateWorldHud(); toast('משימה חדשה: ' + msg + ' 📜'); } };
+}
+const later = { label: 'אולי אחר כך', fn: () => {} };
+
+function talk(key) {
+  const q = S.q;
+  if (key === 'noni') {
+    if (q.scarf === 0) say('נוני', 'לונה, עזרה! הצעיף האדום האהוב שלי נפל ליד האגם, בצד המערבי. את יכולה לחפש אותו?', [accept('scarf', 'הצעיף האבוד'), later]);
+    else if (q.scarf === 1 && !S.scarfFound) say('נוני', 'חפשי ליד האגם, בצד המערבי. הצעיף אדום ומנצנץ בשמש.');
+    else if (q.scarf === 1) say('נוני', 'הצעיף שלי! תודה רבה! קחי, מצאתי את הנוצה הכחולה הזאת ליד האגם.',
+      [{ label: 'תודה!', fn: () => { q.scarf = 2; save(); reward(15); addTreasure('feather'); } }]);
+    else say('נוני', 'תודה שוב על הצעיף! ואם תראי כוכב נופל, תגידי לי.');
+  } else if (key === 'dobi') {
+    if (q.fish === 0) say('דובי', 'אני כל כך רוצה פשטידת דגים, אבל אין לי חכה. תוכלי להביא לי 2 דגים? אתן לך משהו שמצאתי בנהר.', [accept('fish', 'שני דגים לדובי'), later]);
+    else if (q.fish === 1 && S.inv.fish < 2) say('דובי', 'עוד אין לך 2 דגים. הרציף נמצא דרומית לאגם. אפשר לדוג שם!');
+    else if (q.fish === 1) say('דובי', 'וואו, דגים! תודה, לונה! קחי את זה, מצאתי אותו בנהר לפני הרבה זמן.',
+      [{ label: 'תודה!', fn: () => { S.inv.fish -= 2; q.fish = 2; save(); reward(20); addTreasure('shard1'); } }]);
+    else say('דובי', 'הפשטידה הייתה הכי טעימה בעולם!');
+  } else if (key === 'bobo') {
+    if (q.bridge === 0) say('בובו', 'הו הו. הגשר מעל הנהר נשבר, ובצד השני גרה ציפי. תוכלי להביא 3 קרשים מהיער? הם מפוזרים בין העצים.', [accept('bridge', 'לתקן את הגשר'), later]);
+    else if (q.bridge === 1 && S.planks < 3) say('בובו', 'עוד חסרים קרשים. חפשי אותם ביער, בין העצים (' + S.planks + ' מתוך 3).');
+    else if (q.bridge === 1) say('בובו', 'יש לך את כל הקרשים! לכי אל הגשר ותקני אותו.');
+    else say('בובו', 'הגשר חזק, והכול בזכותך. עכשיו אפשר לעבור לצד השני!');
+  } else if (key === 'tzipi') {
+    if (q.potion === 0) say('ציפי', 'שלום! אני לא חוצה את הנהר כבר זמן רב. אפשר שיקוי פרחים? הוא עוזר לי לחשוב.', [accept('potion', 'שיקוי לציפי'), later]);
+    else if (q.potion === 1 && S.inv.potion < 1) say('ציפי', 'אפשר להכין שיקוי פרחים בחנות, מ-2 פרחים.');
+    else if (q.potion === 1) say('ציפי', 'מרגיש נפלא! קחי את זה. ועוד סוד: בסוף השביל, איפה שהצל של העץ הגדול נופל, משהו מנצנץ. תחפרי שם.',
+      [{ label: 'תודה!', fn: () => { S.inv.potion--; q.potion = 2; save(); reward(25); addTreasure('shard2', () => toast('בצד המזרחי מנצנץ משהו חדש...')); } }]);
+    else say('ציפי', 'תמצאי את הכוכבים, לונה. אני מאמינה בך!');
+  }
+}
+
+/* ---------- Quest log and treasure album ---------- */
+function showQuests() {
+  const rows = [
+    [S.q.scarf, 'נוני: למצוא את הצעיף האדום ליד האגם'],
+    [S.q.fish, 'דובי: להביא 2 דגים (' + Math.min(S.inv.fish, 2) + '/2)'],
+    [S.q.bridge, 'בובו: להביא 3 קרשים ולתקן את הגשר (' + S.planks + '/3)'],
+    [S.q.potion, 'ציפי: להביא שיקוי פרחים'],
+  ].filter(r => r[0] >= 1);
+  let html = '<b>📜 המשימות של לונה</b><br>';
+  html += rows.length ? rows.map(r => '<div class="quest' + (r[0] === 2 ? ' done' : '') + '">• ' + r[1] + '</div>').join('')
+                      : 'עוד אין משימות. דברי עם החברים בכפר!';
+  html += '<br><b>המטרה הגדולה:</b> למצוא 3 שברי כוכב (' + shardCount() + '/3)';
+  story(html, [{ label: 'סגירה', fn: () => {} }], true);
+}
+
+function showAlbum() {
+  let html = '<b>📖 אלבום האוצרות</b><div class="grid">';
+  for (const id in TREASURES) {
+    const t = TREASURES[id], got = S.treasures[id];
+    html += '<div class="cell' + (got ? '' : ' locked') + '"><img src="' + Art.icon(t.icon) + '" alt=""><br>' + (got ? t.n : 'עוד לא נמצא') + '</div>';
+  }
+  html += '</div>';
+  story(html, [{ label: 'סגירה', fn: () => {} }], true);
+}
+
+$('questBtn').addEventListener('click', e => { e.currentTarget.blur(); Sound.play('click'); showQuests(); });
+$('albumBtn').addEventListener('click', e => { e.currentTarget.blur(); Sound.play('click'); showAlbum(); });
+$('actBtn').addEventListener('click', e => { e.currentTarget.blur(); doAct(); });
+addEventListener('keydown', e => {
+  if (currentScreen === 'world' && ['KeyE', 'Space', 'Enter'].includes(e.code) && $('story').hidden) {
+    e.preventDefault();
+    doAct();
+  }
+});
+wcv.addEventListener('pointerdown', e => {
+  if (!WR) return;
+  const r = wcv.getBoundingClientRect();
+  WR.target = { x: (e.clientX - r.left) * 800 / r.width + WR.cam.x, y: (e.clientY - r.top) * 500 / r.height + WR.cam.y };
+});
+
+/* ---------- Every frame: move, collect, find what's nearby ---------- */
+function updateWorld() {
+  const w = WR;
+  if (!$('story').hidden) return;
+  w.t++;
+  const L = w.luna;
+
+  let dx = 0, dy = 0;
+  if (keys.ArrowLeft || keys.KeyA) dx -= 1;
+  if (keys.ArrowRight || keys.KeyD) dx += 1;
+  if (keys.ArrowUp || keys.KeyW) dy -= 1;
+  if (keys.ArrowDown || keys.KeyS) dy += 1;
+  if (dx || dy) {
+    w.target = null;
+  } else if (w.target) {
+    const d = dist(L, w.target);
+    if (d < 4) w.target = null;
+    else { dx = (w.target.x - L.x) / d; dy = (w.target.y - L.y) / d; }
+  }
+  const len = Math.hypot(dx, dy);
+  if (len > 1) { dx /= len; dy /= len; }
+  if (w.fishing && len > 0.05) { w.fishing = null; toast('לונה אספה את החכה.'); }
+
+  // Walk, but never into water or walls (try each direction separately so she slides along them)
+  const before = { x: L.x, y: L.y };
+  if (!w.fishing) {
+    const nx = L.x + dx * 3.4, ny = L.y + dy * 3.4;
+    if (!blocked(nx, L.y)) L.x = nx;
+    if (!blocked(L.x, ny)) L.y = ny;
+  }
+  L.x = Math.min(WW - 15, Math.max(15, L.x));
+  L.y = Math.min(WH - 8, Math.max(60, L.y));
+  w.moving = Math.hypot(L.x - before.x, L.y - before.y) > 0.3;
+  if (w.target && !w.moving && len > 0.05 && ++w.stuck > 20) { w.target = null; w.stuck = 0; }
+  if (w.moving) w.stuck = 0;
+  if (dx > 0.1) w.dir = 1;
+  if (dx < -0.1) w.dir = -1;
+  w.cam.x = Math.min(WW - 800, Math.max(0, L.x - 400));
+  w.cam.y = Math.min(WH - 500, Math.max(0, L.y - 320));
+
+  // Pick up things lying around
+  for (let i = w.items.length - 1; i >= 0; i--) {
+    const it = w.items[i];
+    if (dist(L, it) < 30) {
+      w.items.splice(i, 1);
+      S.inv[it.type]++;
+      save();
+      updateWorldHud();
+      Sound.play('pick');
+      toast('+1 ' + ITEMS[it.type].n);
+    }
+  }
+  if (S.q.bridge === 1) {
+    PLANK_SPOTS.forEach((p, i) => {
+      if (!S.plankGot[i] && dist(L, { x: p[0], y: p[1] }) < 32) {
+        S.plankGot[i] = true; S.planks++;
+        save(); updateWorldHud(); Sound.play('pick');
+        toast('מצאת קרש! ' + S.planks + ' מתוך 3');
+      }
+    });
+  }
+
+  // Fishing: wait, then a bite, and the player has a moment to pull
+  const f = w.fishing;
+  if (f && --f.timer <= 0) {
+    if (f.phase === 'wait') { f.phase = 'bite'; f.timer = 80; Sound.play('spark'); toast('משהו נוגס! למשוך עכשיו! 🎣'); }
+    else { w.fishing = null; toast('הדג ברח... אפשר לנסות שוב.'); }
+  }
+
+  // What can Luna do right here?
+  let best = null, bd = 1e9;
+  interactables().forEach(a => {
+    const d = dist(L, a);
+    if (d < a.r && d < bd) { best = a; bd = d; }
+  });
+  w.act = w.fishing ? { label: '🎣 למשוך!' } : best;
+  const label = w.act ? w.act.label : '';
+  if (label !== w.actLabel) {
+    w.actLabel = label;
+    $('actBtn').hidden = !label;
+    $('actBtn').textContent = label;
+  }
+}
+
+/* ---------- Drawing the world ---------- */
+function friendMark(key) {
+  const q = S.q;
+  if (key === 'noni') return q.scarf === 0 || (q.scarf === 1 && S.scarfFound);
+  if (key === 'dobi') return q.fish === 0 || (q.fish === 1 && S.inv.fish >= 2);
+  if (key === 'bobo') return q.bridge === 0;
+  return q.potion === 0 || (q.potion === 1 && S.inv.potion >= 1);
+}
+
+function drawWorld() {
+  const w = WR, c = wctx, t = w.t, L = w.luna;
+  c.save();
+  c.translate(-w.cam.x, -w.cam.y);
+  Art.worldGround(c, w.cam.x, w.cam.y, 800, 500, t);
+
+  // water, the dock and the bridge
+  Art.lake(c, LAKE.x, LAKE.y, LAKE.rx, LAKE.ry, t);
+  Art.waterRect(c, STREAM.x0, STREAM.y0, STREAM.x1 + 5, STREAM.y1, t);
+  Art.waterRect(c, RIVER.x0, -10, RIVER.x1, WH + 10, t);
+  Art.dock(c, DOCK.x, DOCK.y - 4);
+  Art.bridge(c, RIVER.x0 - 15, RIVER.x1 + 15, BRIDGE.y0, BRIDGE.y1, S.bridge);
+
+  // hidden spots glitter
+  if (S.q.scarf === 1 && !S.scarfFound) {
+    Art.ell(c, SCARF_SPOT.x, SCARF_SPOT.y - 3, 11, 4, '#e8394d');
+    Art.sparkle(c, SCARF_SPOT.x, SCARF_SPOT.y, t);
+  }
+  if (S.q.potion === 2 && !S.digFound) Art.sparkle(c, DIG_SPOT.x, DIG_SPOT.y, t);
+
+  // everything that stands up, drawn from back to front
+  const things = [];
+  HOUSES.forEach(h => things.push({ y: h.y, draw: () => Art.house(c, h.x, h.y, h.s, h.roof, h.shop, t) }));
+  w.trees.forEach(tr => things.push({ y: tr.y, draw: () => Art.tree(c, tr.x, tr.y, tr.s, t, tr.seed, tr.kind) }));
+  for (const key in FRIENDS) {
+    const f = FRIENDS[key];
+    things.push({ y: f.y, draw: () => {
+      Art.animal(c, f.kind, f.x, f.y, 0.6, t);
+      if (friendMark(key)) {
+        const by = f.y - 92 + Math.sin(t * 0.1) * 3;
+        Art.ell(c, f.x, by, 11, 11, '#ffd84d');
+        c.fillStyle = '#4a3b47'; c.font = 'bold 16px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.fillText('!', f.x, by + 1);
+      }
+    } });
+  }
+  things.push({ y: L.y, draw: () => Art.cat(c, L.x, L.y, 0.95, { dir: w.dir, t: t, walking: w.moving }) });
+  things.sort((a, b) => a.y - b.y).forEach(o => o.draw());
+
+  // things to pick up are on top, so trees never hide them
+  w.items.forEach(it => Art[it.type](c, it.x, it.y, 1.2, t, it.seed));
+  if (S.q.bridge === 1) PLANK_SPOTS.forEach((p, i) => { if (!S.plankGot[i]) { Art.plank(c, p[0], p[1], 1.3); Art.sparkle(c, p[0], p[1] - 6, t + i * 9); } });
+
+  if (w.target) {
+    c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 2;
+    c.beginPath(); c.arc(w.target.x, w.target.y, 8 + Math.sin(t * 0.2) * 2, 0, Math.PI * 2); c.stroke();
+  }
+
+  // the fishing line
+  if (w.fishing) {
+    const bite = w.fishing.phase === 'bite';
+    const by = BOBBER.y + (bite ? 5 + Math.sin(t * 0.8) * 2 : Math.sin(t * 0.1) * 1.5);
+    c.strokeStyle = 'rgba(60,60,60,0.8)'; c.lineWidth = 1.5;
+    c.beginPath(); c.moveTo(L.x + 14, L.y - 42); c.quadraticCurveTo(L.x + 10, BOBBER.y - 30, BOBBER.x, by); c.stroke();
+    Art.ell(c, BOBBER.x, by, 5, 5, '#fff'); Art.ell(c, BOBBER.x, by - 2, 5, 3, '#e8394d');
+    if (bite) {
+      c.strokeStyle = 'rgba(255,255,255,0.8)';
+      [10, 18].forEach((r, i) => { c.beginPath(); c.ellipse(BOBBER.x, by + 3, r + (t % 20) * 0.4 * (i + 1) * 0.5, (r + (t % 20) * 0.2) * 0.35, 0, 0, Math.PI * 2); c.stroke(); });
+      c.fillStyle = '#e8394d'; c.font = 'bold 34px sans-serif'; c.textAlign = 'center';
+      c.fillText('!', L.x, L.y - 88 + Math.sin(t * 0.5) * 3);
+    }
+  }
+  c.restore();
+}
+
+/* ---------- Night in chapter 2 ---------- */
+function chapter2Night() {
+  if (shardCount() >= 3 && !S.ch2done) { finishChapter2(); return; }
+  const left = Math.max(2, 14 - (S.day - 5) * 3);
+  const text = S.ch2done
+    ? 'הלילה יורד על הכפר הקטן. בשמיים מנצנצים כוכבים יפים, ולונה נרדמת עם חיוך.'
+    : 'הלילה יורד על הכפר הקטן. לונה מציצה מהחלון: בשמיים נשארו רק ' + left + ' כוכבים... ' +
+      (shardCount() ? 'שברי הכוכבים שלה מנצנצים בכיס. ' : '') + 'היא נרדמת ומקווה למצוא עוד מחר.';
+  story(text, [{ label: 'בוקר חדש ☀️', fn: startDay }]);
+}
+
+function finishChapter2() {
+  S.ch2done = true;
+  save();
+  Sound.play('win');
+  story('בלילה, שלושת שברי הכוכב בכיס של לונה מתחילים לזרוח. הם מתחברים אחד לשני, ונהיים כוכב קטן ושלם שרוחש בידיים שלה.',
+    [{ label: 'לונה מרימה אותו אל השמיים', fn: () => {
+      story('הכוכב עולה אל השמיים ומאיר! אבל בעומק האגם לונה רואה צל גדול זז במים... ובכפר, מישהו חדש ומסתורי כבר מתקרב בשקט אל הדלת של החנות.',
+        [{ label: 'סוף פרק 2 💛', fn: () => {
+          story('פרק 3 בדרך: הכפר הגדול והאורח המסתורי. בינתיים אפשר להמשיך לטייל, לדוג, לעזור לחברים ולהשלים את אלבום האוצרות.',
+            [{ label: 'להמשיך לשחק', fn: startDay }]);
+        } }]);
+    } }]);
+}
+
+</script>
+</body>
+</html>
