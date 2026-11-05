@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<!-- index.html = השלד של המשחק: כל מה שרואים על המסך -->
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>דוכן הלימונדה</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+  <style>
+/* style.css = הבגדים של המשחק: צבעים, גופנים ומיקומים */
+
+/* תוכנית העיצוב: דוכן רחוב מצויר ביום קיץ, הרבה צבע ושמש,
+   הכסף בקופה הוא הכוכב, וכל השאר שקט סביבו. */
+:root {
+  --lemon: #ffcf33;
+  --lemon-deep: #e8a200;
+  --berry: #e5383b;
+  --leaf: #2f9e44;
+  --wood: #8d5524;
+  --ink: #33210f;
+  --muted: #7d6a4a;
+  --card: #ffffff;
+  --line: #f0dfa8;
+
+  --font-display: "Secular One", "Rubik", "Arial Hebrew", sans-serif;
+  --font-body: "Rubik", "Segoe UI", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: linear-gradient(#a9dcff 0, #fff1b0 420px, #fff1b0 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px max(16px, env(safe-area-inset-left, 0px)) 32px max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ----- כותרת וקופה ----- */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  margin: 0;
+  color: var(--berry);
+  text-shadow: 0 2px 0 #fff;
+  text-wrap: balance;
+}
+.cash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: #fff;
+  padding: 6px 16px 6px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 #1a1007;
+}
+.cash-label { font-size: .85rem; opacity: .75; }
+.cash-num {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--lemon);
+  font-variant-numeric: tabular-nums;
+}
+.cash-num small { font-size: 1.1rem; margin-inline-start: 3px; }
+.cash.bump { animation: bump .35s ease; }
+@keyframes bump { 40% { transform: scale(1.12); } }
+
+/* ----- הסצנה ----- */
+#scene {
+  position: relative;
+  aspect-ratio: 600 / 320;
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 0 rgba(51, 33, 15, .15), 0 14px 30px rgba(51, 33, 15, .18);
+  background: #8cd0ff;
+  --sky1: #5fc0ff; --sky2: #def4ff;
+  --sun-op: 1; --cloud-op: .55;
+  --hill1: #8fd16a; --hill2: #6cbf4a; --crown: #2f9e44;
+  --walk: #e2c79a; --walk-edge: #c9a972;
+  --inside: #ffe7a8;
+  --awn1: #e5383b; --awn2: #ffffff; --sign: #ffd93d; --shirt: #37b24d;
+}
+#scene.w-hot    { --sky1: #ffa94d; --sky2: #ffecb3; --sun-op: 1; --cloud-op: .25; }
+#scene.w-sunny  { --sky1: #5fc0ff; --sky2: #def4ff; --sun-op: 1; --cloud-op: .55; }
+#scene.w-cloudy { --sky1: #9db3c6; --sky2: #e1e9f0; --sun-op: 0; --cloud-op: 1; }
+#scene.w-rainy  { --sky1: #56677a; --sky2: #99a9b8; --sun-op: 0; --cloud-op: 1; }
+/* חורף: שלג וקור מקפיא */
+#scene.w-snowy {
+  --sky1: #8798ab; --sky2: #e9eff5; --sun-op: 0; --cloud-op: 1;
+  --hill1: #f4f8fb; --hill2: #dfe8f0; --crown: #6b8f71;
+  --walk: #eef3f7; --walk-edge: #cfdae4;
+}
+#scene.w-freezing {
+  --sky1: #86c5ec; --sky2: #eaf6fd; --sun-op: .75; --cloud-op: .35;
+  --hill1: #d6ebe8; --hill2: #bfdcd8; --crown: #5f9a8f;
+  --walk: #d9e6ee; --walk-edge: #b9cdda;
+}
+/* דוכן חורף: תה ועוגיות */
+#scene.mode-winter { --awn1: #1c7ed6; --awn2: #ffffff; --sign: #ffe8a3; --inside: #ffd6a0; --shirt: #e8590c; }
+#scene.mode-winter.w-rainy { --inside: #ffd6a0; }
+.a1 { fill: var(--awn1); }
+.a2 { fill: var(--awn2); }
+.sign-board { fill: var(--sign); }
+.owner-shirt { fill: var(--shirt); }
+.crown circle { fill: var(--crown); }
+.only-winter, .snow-cap { display: none; }
+#scene.mode-winter .only-winter { display: inline; }
+#scene.mode-winter .only-summer { display: none; }
+#scene.w-snowy .snow-cap { display: inline; }
+#scene.w-snowy .fruit, #scene.w-freezing .fruit { display: none; }
+.steam { animation: steam 2.4s ease-in-out infinite; }
+@keyframes steam { 0% { transform: translateY(4px); opacity: 0; } 50% { opacity: .9; } 100% { transform: translateY(-8px); opacity: 0; } }
+
+#art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#sun { opacity: var(--sun-op); transition: opacity .8s; }
+#scene.w-hot #sun { transform-origin: 520px 46px; animation: throb 2s ease-in-out infinite alternate; }
+@keyframes throb { to { transform: scale(1.15); } }
+
+.cloud { opacity: var(--cloud-op); transition: opacity .8s; animation: drift 60s linear infinite; }
+.cl2 { animation-duration: 80s; animation-delay: -30s; }
+.cl3 { animation-duration: 70s; animation-delay: -50s; }
+@keyframes drift { from { transform: translateX(-160px); } to { transform: translateX(760px); } }
+
+#rain {
+  position: absolute; inset: 0; display: none; pointer-events: none;
+  background-image: repeating-linear-gradient(103deg, transparent 0 9px, rgba(255,255,255,.55) 9px 10px);
+  background-size: 44px 44px;
+  animation: fall .45s linear infinite;
+}
+#scene.w-rainy #rain { display: block; }
+@keyframes fall { to { background-position: -12px 44px; } }
+
+/* שלג: שלוש שכבות של פתיתים בגדלים שונים */
+#snow {
+  position: absolute; inset: 0; display: none; pointer-events: none;
+  background-image:
+    radial-gradient(circle, #fff 0 2.5px, transparent 3px),
+    radial-gradient(circle, #fff 0 1.8px, transparent 2.2px),
+    radial-gradient(circle, #ffffffcc 0 1.2px, transparent 1.6px);
+  background-size: 90px 90px, 60px 60px, 41px 41px;
+  background-position: 10px 0, 30px 20px, 5px 10px;
+  animation: snowfall 6s linear infinite;
+}
+#scene.w-snowy #snow { display: block; }
+@keyframes snowfall {
+  to { background-position: 0 90px, 20px 80px, -5px 51px; }
+}
+
+#weather-chip {
+  position: absolute; top: 10px; inset-inline-start: 10px;
+  display: flex; gap: 8px; align-items: baseline;
+  background: rgba(255, 255, 255, .92);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  z-index: 12;
+}
+#w-temp { font-family: var(--font-display); color: var(--berry); font-weight: 400; font-size: 1.05rem; }
+
+#toast {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff;
+  padding: 6px 16px; border-radius: 999px;
+  font-weight: 500; font-size: .95rem;
+  z-index: 20; white-space: nowrap;
+  max-width: 94%; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ----- לקוחות ----- */
+#street { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+.customer {
+  position: absolute;
+  width: 8%;
+  max-width: 48px;
+  min-width: 32px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: left 1.8s cubic-bezier(.3, .7, .3, 1);
+  user-select: none;
+}
+.customer .sprite { display: block; width: 100%; animation: bob .5s ease-in-out infinite alternate; }
+.customer.arrived .sprite { animation: none; }
+@keyframes bob { to { transform: translateY(-3px); } }
+.customer .bubble {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  margin-bottom: 2px;
+  background: #fff; border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 1px 6px 3px;
+  font-size: .72rem; font-weight: 700; white-space: nowrap;
+  display: flex; align-items: center; gap: 3px;
+}
+.customer .bubble svg { width: 16px; height: 16px; }
+.customer .bar {
+  position: absolute; bottom: 100%; left: 12%; right: 12%;
+  height: 4px; margin-bottom: -2px;
+  background: rgba(0,0,0,.15); border-radius: 2px; overflow: hidden;
+}
+.customer .bar i { display: block; height: 100%; width: 100%; background: var(--leaf); }
+.customer .bubble svg.want { width: 22px; height: 22px; }
+.customer.hungry:hover .sprite { filter: drop-shadow(0 0 6px var(--lemon)); transform: scale(1.06); }
+.customer.leaving { opacity: 0; transition: opacity .5s, left 1.4s ease-in; }
+.customer.happy .sprite { animation: hop .45s ease; }
+@keyframes hop { 40% { transform: translateY(-14px); } }
+
+.pop {
+  position: absolute; z-index: 15; pointer-events: none;
+  font-family: var(--font-display); font-size: 1.5rem; color: #fff;
+  -webkit-text-stroke: 2px var(--lemon-deep);
+  paint-order: stroke fill;
+  animation: rise 1s ease-out forwards;
+}
+@keyframes rise { to { transform: translateY(-46px); opacity: 0; } }
+
+/* ----- לוחות ----- */
+.card {
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  min-width: 0;
+}
+.card h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  margin: 0 0 10px;
+  color: var(--wood);
+}
+
+.hint { color: var(--muted); font-size: .85rem; margin: 10px 0 0; text-align: center; }
+
+/* ----- רשימת המוצרים ----- */
+.products-card { margin-top: 16px; }
+.products { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.prod {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #fff8dc;
+}
+.prod.low { background: #ffe9e6; }
+.prod.flash { animation: flashrow .6s 2; }
+@keyframes flashrow { 50% { background: #ffb4ad; } }
+.prod .ico { width: 40px; height: 40px; }
+.prod .name { font-weight: 700; font-size: 1.05rem; }
+.prod .count { font-family: var(--font-display); font-size: 1.4rem; min-width: 2.2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.prod .count small { display: block; font-family: var(--font-body); font-size: .7rem; color: var(--muted); }
+.prod .pricing {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 6px;
+  border-top: 2px dashed var(--line);
+}
+.prod .pricing .label { color: var(--muted); font-size: .9rem; }
+.prod .price-val {
+  font-family: var(--font-display); font-size: 1.5rem; color: var(--berry);
+  min-width: 3.2ch; text-align: center; font-variant-numeric: tabular-nums;
+}
+.prod .verdict { margin-inline-start: auto; font-size: .85rem; font-weight: 500; }
+.prod .verdict.good { color: var(--leaf); }
+.prod .verdict.bad { color: var(--berry); }
+button.small { width: 34px; height: 34px; border-radius: 50%; padding: 0; font-size: 1.2rem; line-height: 1; }
+
+button {
+  font-family: var(--font-body);
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--ink);
+  border: none;
+  border-radius: 12px;
+  padding: 7px 12px;
+  background: var(--lemon);
+  box-shadow: 0 3px 0 var(--lemon-deep);
+  cursor: pointer;
+  white-space: nowrap;
+}
+button:hover { filter: brightness(1.05); }
+button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--lemon-deep); }
+button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+button:disabled { background: #e9e4d2; box-shadow: none; color: #9a9078; cursor: not-allowed; }
+button .cost { font-weight: 500; opacity: .8; margin-inline-start: 4px; }
+button.round { width: 46px; height: 46px; border-radius: 50%; font-size: 1.6rem; line-height: 1; padding: 0; }
+
+.footer-stats { text-align: center; color: var(--muted); font-size: .9rem; margin: 18px 0 0; }
+.footer-stats b { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud, #sun, #rain, .customer .sprite { animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+  <!-- ציורים קטנים של המוצרים: משתמשים בהם בכמה מקומות -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-lemonade" viewBox="0 0 40 40">
+        <path d="M8 8h24l-3 28H11z" fill="#fff" fill-opacity=".6" stroke="#8d5524" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9.5 16h21l-2 20H11.5z" fill="#ffd93d"/>
+        <circle cx="20" cy="9" r="6" fill="#fff3a6" stroke="#e8a200" stroke-width="2"/>
+        <path d="M24 8l5-7" stroke="#33210f" stroke-width="2.5" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-popsicle" viewBox="0 0 40 40">
+        <rect x="18" y="26" width="4" height="12" rx="2" fill="#d9a066"/>
+        <path d="M10 14c0-6 4-10 10-10s10 4 10 10v13H10z" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M10 20h20v7H10z" fill="#ffa94d"/>
+        <path d="M15 10c1-2 3-3 5-3" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+      </symbol>
+      <symbol id="i-petit" viewBox="0 0 40 40">
+        <rect x="4" y="9" width="32" height="8" rx="2" fill="#e0b070" stroke="#a9742f" stroke-width="2"/>
+        <rect x="4" y="23" width="32" height="8" rx="2" fill="#e0b070" stroke="#a9742f" stroke-width="2"/>
+        <rect x="6" y="17" width="28" height="6" fill="#fff4d6" stroke="#e4d3a3" stroke-width="1.5"/>
+        <g fill="#a9742f"><circle cx="11" cy="13" r="1"/><circle cx="20" cy="13" r="1"/><circle cx="29" cy="13" r="1"/><circle cx="11" cy="27" r="1"/><circle cx="20" cy="27" r="1"/><circle cx="29" cy="27" r="1"/></g>
+      </symbol>
+      <symbol id="i-tea" viewBox="0 0 40 40">
+        <path d="M6 16h24v8c0 7-5 12-12 12s-12-5-12-12z" fill="#fff" stroke="#6c5ce7" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M30 19h3c3 0 3 8 0 8h-3" fill="none" stroke="#6c5ce7" stroke-width="2.5"/>
+        <path d="M8 17h20" stroke="#c0762f" stroke-width="3"/>
+        <path d="M14 11c-2-2 2-4 0-6M22 11c-2-2 2-4 0-6" fill="none" stroke="#9aa5b1" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-cookie" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="15" fill="#d9a066" stroke="#9a6326" stroke-width="2"/>
+        <g fill="#5a3418"><circle cx="14" cy="15" r="2.4"/><circle cx="25" cy="13" r="2.2"/><circle cx="26" cy="24" r="2.6"/><circle cx="15" cy="26" r="2.2"/><circle cx="20" cy="20" r="1.8"/></g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main class="app">
+    <header class="brand">
+      <h1 id="stand-title">דוכן הלימונדה</h1>
+      <div class="cash" id="cash" aria-live="polite">
+        <span class="cash-label">בקופה</span>
+        <span class="cash-num"><span id="money">20</span><small>₪</small></span>
+      </div>
+    </header>
+
+    <!-- ================= הסצנה ================= -->
+    <div id="scene" class="w-sunny mode-summer">
+      <svg id="art" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color:var(--sky1)"/>
+            <stop offset="1" style="stop-color:var(--sky2)"/>
+          </linearGradient>
+          <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#c98a4b"/>
+            <stop offset="1" stop-color="#8d5524"/>
+          </linearGradient>
+          <clipPath id="awning-clip"><path d="M168 98 L432 98 L444 150 L156 150 Z"/></clipPath>
+        </defs>
+
+        <rect width="600" height="320" fill="url(#sky)"/>
+
+        <!-- שמש -->
+        <g id="sun">
+          <g stroke="#ffb703" stroke-width="5" stroke-linecap="round">
+            <path d="M520 46v-22M520 46v22M520 46h-22M520 46h22M504 30l-12-12M536 62l12 12M504 62l-12 12M536 30l12-12"/>
+          </g>
+          <circle cx="520" cy="46" r="26" fill="#ffe066" stroke="#ffb703" stroke-width="3"/>
+        </g>
+
+        <!-- עננים -->
+        <g class="cloud cl1" fill="#fff"><ellipse cx="90" cy="52" rx="38" ry="15"/><ellipse cx="68" cy="44" rx="20" ry="14"/><ellipse cx="108" cy="42" rx="22" ry="16"/></g>
+        <g class="cloud cl2" fill="#fff"><ellipse cx="340" cy="30" rx="30" ry="11"/><ellipse cx="324" cy="24" rx="16" ry="10"/><ellipse cx="356" cy="23" rx="17" ry="11"/></g>
+        <g class="cloud cl3" fill="#fff"><ellipse cx="220" cy="72" rx="26" ry="10"/><ellipse cx="206" cy="66" rx="14" ry="9"/><ellipse cx="236" cy="65" rx="15" ry="10"/></g>
+
+        <!-- גבעות -->
+        <path d="M0 200 Q90 150 190 192 T380 188 T600 176 V250 H0Z" style="fill:var(--hill1)"/>
+        <path d="M0 222 Q120 184 250 214 T480 208 T600 214 V260 H0Z" style="fill:var(--hill2)"/>
+
+        <!-- עצים -->
+        <g>
+          <rect x="52" y="168" width="10" height="52" fill="#7a4a22"/>
+          <g class="crown"><circle cx="57" cy="150" r="30"/><circle cx="40" cy="166" r="20"/><circle cx="74" cy="164" r="20"/></g>
+          <g class="fruit"><circle cx="62" cy="142" r="6" fill="#ffd93d"/><circle cx="46" cy="158" r="5" fill="#ffd93d"/><circle cx="78" cy="160" r="5" fill="#ffd93d"/></g>
+        </g>
+        <g>
+          <rect x="536" y="176" width="9" height="46" fill="#7a4a22"/>
+          <g class="crown"><circle cx="540" cy="160" r="26"/><circle cx="524" cy="174" r="17"/><circle cx="556" cy="172" r="17"/></g>
+        </g>
+
+        <!-- מדרכה -->
+        <rect x="0" y="246" width="600" height="74" style="fill:var(--walk)"/>
+        <rect x="0" y="246" width="600" height="8" style="fill:var(--walk-edge)"/>
+        <path d="M0 296h600" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-dasharray="30 20"/>
+
+        <!-- ================= הדוכן ================= -->
+        <rect x="170" y="140" width="260" height="110" style="fill:var(--inside)"/>
+        <rect x="170" y="140" width="260" height="14" fill="#000" opacity=".08"/>
+
+        <!-- בעל הדוכן -->
+        <g>
+          <rect x="283" y="190" width="34" height="30" rx="10" class="owner-shirt"/>
+          <circle cx="300" cy="176" r="15" fill="#f1c27d"/>
+          <path d="M285 172c2-14 28-14 30 0-8-6-22-6-30 0z" fill="#5a3a1a" class="owner-hair"/>
+          <circle cx="295" cy="178" r="1.8" fill="#33210f"/><circle cx="305" cy="178" r="1.8" fill="#33210f"/>
+          <path d="M295 184q5 4 10 0" fill="none" stroke="#33210f" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- כובע צמר וצעיף בחורף -->
+          <g class="only-winter">
+            <path d="M284 172c0-18 32-18 32 0z" fill="#e5383b"/>
+            <rect x="283" y="168" width="34" height="6" rx="3" fill="#fff"/>
+            <circle cx="300" cy="157" r="5" fill="#fff"/>
+            <rect x="287" y="190" width="26" height="7" rx="3" fill="#4dabf7"/>
+          </g>
+        </g>
+
+        <!-- עמודים -->
+        <rect x="160" y="148" width="12" height="104" fill="url(#wood)"/>
+        <rect x="428" y="148" width="12" height="104" fill="url(#wood)"/>
+
+        <!-- סוכך מפוספס (הצבעים משתנים לפי העונה) -->
+        <g clip-path="url(#awning-clip)">
+          <rect class="a1" x="150" y="98" width="33" height="52"/><rect class="a2" x="183" y="98" width="33" height="52"/>
+          <rect class="a1" x="216" y="98" width="33" height="52"/><rect class="a2" x="249" y="98" width="33" height="52"/>
+          <rect class="a1" x="282" y="98" width="33" height="52"/><rect class="a2" x="315" y="98" width="33" height="52"/>
+          <rect class="a1" x="348" y="98" width="33" height="52"/><rect class="a2" x="381" y="98" width="33" height="52"/>
+          <rect class="a1" x="414" y="98" width="33" height="52"/>
+          <rect x="150" y="98" width="300" height="9" fill="#000" opacity=".1"/>
+        </g>
+        <g>
+          <circle class="a1" cx="166" cy="150" r="16.5"/><circle class="a2" cx="199" cy="150" r="16.5"/>
+          <circle class="a1" cx="232" cy="150" r="16.5"/><circle class="a2" cx="265" cy="150" r="16.5"/>
+          <circle class="a1" cx="298" cy="150" r="16.5"/><circle class="a2" cx="331" cy="150" r="16.5"/>
+          <circle class="a1" cx="364" cy="150" r="16.5"/><circle class="a2" cx="397" cy="150" r="16.5"/>
+          <circle class="a1" cx="430" cy="150" r="16.5"/>
+        </g>
+
+        <!-- שלג על הסוכך -->
+        <g class="snow-cap">
+          <path d="M160 100 Q170 88 190 96 Q215 84 240 95 Q270 82 300 94 Q330 82 360 95 Q388 84 410 96 Q428 88 440 100 L440 106 L160 106Z" fill="#fff"/>
+        </g>
+
+        <!-- נורות חורף -->
+        <g class="only-winter">
+          <path d="M170 156 Q300 176 430 156" fill="none" stroke="#33210f" stroke-width="1.5" opacity=".6"/>
+          <circle cx="196" cy="163" r="4" fill="#ffd93d"/><circle cx="226" cy="168" r="4" fill="#ff6b6b"/>
+          <circle cx="262" cy="171" r="4" fill="#69db7c"/><circle cx="300" cy="172" r="4" fill="#ffd93d"/>
+          <circle cx="338" cy="171" r="4" fill="#4dabf7"/><circle cx="374" cy="168" r="4" fill="#ff6b6b"/>
+          <circle cx="404" cy="163" r="4" fill="#69db7c"/>
+        </g>
+
+        <!-- שלט עליון -->
+        <g>
+          <path d="M240 62v-6M360 62v-6" stroke="#8d5524" stroke-width="3"/>
+          <rect x="210" y="62" width="180" height="34" rx="8" class="sign-board" stroke="#8d5524" stroke-width="3"/>
+          <text id="sign-text" x="300" y="85" text-anchor="middle" font-family="Secular One, Rubik, sans-serif" font-size="17" fill="#33210f">לימונדה · קרטיבים · פתיבר</text>
+        </g>
+
+        <!-- שרשרת דגלונים (קיץ בלבד) -->
+        <g class="only-summer">
+          <path d="M0 22 Q150 62 300 30 T600 24" fill="none" stroke="#33210f" stroke-width="1.5" opacity=".5"/>
+          <path d="M30 31l10 0-5 16z" fill="#e5383b"/><path d="M70 40l10 0-5 16z" fill="#ffd93d"/>
+          <path d="M110 46l10 0-5 16z" fill="#37b24d"/><path d="M150 49l10 0-5 16z" fill="#4dabf7"/>
+          <path d="M190 50l10 0-5 16z" fill="#e5383b"/><path d="M430 38l10 0-5 16z" fill="#ffd93d"/>
+          <path d="M470 31l10 0-5 16z" fill="#37b24d"/><path d="M510 30l10 0-5 16z" fill="#4dabf7"/>
+          <path d="M550 30l10 0-5 16z" fill="#e5383b"/>
+        </g>
+
+        <!-- הדלפק -->
+        <rect x="150" y="214" width="300" height="12" rx="4" fill="#e0a96d"/>
+        <rect x="158" y="226" width="284" height="26" fill="url(#wood)"/>
+        <path d="M158 238h284" stroke="#6b3d17" stroke-width="2" opacity=".5"/>
+
+        <!-- על הדלפק, קיץ: קנקן לימונדה, קרטיבים ופתיבר -->
+        <g class="only-summer">
+          <path d="M184 168h36l-4 46h-28z" fill="#fff" fill-opacity=".55" stroke="#8d5524" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M187 184h30l-3 30h-24z" fill="#ffd93d"/>
+          <circle cx="200" cy="196" r="7" fill="#fff3a6" stroke="#f0a500" stroke-width="1.5"/>
+          <path d="M217 176q14 0 12 12t-10 10" fill="none" stroke="#8d5524" stroke-width="3"/>
+          <g transform="translate(236 192)"><path d="M0 0h18l-2 22H2z" fill="#ffd93d" stroke="#d99a00" stroke-width="1.5"/></g>
+          <g transform="translate(258 192)"><path d="M0 0h18l-2 22H2z" fill="#ffd93d" stroke="#d99a00" stroke-width="1.5"/></g>
+          <!-- דלי קרטיבים -->
+          <rect x="334" y="196" width="44" height="18" rx="3" fill="#4dabf7" stroke="#1971c2" stroke-width="2"/>
+          <rect x="340" y="176" width="9" height="22" rx="4" fill="#ff6b6b"/><rect x="354" y="172" width="9" height="26" rx="4" fill="#ffa94d"/><rect x="368" y="177" width="9" height="21" rx="4" fill="#69db7c"/>
+          <!-- צלחת פתיבר -->
+          <ellipse cx="408" cy="212" rx="22" ry="5" fill="#fff" stroke="#9fb3c8" stroke-width="1.5"/>
+          <rect x="394" y="198" width="28" height="5" rx="1.5" fill="#e0b070"/><rect x="394" y="203" width="28" height="4" fill="#fff4d6"/><rect x="394" y="207" width="28" height="5" rx="1.5" fill="#e0b070"/>
+        </g>
+
+        <!-- על הדלפק, חורף: קומקום תה, ספלים וקערת עוגיות -->
+        <g class="only-winter">
+          <path d="M186 214v-24q0-14 20-14t20 14v24z" fill="#6c5ce7" stroke="#4834d4" stroke-width="2"/>
+          <path d="M196 176q10-10 20 0" fill="none" stroke="#4834d4" stroke-width="3"/>
+          <circle cx="206" cy="170" r="4" fill="#a29bfe"/>
+          <path d="M226 192q14 0 10 14" fill="none" stroke="#4834d4" stroke-width="4" stroke-linecap="round"/>
+          <path d="M184 196l-10-6" stroke="#4834d4" stroke-width="4" stroke-linecap="round"/>
+          <g class="steam"><path d="M200 168c-4-6 4-8 0-14M212 168c-4-6 4-8 0-14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".85"/></g>
+          <g transform="translate(240 194)"><path d="M0 0h18v10c0 6-4 10-9 10S0 16 0 10z" fill="#fff" stroke="#6c5ce7" stroke-width="2"/><rect x="1" y="2" width="16" height="4" fill="#c0762f"/></g>
+          <g transform="translate(264 194)"><path d="M0 0h18v10c0 6-4 10-9 10S0 16 0 10z" fill="#fff" stroke="#6c5ce7" stroke-width="2"/><rect x="1" y="2" width="16" height="4" fill="#c0762f"/></g>
+          <!-- צנצנת עוגיות -->
+          <rect x="340" y="176" width="40" height="38" rx="6" fill="#fff" fill-opacity=".5" stroke="#8d5524" stroke-width="2.5"/>
+          <rect x="336" y="170" width="48" height="8" rx="3" fill="#c0762f"/>
+          <circle cx="352" cy="204" r="8" fill="#d9a066"/><circle cx="368" cy="204" r="8" fill="#d9a066"/><circle cx="360" cy="190" r="8" fill="#d9a066"/>
+          <g fill="#5a3418"><circle cx="350" cy="202" r="1.5"/><circle cx="370" cy="206" r="1.5"/><circle cx="358" cy="188" r="1.5"/><circle cx="364" cy="192" r="1.5"/></g>
+          <!-- צלחת עוגיות -->
+          <ellipse cx="408" cy="212" rx="22" ry="5" fill="#fff" stroke="#9fb3c8" stroke-width="1.5"/>
+          <circle cx="400" cy="205" r="8" fill="#d9a066"/><circle cx="416" cy="205" r="8" fill="#d9a066"/>
+          <g fill="#5a3418"><circle cx="398" cy="204" r="1.4"/><circle cx="403" cy="207" r="1.4"/><circle cx="415" cy="203" r="1.4"/><circle cx="419" cy="207" r="1.4"/></g>
+        </g>
+      </svg>
+
+      <div id="rain"></div>
+      <div id="snow"></div>
+      <div id="street"></div>
+      <div id="weather-chip"><span id="w-name">שמשי</span><span id="w-temp">27°</span></div>
+      <div id="toast" hidden></div>
+    </div>
+
+    <!-- ================= מוצרים ================= -->
+    <section class="card products-card" aria-labelledby="h-prod">
+      <h2 id="h-prod">מה מוכרים היום</h2>
+      <ul class="products" id="products"></ul>
+      <p class="hint">לכל מוצר יש מחיר ומלאי משלו. הלקוחות יודעים להבחין בין הוגן ליקר.</p>
+    </section>
+
+    <p class="footer-stats">
+      נמכרו בסך הכל <b id="sold">0</b> מוצרים · <b id="missed">0</b> לקוחות הלכו כי היה יקר
+    </p>
+  </main>
+
+  <script>
+// script.js = המוח של המשחק: כל החוקים והחישובים
+// המשחק רציף: אין יעד ואין ימים. כל מוצר שמוכרים מוסיף כסף לקופה.
+// בחום ובשמש הדוכן מוכר לימונדה, קרטיבים ופתיבר. בגשם, בשלג ובקור הוא הופך לדוכן תה ועוגיות.
+
+// ---------- 1. המוצרים ----------
+// fair = המחיר ההוגן, cost = כמה עולה לקנות חבילה של 5 יחידות
+const PRODUCTS = {
+  lemonade: { name: "לימונדה", icon: "i-lemonade", fair: 5, cost: 8 },
+  popsicle: { name: "קרטיב",   icon: "i-popsicle", fair: 4, cost: 7 },
+  petit:    { name: "פתיבר",   icon: "i-petit",    fair: 6, cost: 12 },
+  tea:      { name: "תה חם",   icon: "i-tea",      fair: 5, cost: 8 },
+  cookie:   { name: "עוגיות",  icon: "i-cookie",   fair: 4, cost: 8 }
+};
+const BATCH = 5; // כמה יחידות מקבלים בכל קנייה
+
+// שני סוגי דוכן
+const STANDS = {
+  summer: {
+    title: "דוכן הלימונדה",
+    sign: "לימונדה · קרטיבים · פתיבר",
+    products: ["lemonade", "popsicle", "petit"],
+    hello: "יום חם! פותחים דוכן לימונדה, קרטיבים ופתיבר"
+  },
+  winter: {
+    title: "דוכן התה והעוגיות",
+    sign: "תה חם ועוגיות",
+    products: ["tea", "cookie"],
+    hello: "קר בחוץ! הדוכן הופך לדוכן תה חם ועוגיות"
+  }
+};
+
+// סוגי מזג אוויר:
+// crowd = כמה לקוחות מגיעים, bonus = כמה זה מעלה את מה שהלקוחות מוכנים לשלם
+const WEATHERS = [
+  { cls: "w-hot",      name: "חם מאוד", temp: 34, crowd: 1.0,  bonus: 3,   stand: "summer" },
+  { cls: "w-sunny",    name: "שמשי",    temp: 27, crowd: 0.75, bonus: 1.5, stand: "summer" },
+  { cls: "w-cloudy",   name: "מעונן",   temp: 21, crowd: 0.5,  bonus: -0.5, stand: "summer" },
+  { cls: "w-rainy",    name: "גשום",    temp: 14, crowd: 0.55, bonus: 1.5, stand: "winter" },
+  { cls: "w-snowy",    name: "שלג",     temp: -2, crowd: 0.5,  bonus: 2.5, stand: "winter" },
+  { cls: "w-freezing", name: "קר מאוד", temp: 3,  crowd: 0.55, bonus: 2,   stand: "winter" }
+];
+
+// ---------- 2. מה שהמשחק "זוכר" ----------
+const state = {
+  money: 20,
+  stock: { lemonade: 6, popsicle: 6, petit: 6, tea: 6, cookie: 6 },
+  prices: { lemonade: 5, popsicle: 4, petit: 6, tea: 5, cookie: 4 },
+  sold: 0,
+  missed: 0,
+  weather: null,
+  festival: false
+};
+
+const PATIENCE = 9;          // כמה שניות לקוח מוכן לחכות
+const MAX_WAITING = 5;       // כמה לקוחות יכולים לחכות בו זמנית
+const WEATHER_EVERY = 45000; // כל כמה זמן מזג האוויר משתנה
+
+// ---------- 3. עזרים ----------
+const $ = (id) => document.getElementById(id);
+const random = (min, max) => min + Math.random() * (max - min);
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
+const stand = () => STANDS[state.weather.stand];
+
+// שמירה בדפדפן, כדי שהכסף יישאר גם אחרי סגירה. אם אי אפשר לשמור, ממשיכים בלי
+const SAVE_KEY = "lemonade-stand-v2";
+function save() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      money: state.money, stock: state.stock, prices: state.prices, sold: state.sold
+    }));
+  } catch (e) { /* בסדר */ }
+}
+function load() {
+  try {
+    const data = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+    if (data) {
+      state.money = data.money;
+      state.sold = data.sold;
+      Object.assign(state.stock, data.stock);
+      Object.assign(state.prices, data.prices);
+    }
+  } catch (e) { /* בסדר */ }
+}
+
+// צלילים קטנים בלי קבצים: הדפדפן "מנגן" צפצוף בתדר שאנחנו קובעים
+let audioCtx = null;
+function beep(freq, length = 0.12, volume = 0.07) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = freq;
+    gain.gain.value = volume;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + length);
+  } catch (e) { /* אם אין סאונד, ממשיכים בשקט */ }
+}
+const coinSound = () => { beep(988, 0.07); setTimeout(() => beep(1319, 0.14), 70); };
+const buySound = () => beep(520, 0.06);
+const sadSound = () => beep(180, 0.2);
+
+let toastTimer = null;
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 2800);
+}
+
+// ---------- 4. מה הלקוחות מוכנים לשלם ----------
+// המחיר שלקוח "ממוצע" מוכן לשלם על מוצר, לפי מזג האוויר
+function expectedPay(id) {
+  return PRODUCTS[id].fair * 1.3 + state.weather.bonus;
+}
+
+// ---------- 5. הצגה על המסך ----------
+function renderProducts() {
+  $("products").innerHTML = stand().products.map((id) => {
+    const p = PRODUCTS[id];
+    const price = state.prices[id];
+    const diff = expectedPay(id) - price;
+    const verdict = diff >= 0.5 ? ["good", "מחיר הוגן"]
+                  : diff >= -1  ? ["", "קצת יקר"]
+                  :               ["bad", "יקר, לקוחות ילכו"];
+    return '<li class="prod' + (state.stock[id] < 3 ? " low" : "") + '" data-id="' + id + '">' +
+      '<svg class="ico"><use href="#' + p.icon + '"/></svg>' +
+      '<span class="name">' + p.name + "</span>" +
+      '<span class="count">' + state.stock[id] + "<small>במלאי</small></span>" +
+      '<button data-act="buy" ' + (state.money < p.cost ? "disabled" : "") + ">+" + BATCH +
+        ' <span class="cost">' + p.cost + " ₪</span></button>" +
+      '<div class="pricing"><span class="label">מחיר</span>' +
+        '<button class="small" data-act="down" aria-label="הורד מחיר"' + (price <= 1 ? " disabled" : "") + ">−</button>" +
+        '<span class="price-val">' + price + " ₪</span>" +
+        '<button class="small" data-act="up" aria-label="העלה מחיר"' + (price >= 20 ? " disabled" : "") + ">+</button>" +
+        '<span class="verdict ' + verdict[0] + '">' + verdict[1] + "</span></div>" +
+      "</li>";
+  }).join("");
+}
+
+function updateScreen() {
+  $("money").textContent = state.money;
+  $("sold").textContent = state.sold;
+  $("missed").textContent = state.missed;
+  renderProducts();
+}
+
+function addMoney(amount) {
+  state.money += amount;
+  const cash = $("cash");
+  cash.classList.remove("bump");
+  void cash.offsetWidth; // טריק קטן שמאפשר להפעיל את האנימציה שוב
+  cash.classList.add("bump");
+}
+
+// ---------- 6. קניות ומחירים ----------
+$("products").addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn || btn.disabled) return;
+  const id = btn.closest(".prod").dataset.id;
+  const act = btn.dataset.act;
+
+  if (act === "buy" && state.money >= PRODUCTS[id].cost) {
+    state.money -= PRODUCTS[id].cost;
+    state.stock[id] += BATCH;
+    buySound();
+  } else if (act === "up") {
+    state.prices[id] = Math.min(20, state.prices[id] + 1);
+  } else if (act === "down") {
+    state.prices[id] = Math.max(1, state.prices[id] - 1);
+  }
+  updateScreen();
+  save();
+});
+
+// ---------- 7. מזג אוויר והחלפת דוכן ----------
+function setWeather(w) {
+  const before = state.weather ? state.weather.stand : null;
+  state.weather = w;
+  const scene = $("scene");
+  scene.className = w.cls + " mode-" + w.stand;
+  $("w-name").textContent = w.name;
+  // התו הנסתר ‎ שומר שהמינוס יישאר ליד המספר גם בטקסט מימין לשמאל
+  $("w-temp").textContent = "‎" + w.temp + "°";
+
+  // אם הדוכן התחלף, מפנים את הרחוב ומעדכנים שלט וכותרת
+  if (before !== w.stand) {
+    customers.forEach(leave);
+    $("stand-title").textContent = stand().title;
+    $("sign-text").textContent = stand().sign;
+    if (before) toast(stand().hello);
+  }
+
+  // לפעמים יש פסטיבל ברחוב, ואז מגיעים הרבה יותר לקוחות
+  state.festival = Math.random() < 0.2;
+  if (state.festival) setTimeout(() => toast("פסטיבל ברחוב! הלקוחות מגיעים בהמוניהם"), before ? 2900 : 0);
+  updateScreen();
+}
+
+function nextWeather() {
+  setWeather(pick(WEATHERS.filter((w) => w !== state.weather)));
+}
+
+// לחיצה על שבב מזג האוויר מחליפה אותו מיד
+$("weather-chip").addEventListener("click", nextWeather);
+
+// ---------- 8. לקוחות ----------
+let customers = [];
+
+const SKIN = ["#f1c27d", "#e0ac69", "#c68642", "#8d5524", "#ffdbac"];
+const HAIR = ["#2b1b0e", "#5a3a1a", "#a0522d", "#e6c15a", "#222", "#c0392b"];
+const SHIRT = ["#4dabf7", "#845ef7", "#f06595", "#20c997", "#ff922b", "#74c0fc", "#69db7c"];
+const COAT = ["#495057", "#364fc7", "#862e9c", "#a61e4d", "#2b8a3e", "#c2255c"];
+const HAT = ["#e5383b", "#1c7ed6", "#f59f00", "#37b24d", "#9c36b5"];
+
+// מצייר לקוח כציור קטן (SVG) עם צבעים אקראיים. בחורף: מעיל, כובע וצעיף
+function drawPerson(winter) {
+  const skin = pick(SKIN), hair = pick(HAIR);
+  const top = winter ? pick(COAT) : pick(SHIRT);
+  let svg = '<svg class="sprite" viewBox="0 0 44 70">' +
+    '<rect x="12" y="54" width="8" height="14" rx="3" fill="#33415c"/>' +
+    '<rect x="24" y="54" width="8" height="14" rx="3" fill="#33415c"/>' +
+    '<rect x="8" y="26" width="28" height="32" rx="10" fill="' + top + '"/>' +
+    '<circle cx="22" cy="16" r="11" fill="' + skin + '"/>' +
+    '<path d="M10 14c1-12 23-12 24 0-6-5-18-5-24 0z" fill="' + hair + '"/>' +
+    '<circle cx="18" cy="17" r="1.6" fill="#33210f"/><circle cx="26" cy="17" r="1.6" fill="#33210f"/>' +
+    '<path d="M18 22q4 3 8 0" fill="none" stroke="#33210f" stroke-width="1.6" stroke-linecap="round"/>';
+  if (winter) {
+    const hat = pick(HAT);
+    svg += '<path d="M10 14c0-14 24-14 24 0z" fill="' + hat + '"/>' +
+      '<rect x="9" y="11" width="26" height="5" rx="2.5" fill="#fff"/>' +
+      '<circle cx="22" cy="3.5" r="3.5" fill="#fff"/>' +
+      '<rect x="12" y="26" width="20" height="6" rx="3" fill="' + pick(HAT) + '"/>';
+  }
+  return svg + "</svg>";
+}
+
+function addCustomer() {
+  const el = document.createElement("div");
+  el.className = "customer";
+
+  // הלקוח נכנס מצד אחד של המסך והולך אל הדוכן
+  const fromLeft = Math.random() < 0.5;
+  el.style.left = fromLeft ? "-14%" : "104%";
+  el.style.top = random(60, 70) + "%";
+
+  // כל לקוח רוצה מוצר אחד, ויש לו מחיר מקסימלי שהוא מוכן לשלם עליו
+  const productId = pick(stand().products);
+  const maxPay = expectedPay(productId) + random(-1.5, 1.5);
+  const willBuy = state.prices[productId] <= maxPay;
+
+  const c = { el, productId, patience: PATIENCE, done: false, willBuy };
+  el.innerHTML = drawPerson(state.weather.stand === "winter") +
+    '<span class="bubble">' + (willBuy
+      ? '<svg class="want" viewBox="0 0 40 40"><use href="#' + PRODUCTS[productId].icon + '"/></svg>'
+      : "יקר מדי") + "</span>" +
+    '<span class="bar"><i></i></span>';
+  c.bar = el.querySelector(".bar i");
+
+  $("street").appendChild(el);
+  customers.push(c);
+
+  // רגע אחרי, מזיזים אותו לפני הדוכן, וה-CSS עושה את ההליכה החלקה
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.left = random(14, 74) + "%";
+  }));
+  setTimeout(() => {
+    el.classList.add("arrived");
+    if (c.willBuy) el.classList.add("hungry");
+  }, 1800);
+
+  if (willBuy) {
+    el.addEventListener("click", () => serve(c));
+  } else {
+    // היקר מדי בשבילו: מציץ רגע ואז הולך
+    state.missed++;
+    updateScreen();
+    setTimeout(() => leave(c), 2600);
+  }
+}
+
+function serve(c) {
+  if (c.done) return;
+  const id = c.productId;
+  if (state.stock[id] < 1) {
+    toast("נגמר ה" + PRODUCTS[id].name + "! קנה עוד למטה");
+    const row = document.querySelector('[data-id="' + id + '"]');
+    if (row) {
+      row.classList.remove("flash");
+      void row.offsetWidth;
+      row.classList.add("flash");
+    }
+    sadSound();
+    return;
+  }
+
+  // מוכרים: מורידים מהמלאי ומקבלים כסף
+  state.stock[id]--;
+  state.sold++;
+  const price = state.prices[id];
+  addMoney(price);
+  coinSound();
+  popCoins(c.el, price);
+
+  c.done = true;
+  c.el.classList.add("happy");
+  c.el.querySelector(".bubble").textContent = "תודה!";
+  setTimeout(() => leave(c), 500);
+  updateScreen();
+  save();
+}
+
+function leave(c) {
+  if (c.el.classList.contains("leaving")) return;
+  c.done = true;
+  c.el.classList.add("leaving");
+  c.el.style.left = (parseFloat(c.el.style.left) < 50 ? "-14%" : "104%");
+  setTimeout(() => {
+    c.el.remove();
+    customers = customers.filter((x) => x !== c);
+  }, 1500);
+}
+
+// "+5" שעף למעלה מעל הלקוח
+function popCoins(el, amount) {
+  const pop = document.createElement("div");
+  pop.className = "pop";
+  pop.textContent = "+" + amount + " ₪";
+  pop.style.left = el.style.left;
+  pop.style.top = (parseFloat(el.style.top) - 14) + "%";
+  $("scene").appendChild(pop);
+  setTimeout(() => pop.remove(), 1000);
+}
+
+// ---------- 9. השעון של המשחק ----------
+// tick רצה עשר פעמים בשנייה
+function tick() {
+  const waiting = customers.filter((c) => !c.done).length;
+  const boost = state.festival ? 1.8 : 1;
+  if (waiting < MAX_WAITING && Math.random() < state.weather.crowd * boost * 0.04) {
+    addCustomer();
+  }
+
+  customers.forEach((c) => {
+    if (c.done || !c.willBuy) return;
+    c.patience -= 0.1;
+    c.bar.style.width = Math.max(0, (c.patience / PATIENCE) * 100) + "%";
+    c.bar.style.background = c.patience < 3 ? "var(--berry)" : "var(--leaf)";
+    if (c.patience <= 0) leave(c);
+  });
+}
+
+// ---------- 10. מתחילים! ----------
+load();
+setWeather(pick(WEATHERS));
+setInterval(tick, 100);
+setInterval(nextWeather, WEATHER_EVERY);
+
+</script>
+</body>
+</html>

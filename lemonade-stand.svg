@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <rect width="400" height="260" fill="#8fe3ff"/>
+  <circle cx="335" cy="55" r="32" fill="#fff3b0"/>
+  <rect y="200" width="400" height="60" fill="#6fd16f"/>
+  <rect y="222" width="400" height="38" fill="#ffe0a3"/>
+  <!-- הדוכן -->
+  <rect x="95" y="105" width="210" height="105" fill="#ffe7a8" stroke="#222" stroke-width="5"/>
+  <rect x="95" y="175" width="210" height="40" fill="#c98a4b" stroke="#222" stroke-width="5"/>
+  <rect x="92" y="165" width="216" height="14" rx="4" fill="#e0a96d" stroke="#222" stroke-width="4"/>
+  <!-- סוכך מפוספס -->
+  <path d="M80 112 L100 60 H300 L320 112 Z" fill="#fff" stroke="#222" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M100 60 H140 L134 112 H80 Z M180 60 H220 L220 112 H170 Z M260 60 H300 L320 112 H266 Z" fill="#ff5a5f"/>
+  <path d="M80 112 L100 60 H300 L320 112 Z" fill="none" stroke="#222" stroke-width="5" stroke-linejoin="round"/>
+  <!-- כוס לימונדה גדולה -->
+  <path d="M170 105 h60 l-8 62 h-44 z" fill="#fff" fill-opacity=".7" stroke="#222" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M175 128 h50 l-5 39 h-40 z" fill="#ffd93d"/>
+  <circle cx="200" cy="108" r="14" fill="#fff3a6" stroke="#222" stroke-width="4"/>
+  <path d="M212 104 l16 -22" stroke="#222" stroke-width="5" stroke-linecap="round"/>
+  <!-- לימון -->
+  <ellipse cx="55" cy="205" rx="26" ry="18" fill="#ffd93d" stroke="#222" stroke-width="5"/>
+  <path d="M29 205 l-8 -4 M81 205 l8 -4" stroke="#222" stroke-width="5" stroke-linecap="round"/>
+</svg>
