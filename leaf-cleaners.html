@@ -208,7 +208,7 @@ img{max-width:100%}
       <div class="meter">
         <div class="meter-row"><span id="left">נשארו 0 עלים</span><strong id="pct">0% נקי</strong></div>
         <div class="bar-big"><i id="fill"></i></div>
-        <div class="meter-row controls"><span>מדי פעם עוברת תיבת זהב. לוחצים עליה מהר כדי לקבל בוסט לדקה.</span><span>מקלדת: חיצים או W A S D</span></div>
+        <div class="meter-row controls"><span>מדי פעם עוברת תיבת זהב. לוחצים עליה או נוגעים בה עם הקובייה כדי לקבל בוסט לדקה.</span><span>מקלדת: חיצים או W A S D</span></div>
       </div>
       <div class="legend">
         <h2>כמה שווה כל עלה</h2>
@@ -797,8 +797,8 @@ function nextLevel(){
 }
 function spawnBox(){
   const fromLeft=Math.random()<.5;
-  box={x:fromLeft?-40*S:W+40*S,y0:H*(.18+Math.random()*.64),y:0,dir:fromLeft?1:-1,speed:W/3.2+110*S,ph:Math.random()*6,t:0};
-  box.y=box.y0;showBanner('תיבת זהב! לוחצים עליה מהר');
+  box={x:fromLeft?-40*S:W+40*S,y0:H*(.18+Math.random()*.64),y:0,dir:fromLeft?1:-1,speed:W/8+30*S,ph:Math.random()*6,t:0};
+  box.y=box.y0;showBanner('תיבת זהב! לוחצים עליה או נוגעים בה עם הקובייה');
 }
 function claimBox(){
   if(!box)return;
@@ -840,7 +840,10 @@ function update(dt){
   // bonus chest
   if(!box&&boostT<=0){boxTimer-=dt;if(boxTimer<=0)spawnBox();}
   if(box){
-    box.t+=dt;box.x+=box.dir*box.speed*dt;box.y=box.y0+Math.sin(box.t*4+box.ph)*22*S;
+    box.t+=dt;box.x+=box.dir*box.speed*dt;box.y=box.y0+Math.sin(box.t*2+box.ph)*16*S;
+  }
+  if(box&&Math.hypot(box.x-cx,box.y-cy)<half+26*S)claimBox();
+  if(box){
     sparkT-=dt;if(sparkT<=0){sparkT=.035;parts.push({x:box.x-box.dir*16*S,y:box.y+(Math.random()-.5)*14*S,vx:-box.dir*40*S,vy:(Math.random()-.5)*40*S,life:.5,max:.5,c:'#FFE07A',r:2*S});}
     if((box.dir>0&&box.x>W+50*S)||(box.dir<0&&box.x<-50*S)){box=null;boxTimer=28+Math.random()*22;}
   }
@@ -1002,7 +1005,7 @@ addEventListener('blur',()=>keys.clear());
 function setPos(e){const r=cv.getBoundingClientRect();pointer.x=e.clientX-r.left;pointer.y=e.clientY-r.top;}
 cv.addEventListener('pointerdown',e=>{
   setPos(e);markStarted();e.preventDefault();
-  if(box&&Math.hypot(pointer.x-box.x,pointer.y-box.y)<Math.max(34,44*S)){claimBox();return;}
+  if(box&&Math.hypot(pointer.x-box.x,pointer.y-box.y)<Math.max(52,64*S)){claimBox();return;}
   pointer.active=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}
 });
 cv.addEventListener('pointermove',e=>{if(pointer.active)setPos(e);});
