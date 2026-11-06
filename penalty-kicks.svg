@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <rect width="400" height="260" fill="#2fb35a"/>
+  <rect y="120" width="400" height="30" fill="#3cc468"/>
+  <rect y="180" width="400" height="40" fill="#3cc468"/>
+  <!-- יציע -->
+  <rect width="400" height="62" fill="#2a1a6e"/>
+  <g fill="#ffd23f"><circle cx="30" cy="22" r="6"/><circle cx="90" cy="38" r="6"/><circle cx="160" cy="20" r="6"/><circle cx="250" cy="40" r="6"/><circle cx="320" cy="22" r="6"/><circle cx="375" cy="40" r="6"/></g>
+  <g fill="#ff5a5f"><circle cx="58" cy="44" r="6"/><circle cx="125" cy="26" r="6"/><circle cx="205" cy="46" r="6"/><circle cx="285" cy="26" r="6"/><circle cx="350" cy="50" r="6"/></g>
+  <rect y="58" width="400" height="8" fill="#222"/>
+  <!-- שער -->
+  <rect x="92" y="70" width="216" height="104" fill="#e8f7ee" fill-opacity=".55"/>
+  <g stroke="#222" stroke-opacity=".35" stroke-width="2">
+    <path d="M92 96H308M92 122H308M92 148H308M128 70V174M164 70V174M200 70V174M236 70V174M272 70V174"/>
+  </g>
+  <path d="M92 174V70H308V174" fill="none" stroke="#222" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M92 174V70H308V174" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+  <!-- שוער צולל -->
+  <g transform="rotate(-38 230 128)">
+    <rect x="212" y="102" width="34" height="46" rx="10" fill="#ff8a00" stroke="#222" stroke-width="5"/>
+    <rect x="214" y="144" width="12" height="30" rx="5" fill="#ff8a00" stroke="#222" stroke-width="5"/>
+    <rect x="232" y="144" width="12" height="30" rx="5" fill="#ff8a00" stroke="#222" stroke-width="5"/>
+    <circle cx="229" cy="88" r="14" fill="#f1c27d" stroke="#222" stroke-width="5"/>
+    <rect x="204" y="64" width="12" height="42" rx="6" fill="#ff8a00" stroke="#222" stroke-width="5"/>
+    <rect x="242" y="64" width="12" height="42" rx="6" fill="#ff8a00" stroke="#222" stroke-width="5"/>
+    <circle cx="210" cy="62" r="9" fill="#35e0ff" stroke="#222" stroke-width="4"/>
+    <circle cx="248" cy="62" r="9" fill="#35e0ff" stroke="#222" stroke-width="4"/>
+  </g>
+  <!-- קו שער ונקודת פנדל -->
+  <path d="M0 174H400" stroke="#fff" stroke-width="5"/>
+  <ellipse cx="200" cy="232" rx="8" ry="3" fill="#fff"/>
+  <!-- כדור בתנועה -->
+  <g stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"><path d="M146 232l24-26M154 244l22-20"/></g>
+  <circle cx="190" cy="206" r="22" fill="#fff" stroke="#222" stroke-width="5"/>
+  <path d="M190 195l11 8-4 13h-14l-4-13z" fill="#222"/>
+  <path d="M190 195v-9M201 203l9-4M197 216l6 8M183 216l-6 8M179 203l-9-4" stroke="#222" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

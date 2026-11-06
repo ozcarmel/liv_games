@@ -118,6 +118,13 @@
     box-shadow: 3px 3px 0 var(--ink);
   }
   .card:hover .play { animation: wiggle .5s ease; }
+
+  /* שורה תחתונה בכרטיס: כפתור "שחקו" בצד אחד, ומספר הנכנסים (עין ומספר) בצד השני */
+  .actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+  .actions .play { margin-top: 0; }
+  .seen { display: inline-flex; align-items: center; gap: 6px; font-family: var(--display); font-size: 1.3rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .seen svg { width: 24px; height: 24px; flex: none; }
+  .seen[hidden] { display: none; }
   @keyframes wiggle { 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
 
   /* כרטיס "בקרוב" */
@@ -185,16 +192,17 @@
   //   image   = התמונה הקטנה    url     = הדף של המשחק
   //   soon: true = כרטיס "בקרוב" שעוד אי אפשר לפתוח
   var games = [
-    { name: "החנות של לונה",     creator: "ליב", image: "luna-game.svg",     url: "luna-game.html" },
-    { name: "מגן החלל",          creator: "ליב", image: "space-shooter.svg", url: "space-shooter.html" },
-    { name: "עולם הקוביות",      creator: "ליב", image: "cube-world.svg",    url: "https://ozcarmel.github.io/cube_world/" },
-    { name: "שוטרים וגנבים",     creator: "גאיה", image: "cops-and-robbers.svg", url: "cops-and-robbers.html" },
-    { name: "בונים בית",         creator: "ליב", image: "build-house.svg",   url: "build-house.html" },
-    { name: "קופסת הכרטיסיות",   creator: "ליב", image: "flashcards.svg",    url: "flashcards.html" },
-    { name: "משחק פנדה",         creator: "ליב", image: "panda.svg",         url: "panda.html" },
-    { name: "הגנן של הכוכבים",   creator: "גילי", image: "star-gardener.svg", url: "star-gardener.html" },
-    { name: "דוכן לימונדה",      creator: "ליב", image: "lemonade-stand.svg", url: "lemonade-stand.html" },
-    { name: "מנקי העלים",        creator: "מיקה", image: "leaf-cleaners.svg", url: "leaf-cleaners.html" }
+    { key: "luna-game",      name: "החנות של לונה",     creator: "ליב", image: "luna-game.svg",     url: "luna-game.html" },
+    { key: "space-shooter",  name: "מגן החלל",          creator: "ליב", image: "space-shooter.svg", url: "space-shooter.html" },
+    { key: "cube-world",     name: "עולם הקוביות",      creator: "ליב", image: "cube-world.svg",    url: "https://ozcarmel.github.io/cube_world/" },
+    { key: "cops-and-robbers", name: "שוטרים וגנבים",   creator: "גאיה", image: "cops-and-robbers.svg", url: "cops-and-robbers.html" },
+    { key: "build-house",    name: "בונים בית",         creator: "ליב", image: "build-house.svg",   url: "build-house.html" },
+    { key: "flashcards",     name: "קופסת הכרטיסיות",   creator: "ליב", image: "flashcards.svg",    url: "flashcards.html" },
+    { key: "panda",          name: "משחק פנדה",         creator: "ליב", image: "panda.svg",         url: "panda.html" },
+    { key: "star-gardener",  name: "הגנן של הכוכבים",   creator: "עוז", image: "star-gardener.svg", url: "star-gardener.html" },
+    { key: "lemonade-stand", name: "דוכן לימונדה",      creator: "ליב", image: "lemonade-stand.svg", url: "lemonade-stand.html" },
+    { key: "leaf-cleaners",  name: "מנקי העלים",        creator: "מיקה", image: "leaf-cleaners.svg", url: "leaf-cleaners.html" },
+    { key: "penalty-kicks",  name: "בעיטות לשער",       creator: "עוז", image: "penalty-kicks.svg", url: "penalty-kicks.html" }
   ];
 
   // ===== הכותרת הצבעונית: כל אות בצבע אחר =====
@@ -222,14 +230,62 @@
     var thumb = g.soon
       ? '<div class="thumb"><span class="q">?</span></div>'
       : '<div class="thumb"><img src="' + g.image + '" alt="" loading="lazy"></div>';
+    // ליד כפתור "שחקו" יש עין ומספר: כמה אנשים נכנסו למשחק (מוצג רק אחרי שהמספר מגיע)
+    var seen = g.soon ? "" :
+      '<span class="seen" hidden>' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg>' +
+        '<span class="n"></span></span>';
     card.innerHTML = thumb +
       '<div class="info"><h3></h3><p class="by">נוצר על ידי <b></b></p>' +
-      '<span class="play">' + (g.soon ? "בקרוב" : "שחקו!") + '</span></div>';
+      '<div class="actions"><span class="play">' + (g.soon ? "בקרוב" : "שחקו!") + '</span>' + seen + '</div></div>';
     card.querySelector("h3").textContent = g.name;
     card.querySelector("b").textContent = g.creator;
     grid.appendChild(card);
+    if (!g.soon) trackGame(g, card);
   });
   document.getElementById("count").textContent = ready + " משחקים";
+
+  // ===== מונה נכנסים לכל משחק =====
+  // אותו שירות חינמי של המונה הכללי, עם מפתח נפרד לכל משחק.
+  // כל דפדפן נספר פעם אחת לכל משחק: כשלוחצים על הכרטיס מוסיפים 1, ובשאר הזמן רק קוראים את המספר.
+  // אם השירות לא עונה, המספר פשוט לא מוצג והאתר ממשיך לעבוד.
+  function trackGame(g, card) {
+    var base = "https://abacus.jasoncameron.dev/", ns = "ozcarmel-liv-games", key = "game-" + g.key;
+    var storeKey = "livGamesPlayed:" + g.key;
+    var box = card.querySelector(".seen"), num = card.querySelector(".n");
+    var current = null; // המספר שמוצג עכשיו
+
+    function show(n) {
+      if (typeof n !== "number") return;
+      current = n;
+      num.textContent = n.toLocaleString("he-IL");
+      box.setAttribute("aria-label", "מספר הנכנסים למשחק: " + n.toLocaleString("he-IL"));
+      box.hidden = false;
+    }
+    function played() { try { return localStorage.getItem(storeKey) === "1"; } catch (e) { return false; } }
+
+    // בטעינת העמוד: קוראים את המספר. אם עוד אף אחד לא נכנס למשחק, המשחק עוד לא קיים בשירות ומציגים 0
+    fetch(base + "get/" + ns + "/" + key).then(function (r) {
+      if (r.status === 404) return { value: 0 };
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function (d) { show(d.value); }).catch(function () {});
+
+    // בלחיצה על הכרטיס (גם לחיצה אמצעית): סופרים פעם אחת לכל דפדפן
+    function onOpen() {
+      if (played()) return;
+      try { localStorage.setItem(storeKey, "1"); } catch (e) {}
+      fetch(base + "hit/" + ns + "/" + key, { keepalive: true }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      }).then(function (d) { show(d.value); }).catch(function () {
+        // לא הצליח לספור: מאפשרים לנסות שוב בפעם הבאה
+        try { localStorage.removeItem(storeKey); } catch (e) {}
+      });
+    }
+    card.addEventListener("click", onOpen);
+    card.addEventListener("auxclick", onOpen);
+  }
 
   // ===== מונה מבקרים =====
   // שירות חינמי (abacus.jasoncameron.dev) סופר ביקורים. כל דפדפן נספר פעם אחת בלבד:
