@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <!-- דשא -->
+  <rect width="400" height="260" fill="#57A22C"/>
+  <circle cx="90" cy="70" r="90" fill="#8CCB3E" opacity=".35"/>
+  <circle cx="320" cy="200" r="110" fill="#3E8A22" opacity=".3"/>
+  <g stroke="#B5E05A" stroke-width="3" stroke-linecap="round" opacity=".7">
+    <path d="M30 40 l4 -12 M60 120 l-3 -12 M140 30 l5 -11 M200 230 l-4 -12 M360 60 l3 -12 M300 120 l-5 -10 M40 210 l4 -12 M250 40 l-3 -11 M110 190 l5 -11 M370 230 l-4 -12"/>
+  </g>
+  <g stroke="#2F6E18" stroke-width="3" stroke-linecap="round" opacity=".6">
+    <path d="M70 60 l-4 -12 M180 100 l4 -11 M330 30 l-4 -12 M20 150 l5 -10 M260 200 l-3 -12 M380 150 l-4 -11 M150 240 l4 -12"/>
+  </g>
+  <!-- עלים -->
+  <g stroke="#222" stroke-width="3.5" stroke-linejoin="round">
+    <path d="M40 90 q22 -22 44 0 q-22 22 -44 0 z" fill="#E8892B" transform="rotate(-20 62 90)"/>
+    <path d="M300 60 q22 -22 44 0 q-22 22 -44 0 z" fill="#C7372F" transform="rotate(25 322 60)"/>
+    <path d="M320 180 q22 -22 44 0 q-22 22 -44 0 z" fill="#E3B23C" transform="rotate(-35 342 180)"/>
+    <path d="M60 200 q22 -22 44 0 q-22 22 -44 0 z" fill="#D9541E" transform="rotate(40 82 200)"/>
+    <path d="M230 210 q20 -20 40 0 q-20 20 -40 0 z" fill="#9A5B2A" transform="rotate(10 250 210)"/>
+    <path d="M250 30 q18 -18 36 0 q-18 18 -36 0 z" fill="#F4C93E" transform="rotate(-15 268 30)"/>
+  </g>
+  <!-- הקובייה -->
+  <rect x="148" y="98" width="104" height="104" rx="20" fill="#222" opacity=".25" transform="translate(9 12)"/>
+  <rect x="148" y="98" width="104" height="104" rx="20" fill="#8A2A24" stroke="#222" stroke-width="5"/>
+  <rect x="160" y="110" width="80" height="80" rx="14" fill="#E2534A"/>
+  <path d="M178 150 h40 M218 122 v56 M218 126 h16 M218 138 h16 M218 150 h16 M218 162 h16 M218 174 h16" stroke="#6E1F1A" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- מטבע -->
+  <circle cx="275" cy="105" r="17" fill="#E2A915" stroke="#222" stroke-width="4"/>
+  <circle cx="275" cy="105" r="9" fill="none" stroke="#9E720A" stroke-width="3"/>
+</svg>
