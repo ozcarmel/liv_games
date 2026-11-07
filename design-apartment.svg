@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <rect width="400" height="260" fill="#ffe9c7"/>
+  <g fill="#fff" opacity=".6"><circle cx="40" cy="40" r="16"/><circle cx="360" cy="52" r="11"/><circle cx="340" cy="26" r="6"/></g>
+  <!-- קיר שמאלי -->
+  <path d="M60 170 L200 100 L200 18 L60 88 Z" fill="#ff9ec2" stroke="#1d1b4b" stroke-width="5" stroke-linejoin="round"/>
+  <g fill="#fff" opacity=".45"><circle cx="90" cy="110" r="5"/><circle cx="120" cy="96" r="5"/><circle cx="150" cy="80" r="5"/><circle cx="180" cy="66" r="5"/><circle cx="105" cy="135" r="5"/><circle cx="165" cy="105" r="5"/></g>
+  <!-- תמונה על הקיר -->
+  <path d="M98 108 L150 82 L150 48 L98 74 Z" fill="#fff6dc" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M104 101 L124 91 L134 72 L144 78 L144 86 L104 106 Z" fill="#69b578"/>
+  <circle cx="135" cy="66" r="5" fill="#ffc94d"/>
+  <!-- קיר ימני -->
+  <path d="M200 100 L340 170 L340 88 L200 18 Z" fill="#8fd8d0" stroke="#1d1b4b" stroke-width="5" stroke-linejoin="round"/>
+  <!-- חלון -->
+  <path d="M240 76 L300 106 L300 62 L240 32 Z" fill="#cdeeff" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M270 91 L270 47 M240 54 L300 84" stroke="#1d1b4b" stroke-width="3"/>
+  <!-- רצפה -->
+  <path d="M60 170 L200 100 L340 170 L200 240 Z" fill="#f2c48d" stroke="#1d1b4b" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M95 187 L235 117 M130 205 L270 135 M165 222 L305 152" stroke="#d99e5f" stroke-width="3"/>
+  <!-- שטיח -->
+  <path d="M120 175 L200 135 L270 170 L190 210 Z" fill="#7a5cff" opacity=".85"/>
+  <path d="M140 175 L200 145 L250 170 L190 200 Z" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>
+  <!-- ספה -->
+  <path d="M110 160 L170 130 L170 112 L110 142 Z" fill="#ff6b8b" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M110 160 L170 130 L196 143 L136 173 Z" fill="#ff8fa8" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M136 173 L196 143 L196 156 L136 186 Z" fill="#e04f71" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M110 160 L136 173 L136 186 L110 173 Z" fill="#e04f71" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <!-- עציץ -->
+  <path d="M268 172 L292 172 L288 196 L272 196 Z" fill="#fff" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="#2fd1a0" stroke="#1d1b4b" stroke-width="3.5"><ellipse cx="268" cy="152" rx="10" ry="20" transform="rotate(-30 268 152)"/><ellipse cx="292" cy="150" rx="10" ry="20" transform="rotate(30 292 150)"/><ellipse cx="280" cy="142" rx="9" ry="22"/></g>
+  <!-- מנורה -->
+  <path d="M228 0 L228 40" stroke="#1d1b4b" stroke-width="3"/>
+  <path d="M208 58 Q228 30 248 58 Z" fill="#ffc94d" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  <!-- מכחול -->
+  <g transform="translate(345 200) rotate(35)">
+    <rect x="-7" y="-46" width="14" height="40" rx="5" fill="#ffd23f" stroke="#1d1b4b" stroke-width="4"/>
+    <rect x="-9" y="-8" width="18" height="12" fill="#c9cbcd" stroke="#1d1b4b" stroke-width="4"/>
+    <path d="M-9 4 Q0 30 9 4 Z" fill="#ff5fa2" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+  <g fill="#fff" stroke="#1d1b4b" stroke-width="3"><path d="M40 210 l6 12 l12 6 l-12 6 l-6 12 l-6 -12 l-12 -6 l12 -6 Z"/></g>
+</svg>
