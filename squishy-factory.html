@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מפעל הסקווישים | משחק סקווישים בחינם</title>
+<meta name="description" content="מכינים סקוויש משלכם, סוחטים אותו ומפוצצים: בוחרים צורה, צבע, פרצוף וקישוט, ואז לוחצים עד שהוא מתפוצץ בקונפטי. משחק בחינם בדפדפן.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/squishy-factory.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="מפעל הסקווישים | משחק סקווישים בחינם">
+<meta property="og:description" content="מכינים סקוויש משלכם, סוחטים אותו ומפוצצים: בוחרים צורה, צבע, פרצוף וקישוט, ואז לוחצים עד שהוא מתפוצץ בקונפטי. משחק בחינם בדפדפן.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/squishy-factory.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "מפעל הסקווישים",
+  "description": "מכינים סקוויש משלכם, סוחטים אותו ומפוצצים: בוחרים צורה, צבע, פרצוף וקישוט, ואז לוחצים עד שהוא מתפוצץ בקונפטי. משחק בחינם בדפדפן.",
+  "url": "https://ozcarmel.github.io/liv_games/squishy-factory.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "סימולציה",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": { "@type": "WebSite", "name": "אתר המשחקים של ליב", "url": "https://ozcarmel.github.io/liv_games/" }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+  /* ===== תוכנית העיצוב =====
+     מפעל צעצועים פסטלי: רקע שמיים מתוק, מדבקות עם מסגרת עבה וצל קשיח
+     (אותו סגנון של אתר המשחקים), והסקוויש הוא הכוכב היחיד. */
+  :root {
+    --sky: #6fd3ff; --sun: #ffd23f; --pink: #ff5fa2; --grape: #7a5cff; --mint: #2fd1a0;
+    --ink: #1d1b4b; --paper: #ffffff;
+    --display: "Secular One", "Arial Rounded MT Bold", Arial, sans-serif;
+    --body: "Rubik", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--body); color: var(--ink); font-size: 17px;
+    background-color: var(--sky);
+    background-image: radial-gradient(rgba(255,255,255,.55) 3px, transparent 3.5px);
+    background-size: 34px 34px;
+    min-height: 100vh;
+    padding: 14px max(14px, env(safe-area-inset-left, 0px)) 40px max(14px, env(safe-area-inset-right, 0px));
+  }
+  .app { max-width: 880px; margin: 0 auto; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  h1 {
+    font-family: var(--display); font-weight: 400; margin: 0; line-height: 1;
+    font-size: clamp(30px, 6vw, 52px); color: #fff; -webkit-text-stroke: .06em var(--ink); paint-order: stroke fill;
+    text-shadow: 3px 4px 0 var(--ink);
+  }
+
+  .modes { display: flex; gap: 8px; flex-wrap: wrap; }
+  .modes button, .btn {
+    font-family: var(--display); font-size: 1.05rem; color: var(--ink);
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 999px; padding: 6px 18px; cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink); transition: transform .1s;
+  }
+  .modes button:hover, .btn:hover { transform: translateY(-2px); }
+  .modes button:active, .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .modes button[aria-pressed="true"] { background: var(--sun); }
+  .modes button.pop[aria-pressed="true"] { background: var(--pink); color: #fff; }
+  button:focus-visible { outline: 4px solid var(--grape); outline-offset: 3px; }
+
+  .stage {
+    position: relative; border: 5px solid var(--ink); border-radius: 28px; overflow: hidden;
+    box-shadow: 9px 9px 0 var(--grape); background: #ffd9f0; touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  canvas { display: block; width: 100%; height: auto; cursor: pointer; touch-action: none; }
+
+  .hud { position: absolute; top: 12px; inset-inline-start: 12px; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; }
+  .chip {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 999px; padding: 3px 14px 4px;
+    font-weight: 700; font-size: .95rem; box-shadow: 3px 3px 0 var(--ink);
+  }
+  .chip b { font-family: var(--display); font-weight: 400; font-size: 1.25em; margin-inline-start: 6px; font-variant-numeric: tabular-nums; }
+  .chip[hidden] { display: none; }
+
+  .hint {
+    position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); width: max-content; max-width: 92%;
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; padding: 6px 16px;
+    font-weight: 500; font-size: .95rem; text-align: center; box-shadow: 3px 3px 0 var(--ink);
+  }
+  .mute {
+    position: absolute; top: 12px; inset-inline-end: 12px; width: 44px; height: 44px; border-radius: 50%; padding: 0;
+    background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); cursor: pointer; display: grid; place-items: center;
+  }
+  .mute svg { width: 22px; height: 22px; }
+
+  .banner {
+    position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%) scale(.4); pointer-events: none; opacity: 0;
+    font-family: var(--display); font-size: clamp(40px, 12vw, 120px); line-height: 1; white-space: nowrap;
+    color: var(--sun); -webkit-text-stroke: .07em var(--ink); paint-order: stroke fill; text-shadow: 5px 6px 0 var(--ink);
+    transition: transform .25s cubic-bezier(.2, 1.7, .4, 1), opacity .18s;
+  }
+  .banner.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .banner.small { font-size: clamp(26px, 7vw, 64px); color: #fff; }
+
+  /* ===== הסדנה ===== */
+  .workshop {
+    margin-top: 22px; background: var(--paper); border: 5px solid var(--ink); border-radius: 26px; padding: 16px 18px 20px;
+    box-shadow: 8px 8px 0 var(--mint);
+  }
+  .workshop[hidden] { display: none; }
+  .workshop h2 { font-family: var(--display); font-weight: 400; font-size: 1.6rem; margin: 0 0 4px; }
+  .workshop .sub { margin: 0 0 12px; opacity: .75; font-size: .95rem; }
+  .group { margin-bottom: 12px; }
+  .group h3 { font-family: var(--display); font-weight: 400; font-size: 1.1rem; margin: 0 0 6px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt {
+    width: 66px; height: 66px; padding: 0; border-radius: 16px; border: 3px solid var(--ink); background: #f4f0ff; cursor: pointer;
+    display: grid; place-items: center; box-shadow: 2px 2px 0 var(--ink); transition: transform .1s;
+  }
+  .opt:hover { transform: translateY(-2px); }
+  .opt[aria-pressed="true"] { background: var(--sun); box-shadow: 0 0 0 4px var(--pink), 2px 2px 0 4px var(--ink); }
+  .opt canvas { width: 54px; height: 54px; cursor: pointer; }
+  .opt.sw { width: 46px; height: 46px; border-radius: 50%; }
+  .row-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .btn.go { background: var(--pink); color: #fff; }
+  .btn.alt { background: var(--mint); }
+
+  .foot { text-align: center; margin: 22px 0 0; font-size: .95rem; font-weight: 500; }
+  .foot a { color: var(--ink); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (max-width: 560px) {
+    .opt { width: 58px; height: 58px; } .opt canvas { width: 46px; height: 46px; } .opt.sw { width: 40px; height: 40px; }
+    .modes button { padding: 5px 13px; font-size: .95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .banner { transition: none; } }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>מפעל הסקווישים</h1>
+    <div class="modes" role="group" aria-label="מצב משחק">
+      <button type="button" data-mode="make" aria-pressed="true">מכינים</button>
+      <button type="button" data-mode="squeeze" aria-pressed="false">סוחטים</button>
+      <button type="button" class="pop" data-mode="pop" aria-pressed="false">מפוצצים!</button>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="סקוויש גדול על הלוח. לוחצים עליו כדי לסחוט"></canvas>
+    <div class="hud">
+      <div class="chip" id="chipPops" hidden>פיצוצים<b id="popCount">0</b></div>
+      <div class="chip" id="chipCombo" hidden>רצף<b id="comboCount">x1</b></div>
+    </div>
+    <div class="banner" id="banner"></div>
+    <div class="hint" id="hint"></div>
+    <button class="mute" id="mute" type="button" aria-label="השתקת צליל" title="צליל">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" id="muteIcon"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+    </button>
+  </div>
+
+  <section class="workshop" id="workshop" aria-labelledby="wsTitle">
+    <h2 id="wsTitle">הסדנה</h2>
+    <p class="sub">בחרו צורה, צבע, פרצוף וקישוט. הסקוויש משתנה מיד, ואפשר ללחוץ עליו ולסחוט אותו.</p>
+    <div class="group"><h3>צורה</h3><div class="opts" id="optShape"></div></div>
+    <div class="group"><h3>צבע</h3><div class="opts" id="optColor"></div></div>
+    <div class="group"><h3>פרצוף</h3><div class="opts" id="optFace"></div></div>
+    <div class="group"><h3>קישוט</h3><div class="opts" id="optAcc"></div></div>
+    <div class="row-btns">
+      <button type="button" class="btn alt" id="randomBtn">הפתעה</button>
+      <button type="button" class="btn" id="squeezeBtn">סוחטים</button>
+      <button type="button" class="btn go" id="popBtn">מפוצצים!</button>
+    </div>
+  </section>
+
+  <p class="foot">המשחק של ליב · <a href="index.html">חזרה לאתר המשחקים</a></p>
+</main>
+<div class="sr" id="live" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =====================================================================
+  //  1. כלים וצלילים
+  // =====================================================================
+  function $(id) { return document.getElementById(id); }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  var INK = "#1d1b4b";
+
+  var AC = null, muted = false, noiseBuf = null, squishNode = null;
+  function ac() {
+    if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; } }
+    if (AC && AC.state === "suspended") AC.resume();
+    if (AC && !noiseBuf) {
+      noiseBuf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    return AC;
+  }
+  function tone(f, dur, type, vol, slide, delay) {
+    if (muted || !ac()) return;
+    var t0 = AC.currentTime + (delay || 0), o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(f, t0);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t0 + dur);
+    g.gain.setValueAtTime(vol || .2, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + dur + .02);
+  }
+  function noise(dur, vol, freq, kind, delay) {
+    if (muted || !ac()) return;
+    var t0 = AC.currentTime + (delay || 0), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
+    var f = AC.createBiquadFilter(); f.type = kind || "bandpass"; f.frequency.value = freq || 1000;
+    var g = AC.createGain(); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    s.connect(f); f.connect(g); g.connect(AC.destination); s.start(t0, Math.random()); s.stop(t0 + dur + .05);
+  }
+  var sfx = {
+    press: function () { noise(.12, .22, 700, "lowpass"); tone(320, .14, "sine", .25, 120); },
+    release: function () { tone(170, .45, "sine", .3, 330); tone(240, .35, "triangle", .12, 420, .03); },
+    pop: function () { noise(.35, .5, 1800, "highpass"); tone(900, .22, "square", .15, 160); tone(110, .3, "sine", .5, 40); },
+    cheer: function () { tone(660, .12, "triangle", .15, null, 0); tone(880, .12, "triangle", .15, null, .09); tone(1320, .2, "triangle", .15, null, .18); },
+    pick: function () { tone(740, .07, "triangle", .12, 990); },
+    respawn: function () { tone(260, .3, "sine", .2, 620); },
+    holdStart: function () {
+      if (muted || !ac()) return; sfx.holdStop();
+      var s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
+      var f = AC.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 500; f.Q.value = 2;
+      var g = AC.createGain(); g.gain.value = .035;
+      s.connect(f); f.connect(g); g.connect(AC.destination); s.start();
+      squishNode = { s: s, f: f, g: g };
+    },
+    holdSet: function (p, depth) { if (squishNode) { squishNode.f.frequency.value = 350 + p * 1500 + depth * 300; squishNode.g.gain.value = .03 + p * .06; } },
+    holdStop: function () { if (squishNode) { try { squishNode.s.stop(); } catch (e) {} squishNode = null; } }
+  };
+  function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+  // =====================================================================
+  //  2. עיצוב הסקוויש: אפשרויות
+  // =====================================================================
+  var SHAPES = [
+    { id: "mochi", name: "מוצ׳י" }, { id: "cat", name: "חתול" }, { id: "heart", name: "לב" },
+    { id: "star", name: "כוכב" }, { id: "flower", name: "פרח" }, { id: "donut", name: "דונאט" }
+  ];
+  var COLORS = ["#ff8fc7", "#ffb072", "#ffe066", "#b8f26a", "#5de0b6", "#6fd3ff", "#b9a2ff", "#8a6bff", "#ffffff", "#ff6b6b"];
+  var COLOR_NAMES = ["ורוד", "כתום", "צהוב", "ירוק", "טורקיז", "תכלת", "סגול בהיר", "סגול", "לבן", "אדום"];
+  var FACES = ["שמח", "מתוק", "מנומנם", "מופתע", "שובב", "מגניב"];
+  var ACCS = ["בלי", "סומק", "פפיון", "משקפיים", "סוכריות", "כתר"];
+  var SPRINK = ["#ff5fa2", "#ffd23f", "#2fd1a0", "#6fd3ff", "#7a5cff", "#ffffff"];
+
+  var design = { shape: "mochi", color: 0, face: 0, acc: 1 };
+  try {
+    var saved = JSON.parse(localStorage.getItem("squishyDesign") || "null");
+    if (saved && SHAPES.some(function (s) { return s.id === saved.shape; })) design = saved;
+  } catch (e) {}
+  function saveDesign() { try { localStorage.setItem("squishyDesign", JSON.stringify(design)); } catch (e) {} }
+
+  // ----- קווי המתאר של הצורות -----
+  var N = 88, outlines = {};
+  function bump(th, c) { var d = th - c; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return Math.exp(-Math.pow(d / .2, 2)); }
+  function outline(id) {
+    if (outlines[id]) return outlines[id];
+    var b = [], i;
+    for (i = 0; i < N; i++) {
+      var th = i / N * Math.PI * 2 - Math.PI / 2, a = th + Math.PI / 2, x, y, r;
+      if (id === "mochi") { x = Math.cos(th) * 1.1; y = Math.sin(th) * .88; }
+      else if (id === "cat") { r = .9 + .42 * bump(th, -Math.PI / 2 - .62) + .42 * bump(th, -Math.PI / 2 + .62); x = Math.cos(th) * r * 1.08; y = Math.sin(th) * r * .94 + .06; }
+      else if (id === "heart") { var t = i / N * Math.PI * 2; x = 16 * Math.pow(Math.sin(t), 3) / 17; y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 17; }
+      else if (id === "star") { r = .74 + .27 * Math.cos(5 * a); x = Math.cos(th) * r; y = Math.sin(th) * r; }
+      else if (id === "flower") { r = .72 + .3 * Math.abs(Math.cos(3 * a)); x = Math.cos(th) * r; y = Math.sin(th) * r; }
+      else { x = Math.cos(th); y = Math.sin(th); }
+      b.push({ x: x, y: y });
+    }
+    var mx = 0, my = 0, ar = 0;
+    b.forEach(function (p) { mx += p.x; my += p.y; }); mx /= N; my /= N;
+    b.forEach(function (p) { p.x -= mx; p.y -= my; ar += Math.hypot(p.x, p.y); }); ar /= N;
+    var minx = 9, maxx = -9, miny = 9, maxy = -9;
+    b.forEach(function (p) { p.x /= ar; p.y /= ar; minx = Math.min(minx, p.x); maxx = Math.max(maxx, p.x); miny = Math.min(miny, p.y); maxy = Math.max(maxy, p.y); });
+    var u = b.map(function (p) { var l = Math.hypot(p.x, p.y) || 1; return { x: p.x / l, y: p.y / l }; });
+    return (outlines[id] = { b: b, u: u, w: maxx - minx, h: maxy - miny, top: miny, bottom: maxy });
+  }
+  var FACE_OFF = { mochi: .02, cat: .12, heart: -.06, star: .08, flower: .02, donut: 0 };
+
+  var SPR = [];
+  (function () { var s = 7; function r() { s = (s * 16807) % 2147483647; return s / 2147483647; }
+    for (var i = 0; i < 18; i++) SPR.push({ a: r() * Math.PI * 2 - Math.PI / 2, rf: .56 + r() * .3, rot: r() * Math.PI, c: SPRINK[Math.floor(r() * SPRINK.length)] }); })();
+
+  // =====================================================================
+  //  3. ציור סקוויש (גם למשחק וגם לתמונות הקטנות בסדנה)
+  // =====================================================================
+  function shade(hex, amt) {
+    var n = parseInt(hex.slice(1), 16);
+    return "rgb(" + clamp((n >> 16) + amt, 0, 255) + "," + clamp(((n >> 8) & 255) + amt, 0, 255) + "," + clamp((n & 255) + amt, 0, 255) + ")";
+  }
+  function mix(hex, hex2, t) {
+    var a = parseInt(hex.slice(1), 16), b = parseInt(hex2.slice(1), 16);
+    var r = Math.round(lerp(a >> 16, b >> 16, t)), g = Math.round(lerp((a >> 8) & 255, (b >> 8) & 255, t)), bl = Math.round(lerp(a & 255, b & 255, t));
+    return "rgb(" + r + "," + g + "," + bl + ")";
+  }
+  function smoothPath(g, q) {
+    var n = q.length;
+    g.moveTo((q[0].x + q[n - 1].x) / 2, (q[0].y + q[n - 1].y) / 2);
+    for (var i = 0; i < n; i++) { var p = q[i], r = q[(i + 1) % n]; g.quadraticCurveTo(p.x, p.y, (p.x + r.x) / 2, (p.y + r.y) / 2); }
+    g.closePath();
+  }
+
+  // st: { pressure, squeezed }
+  function drawSquishy(g, d, cx, cy, S, scx, scy, o, st) {
+    var ob = outline(d.shape), B = ob.b, U = ob.u, n = B.length, i, sf = S / 155;
+    var q = [], minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+    for (i = 0; i < n; i++) {
+      var x = cx + (B[i].x + U[i].x * o[i]) * S * scx, y = cy + (B[i].y + U[i].y * o[i]) * S * scy;
+      q.push({ x: x, y: y });
+      if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y;
+    }
+    var base = COLORS[d.color], col = st.pressure > 0 ? mix(base, "#ff4d5e", st.pressure * .45) : base;
+    var gr = g.createRadialGradient(cx - S * .35, cy - S * .5, S * .1, cx, cy, S * 1.3);
+    gr.addColorStop(0, mix(base, "#ffffff", .55)); gr.addColorStop(.45, col); gr.addColorStop(1, shade(base, -38));
+    g.save();
+    g.lineJoin = "round"; g.lineCap = "round"; g.strokeStyle = INK; g.lineWidth = Math.max(2, 6 * sf);
+    g.beginPath(); smoothPath(g, q);
+    var hole = null;
+    if (d.shape === "donut") {
+      hole = [];
+      for (i = 0; i < n; i++) { var hr = .38 * (1 + o[i] * .6); hole.push({ x: cx + U[i].x * hr * S * scx, y: cy + U[i].y * hr * S * scy }); }
+      smoothPath(g, hole);
+    }
+    g.fillStyle = gr; g.fill("evenodd"); g.stroke();
+    // הברקה
+    var hi = [], k;
+    for (k = 68; k <= 82; k++) { var p = q[k % n]; hi.push({ x: cx + (p.x - cx) * .8, y: cy + (p.y - cy) * .8 }); }
+    g.strokeStyle = "rgba(255,255,255,.62)"; g.lineWidth = Math.max(2, 11 * sf);
+    g.beginPath(); g.moveTo(hi[0].x, hi[0].y); for (k = 1; k < hi.length; k++) g.lineTo(hi[k].x, hi[k].y); g.stroke();
+    // סוכריות
+    if (d.acc === 4) {
+      SPR.forEach(function (s) {
+        var idx = Math.round((s.a + Math.PI / 2) / (Math.PI * 2) * n) % n, pp = q[(idx + n) % n];
+        var px = cx + (pp.x - cx) * s.rf, py = cy + (pp.y - cy) * s.rf;
+        if (d.shape === "donut" && Math.hypot(px - cx, py - cy) < S * .5) return;
+        g.save(); g.translate(px, py); g.rotate(s.rot); g.strokeStyle = s.c; g.lineWidth = Math.max(2, 7 * sf);
+        g.beginPath(); g.moveTo(-8 * sf, 0); g.lineTo(8 * sf, 0); g.stroke(); g.restore();
+      });
+    }
+    // פרצוף
+    var sx = (maxx - minx) / (ob.w * S), sy = (maxy - miny) / (ob.h * S);
+    var fx = (minx + maxx) / 2, fy = (miny + maxy) / 2 + FACE_OFF[d.shape] * S * sy;
+    drawFace(g, d.face, fx, fy, S, sx, sy, st, sf, d.shape);
+    if (d.acc === 1) { // סומק
+      var bk = d.shape === "donut" ? .62 : 1;
+      g.fillStyle = "rgba(255,70,140,.5)";
+      [-1, 1].forEach(function (s2) { g.beginPath(); g.ellipse(fx + s2 * .5 * S * sx * bk, fy + .1 * S * sy * bk, .12 * S * sx * bk, .075 * S * sy * bk, 0, 0, Math.PI * 2); g.fill(); });
+    }
+    if (d.acc === 3) { // משקפיים
+      var kk = d.shape === "donut" ? .62 : 1;
+      g.strokeStyle = INK; g.lineWidth = Math.max(2, 4.5 * sf * kk);
+      [-1, 1].forEach(function (s3) { g.beginPath(); g.arc(fx + s3 * .3 * S * sx * kk, fy - .04 * S * sy * kk, .17 * S * sx * kk, 0, Math.PI * 2); g.stroke(); });
+      g.beginPath(); g.moveTo(fx - .13 * S * sx * kk, fy - .05 * S * sy * kk); g.lineTo(fx + .13 * S * sx * kk, fy - .05 * S * sy * kk); g.stroke();
+    }
+    var top = q[0];
+    if (d.acc === 2) { // פפיון
+      var bw = .3 * S, bh = .17 * S;
+      g.fillStyle = "#ff5fa2"; g.strokeStyle = INK; g.lineWidth = Math.max(2, 4.5 * sf);
+      g.beginPath(); g.moveTo(top.x, top.y - bh * .2); g.lineTo(top.x - bw, top.y - bh * 1.2); g.lineTo(top.x - bw, top.y + bh * .8); g.closePath(); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(top.x, top.y - bh * .2); g.lineTo(top.x + bw, top.y - bh * 1.2); g.lineTo(top.x + bw, top.y + bh * .8); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = "#ffd23f"; g.beginPath(); g.arc(top.x, top.y - bh * .2, bh * .42, 0, Math.PI * 2); g.fill(); g.stroke();
+    }
+    if (d.acc === 5) { // כתר
+      var cw = .26 * S, ch = .26 * S, bx = top.x, by = top.y + .04 * S;
+      g.fillStyle = "#ffd23f"; g.strokeStyle = INK; g.lineWidth = Math.max(2, 4.5 * sf);
+      g.beginPath(); g.moveTo(bx - cw, by); g.lineTo(bx - cw, by - ch); g.lineTo(bx - cw * .5, by - ch * .55); g.lineTo(bx, by - ch * 1.1);
+      g.lineTo(bx + cw * .5, by - ch * .55); g.lineTo(bx + cw, by - ch); g.lineTo(bx + cw, by); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = "#ff5fa2"; g.beginPath(); g.arc(bx, by - ch * .3, .035 * S, 0, Math.PI * 2); g.fill();
+    }
+    g.restore();
+    return { top: top, minx: minx, maxx: maxx, miny: miny, maxy: maxy };
+  }
+
+  function drawFace(g, type, fx, fy, S, sx, sy, st, sf, shape) {
+    var k = shape === "donut" ? .62 : 1, ax = (sx + sy) / 2;
+    var ex = .3 * S * sx * k, ey = fy - .04 * S * sy * k, er = .085 * S * ax * k * (1 + st.pressure * .5), my = fy + .2 * S * sy * k;
+    var dy = shape === "donut" ? .62 * S * sy : 0;
+    ey += dy * .85; my += dy * .85;
+    g.save(); g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = Math.max(1.8, 4.6 * sf * k);
+    var sq = st.squeezed && type !== 5;
+    [-1, 1].forEach(function (s) {
+      var x = fx + s * ex;
+      if (sq) {
+        var dir = -s; g.beginPath(); g.moveTo(x - dir * er, ey - er); g.lineTo(x + dir * er, ey); g.lineTo(x - dir * er, ey + er); g.stroke();
+      } else if (type === 0) {
+        g.beginPath(); g.ellipse(x, ey, er * .9, er * 1.15, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#fff"; g.beginPath(); g.arc(x - er * .25, ey - er * .4, er * .32, 0, Math.PI * 2); g.fill(); g.fillStyle = INK;
+      } else if (type === 1) {
+        g.beginPath(); g.ellipse(x, ey, er * 1.3, er * 1.5, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#fff"; g.beginPath(); g.arc(x - er * .4, ey - er * .55, er * .5, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.arc(x + er * .4, ey + er * .5, er * .22, 0, Math.PI * 2); g.fill(); g.fillStyle = INK;
+      } else if (type === 2) {
+        g.beginPath(); g.arc(x, ey - er * .3, er * 1.05, Math.PI * .12, Math.PI * .88); g.stroke();
+      } else if (type === 3) {
+        g.fillStyle = "#fff"; g.beginPath(); g.arc(x, ey, er * 1.35, 0, Math.PI * 2); g.fill(); g.stroke();
+        g.fillStyle = INK; g.beginPath(); g.arc(x + er * .1, ey + er * .1, er * .65, 0, Math.PI * 2); g.fill();
+      } else if (type === 4) {
+        if (s < 0) { g.beginPath(); g.moveTo(x - er, ey); g.quadraticCurveTo(x, ey - er * 1.1, x + er, ey); g.stroke(); }
+        else { g.beginPath(); g.ellipse(x, ey, er * .9, er * 1.15, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = "#fff"; g.beginPath(); g.arc(x - er * .25, ey - er * .4, er * .32, 0, Math.PI * 2); g.fill(); g.fillStyle = INK; }
+      }
+    });
+    if (type === 5) {
+      g.fillStyle = INK;
+      [-1, 1].forEach(function (s) { g.beginPath(); g.ellipse(fx + s * ex, ey, er * 1.7, er * 1.3, 0, 0, Math.PI * 2); g.fill(); });
+      g.strokeStyle = INK; g.beginPath(); g.moveTo(fx - ex + er * 1.5, ey - er * .2); g.lineTo(fx + ex - er * 1.5, ey - er * .2); g.stroke();
+      g.strokeStyle = "rgba(255,255,255,.7)"; g.lineWidth = Math.max(1.5, 3 * sf * k);
+      [-1, 1].forEach(function (s) { g.beginPath(); g.moveTo(fx + s * ex - er * .8, ey - er * .5); g.lineTo(fx + s * ex - er * .1, ey - er * .8); g.stroke(); });
+      g.strokeStyle = INK; g.lineWidth = Math.max(1.8, 4.6 * sf * k);
+    }
+    // פה
+    if (st.pressure > .55) {
+      g.beginPath(); var w = er * 2.6, steps = 8;
+      for (var i = 0; i <= steps; i++) { var px = fx - w / 2 + w * i / steps, py = my + (i % 2 ? -1 : 1) * er * .32; if (i) g.lineTo(px, py); else g.moveTo(px, py); }
+      g.stroke();
+    } else if (st.squeezed || type === 3) {
+      g.beginPath(); g.ellipse(fx, my, er * .8, er * 1.05, 0, 0, Math.PI * 2); g.fillStyle = INK; g.fill();
+      g.fillStyle = "#ff7aa8"; g.beginPath(); g.ellipse(fx, my + er * .45, er * .5, er * .4, 0, 0, Math.PI * 2); g.fill();
+    } else if (type === 1) {
+      g.beginPath(); g.arc(fx - er * .55, my - er * .5, er * .6, Math.PI * .1, Math.PI * .9); g.stroke();
+      g.beginPath(); g.arc(fx + er * .55, my - er * .5, er * .6, Math.PI * .1, Math.PI * .9); g.stroke();
+    } else if (type === 5) {
+      g.beginPath(); g.arc(fx + er * .3, my - er * 1.2, er * 1.7, Math.PI * .2, Math.PI * .75); g.stroke();
+    } else {
+      g.beginPath(); g.arc(fx, my - er * .5, er * 1.15, Math.PI * .12, Math.PI * .88); g.stroke();
+      if (type === 4) { g.fillStyle = "#ff7aa8"; g.beginPath(); g.ellipse(fx + er * .4, my + er * .75, er * .5, er * .6, 0, 0, Math.PI); g.fill(); g.stroke(); }
+    }
+    g.restore();
+  }
+
+  // =====================================================================
+  //  4. הלוח והפיזיקה
+  // =====================================================================
+  var cv = $("cv"), g = cv.getContext("2d");
+  var DPR = Math.min(2, window.devicePixelRatio || 1);
+  var W = 800, H = 600, CX = 400, CY = 300, S0 = 150;
+  function resize() {
+    var narrow = window.innerWidth < 640;
+    W = narrow ? 600 : 800; H = narrow ? 680 : 600;
+    cv.width = W * DPR; cv.height = H * DPR; cv.style.aspectRatio = W + " / " + H;
+    CX = W / 2; CY = H * (narrow ? .46 : .5); S0 = Math.min(W, H) * (narrow ? .3 : .27);
+  }
+
+  var o = new Float32Array(N), v = new Float32Array(N);
+  var K = 95, DAMP = 4.5, DIFF = 22, BULGE = 45, PF = 52;
+  var press = { on: false, x: 0, y: 0, held: 0 };
+  var pressure = 0, popped = false, spawnT = 1, mode = "make";
+  var geom = { cx: 0, cy: 0, S: 1, scx: 1, scy: 1 };
+  var pops = 0, combo = 0, lastPop = 0, parts = [], rings = [], flash = 0, shake = 0;
+  var bestPops = 0;
+  try { bestPops = +localStorage.getItem("squishyPops") || 0; pops = bestPops; } catch (e) {}
+
+  function spawnScale(t) { return t >= 1 ? 1 : 1 - Math.pow(2, -9 * t) * Math.cos(t * Math.PI * 3); }
+
+  function step(dt) {
+    var ob = outline(design.shape), B = ob.b, U = ob.u, i, m = 0;
+    for (i = 0; i < N; i++) m += o[i]; m /= N;
+    var RP = geom.S * 1.2, strength = Math.min(1, .55 + press.held * 1.2);
+    for (i = 0; i < N; i++) {
+      var im = (i + N - 1) % N, ip = (i + 1) % N;
+      var a = -K * o[i] - DAMP * v[i] + DIFF * (o[im] + o[ip] - 2 * o[i]) - BULGE * m;
+      if (press.on) {
+        var qx = geom.cx + (B[i].x + U[i].x * o[i]) * geom.S * geom.scx, qy = geom.cy + (B[i].y + U[i].y * o[i]) * geom.S * geom.scy;
+        var dd = Math.hypot(qx - press.x, qy - press.y);
+        if (dd < RP) { var w = 1 - dd / RP; a -= PF * w * w * strength; }
+      }
+      v[i] += a * dt;
+    }
+    for (i = 0; i < N; i++) o[i] = clamp(o[i] + v[i] * dt, -.55, .6);
+  }
+
+  function kick(dir) {
+    var ob = outline(design.shape), B = ob.b, U = ob.u, RP = geom.S * 1.2, i;
+    for (i = 0; i < N; i++) {
+      var qx = geom.cx + (B[i].x + U[i].x * o[i]) * geom.S, qy = geom.cy + (B[i].y + U[i].y * o[i]) * geom.S;
+      var dd = Math.hypot(qx - press.x, qy - press.y);
+      if (dd < RP) { var w = 1 - dd / RP; v[i] += dir * (dir < 0 ? 4 : 5.5) * w; }
+    }
+  }
+
+  // =====================================================================
+  //  5. פיצוץ
+  // =====================================================================
+  var POP_WORDS = ["פופ!", "בום!", "פצצה!", "וואו!", "מתפוצץ!"];
+  var bannerTimer = null;
+  function banner(text, small) {
+    var b = $("banner"); b.textContent = text; b.className = "banner show" + (small ? " small" : "");
+    clearTimeout(bannerTimer); bannerTimer = setTimeout(function () { b.classList.remove("show"); }, small ? 1100 : 900);
+  }
+  function popIt(now) {
+    popped = true; pressure = 0; press.on = false; sfx.holdStop();
+    var col = COLORS[design.color], cx = geom.cx, cy = geom.cy, S = geom.S, i;
+    var confCols = [col, shade(col, 30), shade(col, -30), "#ffd23f", "#ff5fa2", "#2fd1a0", "#6fd3ff", "#fff"];
+    for (i = 0; i < 70; i++) { var a = rand(0, Math.PI * 2), sp = rand(180, 760);
+      parts.push({ x: cx + Math.cos(a) * S * .3, y: cy + Math.sin(a) * S * .3, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 120, r: rand(5, 15), c: i % 3 ? col : shade(col, -25), life: rand(1.1, 1.8), age: 0, kind: "goo" }); }
+    for (i = 0; i < 60; i++) { var a2 = rand(0, Math.PI * 2), sp2 = rand(260, 820);
+      parts.push({ x: cx, y: cy, vx: Math.cos(a2) * sp2, vy: Math.sin(a2) * sp2 - 220, r: rand(5, 10), c: confCols[i % confCols.length], life: rand(1.3, 2.1), age: 0, kind: "conf", rot: rand(0, 6), vr: rand(-12, 12) }); }
+    rings.push({ x: cx, y: cy, age: 0 });
+    flash = 1; shake = 14;
+    combo = (now - lastPop < 5000) ? combo + 1 : 1; lastPop = now; pops++;
+    try { if (pops > bestPops) { bestPops = pops; localStorage.setItem("squishyPops", String(pops)); } } catch (e) {}
+    $("popCount").textContent = pops; $("comboCount").textContent = "x" + combo;
+    sfx.pop(); setTimeout(sfx.cheer, 120); buzz(70);
+    banner(combo >= 3 ? "רצף x" + combo + "!" : POP_WORDS[Math.floor(Math.random() * POP_WORDS.length)]);
+    $("live").textContent = "הסקוויש התפוצץ. פיצוצים: " + pops;
+    setTimeout(function () { popped = false; spawnT = 0; o.fill(0); v.fill(0); sfx.respawn(); }, 950);
+  }
+
+  // =====================================================================
+  //  6. ציור כל פריים
+  // =====================================================================
+  var lastT = 0, bubbles = [];
+  for (var bi = 0; bi < 14; bi++) bubbles.push({ x: Math.random(), s: rand(.05, .14), r: rand(10, 34), o: Math.random() * 1000 });
+
+  function render(now) {
+    var dt = Math.min(.04, (now - lastT) / 1000 || .016); lastT = now;
+    g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    g.clearRect(0, 0, W, H);
+
+    // --- עדכון
+    if (spawnT < 1) spawnT = Math.min(1, spawnT + dt / .8);
+    var sc = popped ? 0 : spawnScale(spawnT);
+    if (mode === "pop" && press.on && !popped) pressure = Math.min(1, pressure + dt / 1.7); else pressure = Math.max(0, pressure - dt * 1.6);
+    if (press.on) press.held += dt; else press.held = 0;
+    if (pressure >= 1 && !popped) popIt(now);
+    shake = Math.max(0, shake - dt * 30); flash = Math.max(0, flash - dt * 2.8);
+    var jit = pressure * pressure * 5, bob = Math.sin(now / 520) * 3;
+    var squash = press.on ? Math.min(1, .35 + press.held * 2) : 0;
+    geom.cx = CX + Math.sin(now / 21) * jit + rand(-shake, shake) * .4;
+    geom.cy = CY + bob + Math.cos(now / 27) * jit + rand(-shake, shake) * .4;
+    geom.S = S0 * (sc < 0 ? 0 : sc) * (1 + .1 * pressure) * (1 + .012 * Math.sin(now / 450));
+    geom.scx = 1 + .11 * squash; geom.scy = 1 - .15 * squash;
+    if (!popped && sc > .02) { step(dt / 2); step(dt / 2); }
+    if (press.on) {
+      var depth = 0; for (var di = 0; di < N; di++) depth = Math.min(depth, o[di]);
+      sfx.holdSet(pressure, -depth);
+    }
+
+    // --- רקע
+    var bg = g.createLinearGradient(0, 0, 0, H);
+    if (mode === "pop") { bg.addColorStop(0, "#ffc9e6"); bg.addColorStop(1, "#ffe3a8"); } else { bg.addColorStop(0, "#ffd9f0"); bg.addColorStop(1, "#c9ecff"); }
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    bubbles.forEach(function (b) {
+      var by = H + 60 - ((now * b.s + b.o) % (H + 120)), bx = b.x * W + Math.sin(now / 1200 + b.o) * 14;
+      g.fillStyle = "rgba(255,255,255,.42)"; g.beginPath(); g.arc(bx, by, b.r, 0, Math.PI * 2); g.fill();
+    });
+    // במה
+    var gy = CY + S0 * 1.08;
+    g.fillStyle = "rgba(255,255,255,.75)"; g.strokeStyle = INK; g.lineWidth = 5;
+    g.beginPath(); g.ellipse(CX, gy + 12, W * .36, 46, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    // צל
+    if (!popped && sc > .02) {
+      var sw = S0 * sc * 1.05 * (1 + (press.on ? .06 : 0));
+      g.fillStyle = "rgba(29,27,75,.18)"; g.beginPath(); g.ellipse(CX, gy + 4, sw, 22 * Math.min(1, sc), 0, 0, Math.PI * 2); g.fill();
+    }
+
+    // --- הסקוויש
+    if (!popped && sc > .02) drawSquishy(g, design, geom.cx, geom.cy, geom.S, geom.scx, geom.scy, o, { pressure: pressure, squeezed: press.on });
+
+    // --- טבעת לחץ
+    if (mode === "pop" && pressure > .02 && !popped) {
+      var rr = S0 * 1.62;
+      g.lineWidth = 14; g.lineCap = "round";
+      g.strokeStyle = "rgba(29,27,75,.14)"; g.beginPath(); g.arc(CX, CY, rr, 0, Math.PI * 2); g.stroke();
+      g.strokeStyle = pressure < .6 ? "#ffd23f" : pressure < .85 ? "#ff9d1c" : "#ff4d5e";
+      g.beginPath(); g.arc(CX, CY, rr, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pressure); g.stroke();
+    }
+
+    // --- פיצוץ: גל, חלקיקים
+    for (var ri = rings.length - 1; ri >= 0; ri--) {
+      var rg = rings[ri]; rg.age += dt; if (rg.age > .6) { rings.splice(ri, 1); continue; }
+      g.strokeStyle = "rgba(255,255,255," + (1 - rg.age / .6) + ")"; g.lineWidth = 16 * (1 - rg.age / .6) + 2;
+      g.beginPath(); g.arc(rg.x, rg.y, rg.age * 760, 0, Math.PI * 2); g.stroke();
+    }
+    for (var pi = parts.length - 1; pi >= 0; pi--) {
+      var p = parts[pi]; p.age += dt;
+      if (p.age > p.life || p.y > H + 40) { parts.splice(pi, 1); continue; }
+      p.vy += 1000 * dt; p.vx *= (1 - dt * .6); p.x += p.vx * dt; p.y += p.vy * dt;
+      var al = clamp(1.3 - p.age / p.life, 0, 1);
+      g.globalAlpha = al;
+      if (p.kind === "goo") {
+        g.fillStyle = p.c; g.strokeStyle = INK; g.lineWidth = 3; g.beginPath(); g.arc(p.x, p.y, p.r, 0, Math.PI * 2); g.fill(); g.stroke();
+      } else {
+        p.rot += p.vr * dt; g.save(); g.translate(p.x, p.y); g.rotate(p.rot); g.fillStyle = p.c; g.fillRect(-p.r, -p.r * .5, p.r * 2, p.r); g.restore();
+      }
+      g.globalAlpha = 1;
+    }
+    if (flash > 0) { g.fillStyle = "rgba(255,255,255," + (flash * .6) + ")"; g.fillRect(0, 0, W, H); }
+
+    requestAnimationFrame(render);
+  }
+
+  // =====================================================================
+  //  7. שליטה (עכבר, מגע, מקלדת)
+  // =====================================================================
+  function pt(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; }
+  function beginPress(p) {
+    if (popped) return;
+    ac(); press.on = true; press.x = p.x; press.y = p.y; press.held = 0;
+    kick(-1); sfx.press(); sfx.holdStart(); buzz(12);
+    if (mode === "pop") pressure = Math.min(.95, pressure + .1);
+  }
+  function endPress() {
+    if (!press.on) return;
+    press.on = false; sfx.holdStop(); kick(1); sfx.release();
+  }
+  cv.addEventListener("pointerdown", function (e) {
+    var p = pt(e);
+    if (Math.hypot(p.x - geom.cx, p.y - geom.cy) > geom.S * 1.3) return;
+    beginPress(p);
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault();
+  });
+  cv.addEventListener("pointermove", function (e) { if (press.on) { var p = pt(e); press.x = p.x; press.y = p.y; } });
+  cv.addEventListener("pointerup", endPress);
+  cv.addEventListener("pointercancel", endPress);
+  cv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  window.addEventListener("keydown", function (e) {
+    if ((e.key === " " || e.key === "Enter") && !e.repeat && document.activeElement === document.body) { e.preventDefault(); beginPress({ x: geom.cx, y: geom.cy }); }
+  });
+  window.addEventListener("keyup", function (e) { if (e.key === " " || e.key === "Enter") endPress(); });
+
+  // =====================================================================
+  //  8. מצבים והסדנה
+  // =====================================================================
+  var HINTS = {
+    make: "בחרו למטה צורה, צבע, פרצוף וקישוט. אפשר גם ללחוץ על הסקוויש ולסחוט אותו!",
+    squeeze: "לחצו על הסקוויש והחזיקו כדי לסחוט אותו. שחררו וראו איך הוא קופץ חזרה",
+    pop: "החזיקו לחוץ והטבעת תתמלא. כשהיא מלאה, הסקוויש מתפוצץ!"
+  };
+  function setMode(m) {
+    mode = m; pressure = 0; press.on = false; sfx.holdStop();
+    document.querySelectorAll(".modes button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.mode === m ? "true" : "false"); });
+    $("workshop").hidden = m !== "make";
+    $("chipPops").hidden = $("chipCombo").hidden = m !== "pop";
+    $("hint").textContent = HINTS[m];
+    $("live").textContent = m === "make" ? "מצב הכנה" : m === "squeeze" ? "מצב סחיטה" : "מצב פיצוץ";
+  }
+  document.querySelectorAll(".modes button").forEach(function (b) { b.addEventListener("click", function () { ac(); setMode(b.dataset.mode); }); });
+  $("squeezeBtn").addEventListener("click", function () { ac(); setMode("squeeze"); window.scrollTo({ top: 0, behavior: "smooth" }); });
+  $("popBtn").addEventListener("click", function () { ac(); setMode("pop"); window.scrollTo({ top: 0, behavior: "smooth" }); });
+  $("randomBtn").addEventListener("click", function () {
+    ac(); sfx.pick();
+    design = { shape: SHAPES[Math.floor(Math.random() * SHAPES.length)].id, color: Math.floor(Math.random() * COLORS.length),
+               face: Math.floor(Math.random() * FACES.length), acc: Math.floor(Math.random() * ACCS.length) };
+    changed(true);
+  });
+  $("mute").addEventListener("click", function () {
+    muted = !muted; if (muted) sfx.holdStop();
+    $("muteIcon").innerHTML = muted
+      ? '<path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/>'
+      : '<path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>';
+    $("mute").setAttribute("aria-label", muted ? "הפעלת צליל" : "השתקת צליל");
+  });
+
+  // ----- כפתורי הבחירה, עם תמונות קטנות שמצוירות בעצמן -----
+  var optButtons = { shape: [], color: [], face: [], acc: [] };
+  function thumb(d, forShape) {
+    var c = document.createElement("canvas"); c.width = c.height = 108;
+    var t = c.getContext("2d"), z = new Float32Array(N);
+    drawSquishy(t, d, 54, forShape ? 56 : 58, forShape ? 30 : 36, 1, 1, z, { pressure: 0, squeezed: false });
+    return c;
+  }
+  function build(group, items, getDesign, onPick, kind) {
+    var box = $("opt" + kind);
+    items.forEach(function (it, i) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "opt" + (group === "color" ? " sw" : "");
+      b.setAttribute("aria-label", it.label); b.title = it.label;
+      if (group === "color") { b.style.background = it.color; b.style.borderColor = INK; }
+      else b.appendChild(thumb(getDesign(i), group === "shape"));
+      b.addEventListener("click", function () { ac(); sfx.pick(); onPick(i); });
+      optButtons[group].push(b); box.appendChild(b);
+    });
+  }
+  function refreshButtons() {
+    var shapeIdx = SHAPES.findIndex(function (s) { return s.id === design.shape; });
+    optButtons.shape.forEach(function (b, i) { b.setAttribute("aria-pressed", i === shapeIdx ? "true" : "false"); });
+    optButtons.color.forEach(function (b, i) { b.setAttribute("aria-pressed", i === design.color ? "true" : "false"); });
+    optButtons.face.forEach(function (b, i) { b.setAttribute("aria-pressed", i === design.face ? "true" : "false"); });
+    optButtons.acc.forEach(function (b, i) { b.setAttribute("aria-pressed", i === design.acc ? "true" : "false"); });
+  }
+  // התמונות הקטנות של הפרצוף והקישוט משתמשות בצבע ובצורה הנוכחיים, לכן מציירים אותן מחדש בכל שינוי
+  function rebuildThumbs() {
+    [["face", FACES, function (i) { return { shape: design.shape, color: design.color, face: i, acc: 0 }; }],
+     ["acc", ACCS, function (i) { return { shape: design.shape, color: design.color, face: design.face, acc: i }; }],
+     ["shape", SHAPES, function (i) { return { shape: SHAPES[i].id, color: design.color, face: design.face, acc: 0 }; }]
+    ].forEach(function (grp) {
+      optButtons[grp[0]].forEach(function (b, i) { var c = b.querySelector("canvas"); if (c) b.replaceChild(thumb(grp[2](i), grp[0] === "shape"), c); });
+    });
+  }
+  function changed(fromRandom) {
+    saveDesign(); refreshButtons(); rebuildThumbs();
+    if (!popped) { spawnT = Math.min(spawnT, .45); }
+    if (fromRandom) { o.fill(0); v.fill(0); spawnT = 0; }
+    else { // נדנוד חלק של כל הגוף (גל עדין סביב ההיקף, לא רעש)
+      var ph = rand(0, 6.28), kk = 2 + Math.floor(rand(0, 2));
+      for (var i = 0; i < N; i++) v[i] += 3 * Math.cos(kk * (i / N * 6.283) + ph);
+    }
+  }
+  function initWorkshop() {
+    build("shape", SHAPES.map(function (s) { return { label: s.name }; }), function (i) { return { shape: SHAPES[i].id, color: design.color, face: design.face, acc: 0 }; },
+      function (i) { design.shape = SHAPES[i].id; changed(false); }, "Shape");
+    build("color", COLORS.map(function (c, i) { return { label: COLOR_NAMES[i], color: c }; }), null,
+      function (i) { design.color = i; changed(false); }, "Color");
+    build("face", FACES.map(function (f) { return { label: f }; }), function (i) { return { shape: design.shape, color: design.color, face: i, acc: 0 }; },
+      function (i) { design.face = i; changed(false); }, "Face");
+    build("acc", ACCS.map(function (a) { return { label: a }; }), function (i) { return { shape: design.shape, color: design.color, face: design.face, acc: i }; },
+      function (i) { design.acc = i; changed(false); }, "Acc");
+    refreshButtons();
+  }
+
+  // =====================================================================
+  //  9. מתחילים
+  // =====================================================================
+  resize();
+  window.addEventListener("resize", function () { var w = W; resize(); if (w !== W) spawnT = Math.min(spawnT, .5); });
+  var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  initWorkshop();
+  setMode("make");
+  spawnT = 0;
+  requestAnimationFrame(render);
+  fontsReady.then(rebuildThumbs);
+})();
+</script>
+</body>
+</html>
