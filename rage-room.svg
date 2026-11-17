@@ -31,7 +31,7 @@
   <g stroke="#1d1b4b" stroke-width="3" stroke-linecap="round"><path d="M120 110 l-12 -8 M218 112 l10 -10 M210 176 l14 6 M118 178 l-14 8 M172 112 l2 -14"/></g>
   <g fill="#fff" stroke="#1d1b4b" stroke-width="2.5"><path d="M110 196 l8 -4 2 6 Z"/><path d="M222 198 l9 -2 -2 6 Z"/><path d="M168 202 l6 -6 4 7 Z"/></g>
   <!-- מחבט -->
-  <g transform="translate(70 238) rotate(-48)">
+  <g transform="translate(14 252) rotate(58) scale(.78)">
     <path d="M-8 0 H8 V-12 Q8 -16 5 -20 L7 -78 Q12 -120 13 -150 Q13 -162 0 -162 Q-13 -162 -13 -150 Q-12 -120 -7 -78 L-5 -20 Q-8 -16 -8 -12 Z" fill="#e8c38a" stroke="#1d1b4b" stroke-width="5" stroke-linejoin="round"/>
     <path d="M-6 -2 H6 V-40 H-6 Z" fill="#1d1b4b"/>
   </g>
