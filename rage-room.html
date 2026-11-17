@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>חדר זעם | שוברים צלחות, כוסות ואגרטלים ומציירים על הקירות בתלת מימד</title>
+<meta name="description" content="חדר זעם בתלת מימד: מנפצים צלחות, כוסות, בקבוקים, אגרטלים, מראה וטלוויזיה עם מחבט, זורקים צלחות על הקירות ומציירים גרפיטי בספריי. מוציאים כעסים בחינם בדפדפן.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#141416">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/rage-room.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="חדר זעם | שוברים הכל ומציירים על הקירות">
+<meta property="og:description" content="חדר זעם בתלת מימד: מנפצים צלחות, כוסות, בקבוקים, אגרטלים, מראה וטלוויזיה עם מחבט, זורקים צלחות על הקירות ומציירים גרפיטי בספריי. מוציאים כעסים בחינם בדפדפן.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/rage-room.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "חדר זעם",
+  "description": "חדר זעם בתלת מימד: מנפצים צלחות, כוסות, בקבוקים, אגרטלים, מראה וטלוויזיה עם מחבט, זורקים צלחות על הקירות ומציירים גרפיטי בספריי.",
+  "url": "https://ozcarmel.github.io/liv_games/rage-room.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "סימולציה",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": { "@type": "WebSite", "name": "אתר המשחקים של ליב", "url": "https://ozcarmel.github.io/liv_games/" }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f4f1ec; --ink2:#b9b2a8; --panel:rgba(20,19,22,.78); --line:rgba(255,255,255,.10);
+    --red:#ff3b30; --red-d:#c9261d; --hazard:#ffc21a; --calm:#2fd18a;
+    --shadow:0 12px 34px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#0d0d0f;color:var(--ink);font-family:'Rubik',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  button{font-family:inherit;cursor:pointer;color:inherit;border:0;background:none}
+  [hidden]{display:none !important}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:crosshair}
+  /* משקפי מגן: הצללה עדינה בקצוות המסך */
+  #visor{position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(ellipse 85% 80% at 50% 50%, transparent 62%, rgba(0,0,0,.42) 100%)}
+  .panel{background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+
+  /* ---------- סרגל עליון ---------- */
+  #top{position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;left:12px;display:flex;align-items:flex-start;gap:10px;pointer-events:none;z-index:5}
+  #top > *{pointer-events:auto}
+  .brand{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 10px}
+  .brand .home{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);text-decoration:none;font-size:20px}
+  .brand b{display:block;font-family:'Secular One',sans-serif;font-size:21px;line-height:1.05;font-weight:400;color:#fff;text-shadow:0 0 18px rgba(255,59,48,.55)}
+  .brand small{color:var(--ink2);font-size:12.5px}
+  #stats{margin-inline-start:auto;display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px}
+  .meter{padding:10px 14px}
+  .meter .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;color:var(--ink2)}
+  .meter .row b{font-size:20px;color:#fff;font-weight:800}
+  .bar{height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:7px}
+  .bar i{display:block;height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,var(--calm),var(--hazard) 55%,var(--red));background-size:210px 100%;transition:width .35s ease}
+  .mini{display:flex;gap:8px;justify-content:flex-end}
+  .mini button{width:44px;height:44px;border-radius:14px;font-size:19px;display:grid;place-items:center}
+  .mini button:hover{background:rgba(255,255,255,.14)}
+
+  /* ---------- כלים ---------- */
+  #dock{position:fixed;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:10px;z-index:5}
+  #tools{display:flex;gap:6px;padding:7px}
+  .tool{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:86px;padding:9px 12px 8px;border-radius:14px;font-weight:700;font-size:14px;color:var(--ink2);transition:background .15s,color .15s,transform .15s}
+  .tool .ic{font-size:26px;line-height:1}
+  .tool:hover{background:rgba(255,255,255,.08);color:#fff}
+  .tool.on{background:linear-gradient(180deg,var(--red),var(--red-d));color:#fff;box-shadow:0 6px 18px rgba(255,59,48,.45)}
+  #palette{display:flex;align-items:center;gap:8px;padding:9px 12px;flex-wrap:wrap;justify-content:center;max-width:min(94vw,560px)}
+  .sw{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.25);box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+  .sw.on{border-color:#fff;transform:scale(1.15)}
+  #palette label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);margin-inline-start:6px}
+  #size{width:100px;accent-color:var(--red)}
+  #hint{position:fixed;left:50%;transform:translateX(-50%);top:max(86px,calc(env(safe-area-inset-top) + 74px));padding:9px 16px;font-size:14.5px;font-weight:500;z-index:4;white-space:nowrap;transition:opacity .4s}
+  #hint.fade{opacity:0}
+
+  /* ---------- כפתורי הליכה במגע ---------- */
+  #pad{position:fixed;left:14px;bottom:max(14px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px;z-index:5;direction:ltr}
+  #pad button{border-radius:14px;font-size:22px;background:var(--panel);border:1px solid var(--line);color:#fff;touch-action:none}
+  #pad button:active,#pad button.on{background:rgba(255,59,48,.75)}
+  #pad .up{grid-column:2;grid-row:1}
+  #pad .lt{grid-column:1;grid-row:2}
+  #pad .dn{grid-column:2;grid-row:2}
+  #pad .rt{grid-column:3;grid-row:2}
+
+  /* ---------- מסכים ---------- */
+  .screen{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 50% 40%,rgba(30,10,10,.55),rgba(5,5,6,.88));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  .card{position:relative;width:min(520px,100%);padding:30px 28px 26px;border-radius:24px;background:#18171a;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:12px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 16px,#1b1b1b 16px 32px)}
+  .card h1{font-family:'Secular One',sans-serif;font-weight:400;font-size:clamp(44px,11vw,64px);margin:10px 0 2px;line-height:1;color:#fff;text-shadow:0 0 30px rgba(255,59,48,.65),0 4px 0 var(--red-d)}
+  .card .sub{color:var(--ink2);margin:6px 0 20px;font-size:16.5px}
+  .how{display:grid;gap:10px;text-align:start;margin-bottom:18px}
+  .how div{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px;font-size:15px}
+  .how .ic{font-size:28px;width:38px;text-align:center;flex:none}
+  .how b{color:#fff}
+  .keys{font-size:13px;color:var(--ink2);margin:0 0 18px}
+  .go{width:100%;padding:15px 18px;border-radius:16px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,var(--red),var(--red-d));box-shadow:0 10px 26px rgba(255,59,48,.45);transition:transform .15s}
+  .go:hover{transform:translateY(-2px)}
+  .go:disabled{opacity:.6;cursor:wait;transform:none}
+  .go.alt{background:rgba(255,255,255,.08);box-shadow:none;margin-top:10px;font-size:16px}
+  .card a.back{display:inline-block;margin-top:14px;color:var(--ink2);font-size:14px}
+  #calm .card::before{background:repeating-linear-gradient(-45deg,var(--calm) 0 16px,#1b1b1b 16px 32px)}
+  #calm h1{text-shadow:0 0 30px rgba(47,209,138,.6),0 4px 0 #1c8a59}
+  .big-emoji{font-size:64px;line-height:1;margin-top:8px}
+
+  @media (max-width:640px){
+    .brand small{display:none}
+    .brand b{font-size:18px}
+    #stats{min-width:150px}
+    .meter{padding:8px 11px}
+    .meter .row b{font-size:17px}
+    .tool{min-width:64px;padding:8px 8px 7px;font-size:12.5px}
+    .tool .ic{font-size:22px}
+    #hint{font-size:13px;white-space:normal;width:max-content;max-width:88vw;text-align:center;top:calc(max(12px,env(safe-area-inset-top)) + 200px)}
+    #dock{left:auto;right:10px;transform:none;align-items:flex-end}
+    #tools{flex-direction:column;padding:6px;gap:4px}
+    .tool{min-width:66px}
+    #palette{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 140px);left:10px;right:10px;max-width:none;gap:7px;padding:8px}
+    .sw{width:26px;height:26px}
+    #size{width:80px}
+  }
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="חדר זעם בתלת מימד"></canvas>
+<div id="visor"></div>
+
+<div id="top">
+  <div class="brand panel">
+    <a class="home" href="index.html" title="חזרה לאתר המשחקים" aria-label="חזרה לאתר המשחקים">🏠</a>
+    <div><b>חדר זעם</b><small>שוברים, זורקים ומציירים</small></div>
+  </div>
+  <div id="stats">
+    <div class="meter panel">
+      <div class="row"><span>שברת</span><b id="broken">0</b></div>
+      <div class="row" style="margin-top:6px"><span>מד העצבים</span><span id="angerTxt">100%</span></div>
+      <div class="bar"><i id="anger"></i></div>
+    </div>
+    <div class="mini">
+      <button class="panel" id="soundBtn" title="צליל" aria-label="צליל">🔊</button>
+      <button class="panel" id="cleanBtn" title="ניקוי הקירות" aria-label="ניקוי הקירות">🧽</button>
+      <button class="panel" id="newBtn" title="חדר חדש: מטאטאים ומביאים חפצים חדשים" aria-label="חדר חדש">🧹</button>
+    </div>
+  </div>
+</div>
+
+<div id="hint" class="panel fade"></div>
+
+<div id="dock">
+  <div id="palette" class="panel" hidden></div>
+  <div id="tools" class="panel" role="toolbar" aria-label="כלים">
+    <button class="tool on" data-tool="bat"><span class="ic">🏏</span>מחבט</button>
+    <button class="tool" data-tool="throw"><span class="ic">🍽️</span>זריקה</button>
+    <button class="tool" data-tool="spray"><span class="ic">🎨</span>ספריי</button>
+  </div>
+</div>
+
+<div id="pad" hidden>
+  <button class="up" data-k="fwd" aria-label="קדימה">▲</button>
+  <button class="lt" data-k="tl" aria-label="להסתובב שמאלה">⟲</button>
+  <button class="dn" data-k="back" aria-label="אחורה">▼</button>
+  <button class="rt" data-k="tr" aria-label="להסתובב ימינה">⟳</button>
+</div>
+
+<div id="start" class="screen">
+  <div class="card">
+    <h1>חדר זעם</h1>
+    <p class="sub">יום עצבני? כאן מותר לשבור הכל!</p>
+    <div class="how">
+      <div><span class="ic">🏏</span><span><b>מחבט:</b> לוחצים על חפץ ומנפצים אותו. אפשר גם להכות במדף ולהפיל הכל.</span></div>
+      <div><span class="ic">🍽️</span><span><b>זריקה:</b> זורקים צלחות, כוסות ובקבוקים על הקירות.</span></div>
+      <div><span class="ic">🎨</span><span><b>ספריי:</b> מציירים גרפיטי על הקירות בצבעים.</span></div>
+    </div>
+    <p class="keys" id="keysTxt">גוררים עם העכבר כדי להסתכל מסביב · W A S D או החצים כדי ללכת</p>
+    <button class="go" id="goBtn" disabled>טוען את החדר…</button>
+    <a class="back" href="index.html">חזרה לאתר המשחקים</a>
+  </div>
+</div>
+
+<div id="calm" class="screen" hidden>
+  <div class="card">
+    <div class="big-emoji">😌</div>
+    <h1>נרגעת!</h1>
+    <p class="sub" id="calmTxt">מד העצבים ירד לאפס.</p>
+    <button class="go" id="keepBtn">להמשיך לשבור</button>
+    <button class="go alt" id="calmNewBtn">🧹 חדר חדש</button>
+  </div>
+</div>
+
+<noscript><p style="position:fixed;inset:auto 0 40% 0;text-align:center;color:#fff">כדי לשחק בחדר הזעם צריך להפעיל JavaScript בדפדפן.</p></noscript>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/* =====================================================================
+   חדר זעם – משחק של ליב
+   חדר בתלת מימד מלא בחפצים שאפשר לשבור. כל חפץ שנשבר מתפרק לרסיסים
+   אמיתיים (חותכים את הצורה שלו לחתיכות), והרסיסים נופלים, קופצים
+   ונשארים על הרצפה. על הקירות אפשר לצייר בספריי.
+   ===================================================================== */
+
+// ---------- כלי עזר ----------
+const rand = (a, b) => a + Math.random() * (b - a);
+const randi = (a, b) => Math.floor(rand(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function makeCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function noiseFill(ctx, w, h, amt) {
+  const d = ctx.getImageData(0, 0, w, h), a = d.data;
+  for (let i = 0; i < a.length; i += 4) { const n = (Math.random() - 0.5) * amt; a[i] += n; a[i + 1] += n; a[i + 2] += n; }
+  ctx.putImageData(d, 0, 0);
+}
+const V3 = THREE.Vector3;
+const tmpV = new V3(), tmpV2 = new V3(), tmpQ = new THREE.Quaternion(), UP = new V3(0, 1, 0);
+const isTouch = matchMedia('(pointer: coarse)').matches;
+
+// ---------- מידות החדר ----------
+const RX = 4, RZ = 3, RH = 3.2;           // החדר: 8 מטר רוחב, 6 מטר עומק, 3.2 גובה
+
+// ---------- מנוע הציור ----------
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, isTouch ? 1.5 : 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0c0c0d);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(isTouch ? 72 : 66, innerWidth / innerHeight, 0.03, 40);
+camera.rotation.order = 'YXZ';
+scene.add(camera);
+const player = { pos: new V3(0, 1.62, 2.1), yaw: 0, pitch: -0.12 };
+
+// =====================================================================
+//   טקסטורות (מציירים אותן בקוד, בלי קבצים)
+// =====================================================================
+function blobs(ctx, size, count, rMin, rMax, light, alphaMax) {
+  for (let i = 0; i < count; i++) {
+    const r = rand(rMin, rMax), px = rand(0, size), py = rand(0, size);
+    const l = light === undefined ? Math.random() < 0.5 : light;
+    const a = rand(0.02, alphaMax);
+    for (const dx of [-size, 0, size]) for (const dy of [-size, 0, size]) {
+      const x = px + dx, y = py + dy;
+      if (x + r < 0 || x - r > size || y + r < 0 || y - r > size) continue;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      const c = l ? '255,255,255' : '0,0,0';
+      g.addColorStop(0, `rgba(${c},${a})`); g.addColorStop(1, `rgba(${c},0)`);
+      ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+    }
+  }
+}
+function concreteCanvas(base, size, joints) {
+  const c = makeCanvas(size, size), x = c.getContext('2d');
+  x.fillStyle = base; x.fillRect(0, 0, size, size);
+  blobs(x, size, 220, 30, 220, undefined, 0.09);
+  blobs(x, size, 30, 60, 180, false, 0.12);              // כתמים
+  for (let i = 0; i < 5000; i++) {                       // גרגרים
+    x.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,.18)' : 'rgba(255,255,255,.12)';
+    const r = rand(0.4, 1.6); x.beginPath(); x.arc(rand(0, size), rand(0, size), r, 0, 7); x.fill();
+  }
+  noiseFill(x, size, size, 20);
+  if (joints) {                                          // תפרי התפשטות בבטון
+    x.fillStyle = 'rgba(25,23,20,.75)'; x.fillRect(0, 0, size, 3); x.fillRect(0, 0, 3, size);
+    x.fillStyle = 'rgba(255,255,255,.08)'; x.fillRect(0, 3, size, 2); x.fillRect(3, 0, 2, size);
+    // סדק קטן
+    x.strokeStyle = 'rgba(20,18,16,.5)'; x.lineWidth = 1.2; x.beginPath();
+    let px = rand(200, 800), py = rand(200, 800); x.moveTo(px, py);
+    for (let i = 0; i < 14; i++) { px += rand(-25, 25); py += rand(5, 30); x.lineTo(px, py); }
+    x.stroke();
+  }
+  return c;
+}
+function roughCanvas(size) {
+  const c = makeCanvas(size, size), x = c.getContext('2d');
+  x.fillStyle = 'rgb(190,190,190)'; x.fillRect(0, 0, size, size);
+  blobs(x, size, 120, 40, 200, undefined, 0.22);
+  noiseFill(x, size, size, 30);
+  return c;
+}
+function texFrom(c, srgb = true, repX = 1, repY = 1) {
+  const t = new THREE.CanvasTexture(c);
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repX, repY);
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return t;
+}
+function woodCanvas(w, h, base, dark, planks, osb) {
+  const c = makeCanvas(w, h), x = c.getContext('2d');
+  x.fillStyle = base; x.fillRect(0, 0, w, h);
+  if (osb) {                                              // לוח OSB של מדפים: שבבי עץ
+    for (let i = 0; i < 900; i++) {
+      x.save(); x.translate(rand(0, w), rand(0, h)); x.rotate(rand(-0.6, 0.6));
+      const l = rand(-28, 28);
+      x.fillStyle = `rgba(${l > 0 ? '255,235,200' : '70,40,15'},${Math.abs(l) / 140})`;
+      x.fillRect(-rand(10, 34), -rand(3, 8), rand(20, 68), rand(6, 16)); x.restore();
+    }
+  } else {
+    for (let i = 0; i < 160; i++) {                      // סיבי עץ
+      const y0 = rand(0, h), amp = rand(1, 5), f = rand(0.004, 0.02), ph = rand(0, 6);
+      x.strokeStyle = `rgba(${dark},${rand(0.05, 0.22)})`; x.lineWidth = rand(0.6, 2.4);
+      x.beginPath();
+      for (let px = 0; px <= w; px += 8) { const y = y0 + Math.sin(px * f + ph) * amp; px ? x.lineTo(px, y) : x.moveTo(px, y); }
+      x.stroke();
+    }
+    for (let i = 0; i < 4; i++) {                        // עיניים בעץ
+      const kx = rand(0, w), ky = rand(0, h);
+      for (let r = 9; r > 1; r -= 2) { x.strokeStyle = `rgba(${dark},.25)`; x.lineWidth = 1.2; x.beginPath(); x.ellipse(kx, ky, r * 2.4, r, 0, 0, 7); x.stroke(); }
+    }
+    if (planks) {
+      const ph = h / planks;
+      for (let i = 0; i <= planks; i++) { x.fillStyle = `rgba(${dark},.75)`; x.fillRect(0, i * ph - 1.5, w, 3); }
+    }
+  }
+  noiseFill(x, w, h, 14);
+  return c;
+}
+
+const floorTex = texFrom(concreteCanvas('rgb(124,120,114)', 1024, true), true, 4, 3);
+const floorRough = texFrom(roughCanvas(512), false, 4, 3);
+const ceilTex = texFrom(concreteCanvas('rgb(66,66,68)', 512, false), true, 4, 3);
+const osbTex = texFrom(woodCanvas(512, 256, '#b8925c', '90,55,20', 0, true), true, 1, 1);
+const tableTex = texFrom(woodCanvas(1024, 512, '#7a5232', '40,22,10', 5), true, 1, 1);
+const crateTex = texFrom(woodCanvas(512, 512, '#a7814f', '60,35,12', 0), true, 1, 1);
+const tvWoodTex = texFrom(woodCanvas(512, 512, '#5b3a22', '25,12,4', 0), true, 1, 1);
+const batTex = (() => {
+  const c = makeCanvas(256, 512), x = c.getContext('2d');
+  x.fillStyle = '#d9b27a'; x.fillRect(0, 0, 256, 512);
+  for (let i = 0; i < 70; i++) { x.strokeStyle = `rgba(120,70,25,${rand(.06, .22)})`; x.lineWidth = rand(.8, 3); const px = rand(0, 256); x.beginPath(); x.moveTo(px, 0); x.bezierCurveTo(px + rand(-12, 12), 170, px + rand(-12, 12), 340, px + rand(-8, 8), 512); x.stroke(); }
+  x.fillStyle = '#151515'; x.fillRect(0, 512 - 150, 256, 150);   // סרט אחיזה
+  for (let y = 512 - 150; y < 512; y += 10) { x.fillStyle = 'rgba(255,255,255,.07)'; x.fillRect(0, y, 256, 2); }
+  x.fillStyle = '#b31b1b'; x.font = 'bold 54px Arial'; x.save(); x.translate(128, 150); x.rotate(-Math.PI / 2); x.textAlign = 'center'; x.fillText('SLUGGER', 0, 18); x.restore();
+  noiseFill(x, 256, 512, 10);
+  const t = texFrom(c); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t;
+})();
+
+// טקסטורת הבליטות של קיר הבלוקים (חוזרת על עצמה)
+const bumpTex = (() => {
+  const S = 256, c = makeCanvas(S, S), x = c.getContext('2d');
+  x.fillStyle = 'rgb(70,70,70)'; x.fillRect(0, 0, S, S);
+  const bw = 128, bh = 64;
+  for (let r = 0; r < 4; r++) {
+    const y = S - (r + 1) * bh, off = (r % 2) ? bw / 2 : 0;
+    for (let cx = -off; cx < S; cx += bw) {
+      const g = x.createLinearGradient(0, y, 0, y + bh);
+      g.addColorStop(0, 'rgb(205,205,205)'); g.addColorStop(0.08, 'rgb(220,220,220)'); g.addColorStop(0.92, 'rgb(215,215,215)'); g.addColorStop(1, 'rgb(190,190,190)');
+      x.fillStyle = g; x.fillRect(cx + 4, y + 4, bw - 8, bh - 8);
+    }
+  }
+  for (let i = 0; i < 900; i++) { x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.arc(rand(0, S), rand(0, S), rand(.5, 1.8), 0, 7); x.fill(); }
+  noiseFill(x, S, S, 26);
+  return texFrom(c, false);
+})();
+
+// =====================================================================
+//   החדר: רצפה, תקרה, קירות שאפשר לצייר עליהם
+// =====================================================================
+const PPM = 160;                                         // פיקסלים למטר על הקירות
+const walls = [];
+const interactive = [];                                  // כל מה שאפשר ללחוץ עליו
+const paintOccluders = [];                               // מה שחוסם את הספריי
+
+const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughnessMap: floorRough, roughness: 1, metalness: 0, envMapIntensity: 0.45 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(RX * 2, RZ * 2), floorMat);
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; floor.userData.type = 'floor';
+scene.add(floor); interactive.push(floor);
+
+const ceil = new THREE.Mesh(new THREE.PlaneGeometry(RX * 2, RZ * 2), new THREE.MeshStandardMaterial({ map: ceilTex, roughness: 0.95, envMapIntensity: 0.2 }));
+ceil.rotation.x = Math.PI / 2; ceil.position.y = RH; scene.add(ceil);
+
+function drawWallBase(w) {
+  const { ctx, W, H } = w;
+  const bw = 0.4 * PPM, bh = 0.2 * PPM;
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#7e7a73'; ctx.fillRect(0, 0, W, H);
+  const rows = Math.ceil(H / bh);
+  for (let r = 0; r < rows; r++) {
+    const y = H - (r + 1) * bh, off = (r % 2) ? bw / 2 : 0;
+    for (let cx = -off; cx < W; cx += bw) {
+      const v = rand(-7, 7);
+      ctx.fillStyle = `rgb(${200 + v},${197 + v},${190 + v})`;
+      ctx.fillRect(cx + 1.5, y + 1.5, bw - 3, bh - 3);
+      const g = ctx.createLinearGradient(0, y, 0, y + bh);
+      g.addColorStop(0, 'rgba(255,255,255,.07)'); g.addColorStop(1, 'rgba(0,0,0,.08)');
+      ctx.fillStyle = g; ctx.fillRect(cx + 1.5, y + 1.5, bw - 3, bh - 3);
+    }
+  }
+  for (let i = 0; i < W * H / 70; i++) { ctx.fillStyle = `rgba(0,0,0,${rand(.05, .16)})`; ctx.beginPath(); ctx.arc(rand(0, W), rand(0, H), rand(.4, 1.3), 0, 7); ctx.fill(); }
+  noiseFill(ctx, W, H, 9);
+  // לכלוך ליד הרצפה
+  const g = ctx.createLinearGradient(0, H, 0, H - 0.7 * PPM);
+  g.addColorStop(0, 'rgba(55,45,35,.45)'); g.addColorStop(1, 'rgba(55,45,35,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, H - 0.7 * PPM, W, 0.7 * PPM);
+  // שריטות וסימנים מאנשים ששברו פה לפנייך
+  for (let i = 0; i < W / 70; i++) {
+    const sx = rand(0, W), sy = H - rand(0.4, 1.8) * PPM;
+    ctx.strokeStyle = `rgba(35,32,30,${rand(.12, .32)})`; ctx.lineWidth = rand(.8, 2.4);
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(sx + rand(-20, 20), sy + rand(-10, 10), sx + rand(-35, 35), sy + rand(-14, 14)); ctx.stroke();
+  }
+  for (let i = 0; i < W / 260; i++) scuff(w, rand(0, W), H - rand(0.5, 1.7) * PPM, rand(0.5, 0.9));
+  // רטיבות/כתמים מהתקרה
+  for (let i = 0; i < 3; i++) {
+    const x0 = rand(0, W); const gg = ctx.createLinearGradient(0, 0, 0, rand(60, 160));
+    gg.addColorStop(0, 'rgba(80,70,55,.18)'); gg.addColorStop(1, 'rgba(80,70,55,0)');
+    ctx.fillStyle = gg; ctx.fillRect(x0, 0, rand(20, 70), 170);
+  }
+  w.tex.needsUpdate = true;
+}
+function scuff(w, x, y, s = 1) {                       // סימן מכה על הקיר
+  const ctx = w.ctx;
+  ctx.save(); ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = 'rgba(120,114,104,.55)';                // שבב שהתקלף מהצבע
+  ctx.beginPath();
+  const k = randi(6, 9);
+  for (let i = 0; i < k; i++) { const a = i / k * 6.283 + rand(-0.3, 0.3), r = rand(4, 11) * s; i ? ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r * 0.8) : ctx.moveTo(x + Math.cos(a) * r, y + Math.sin(a) * r * 0.8); }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(80,74,66,.35)'; ctx.beginPath(); ctx.arc(x + rand(-2, 2), y + rand(-2, 2), 3.5 * s, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(70,64,58,.25)';                     // שריטות קטנות
+  for (let i = 0; i < 10; i++) { ctx.beginPath(); ctx.arc(x + gauss() * 7 * s, y + gauss() * 7 * s, rand(.5, 1.4), 0, 7); ctx.fill(); }
+  ctx.restore();
+  w.dirty = true;
+}
+function makeWall(len, pos, rotY, name) {
+  const W = Math.round(len * PPM), H = Math.round(RH * PPM);
+  const c = makeCanvas(W, H), ctx = c.getContext('2d', { willReadFrequently: true });
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const bt = bumpTex.clone(); bt.needsUpdate = true; bt.repeat.set(len / 0.8, RH / 0.8);
+  const mat = new THREE.MeshStandardMaterial({ map: tex, bumpMap: bt, bumpScale: 1.6, roughness: 0.9, metalness: 0, envMapIntensity: 0.35 });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(len, RH), mat);
+  mesh.position.copy(pos); mesh.rotation.y = rotY; mesh.receiveShadow = true;
+  const w = { mesh, canvas: c, ctx, tex, W, H, len, name, dirty: false, paintLevel: new Float32Array(Math.ceil(W / 16) * Math.ceil(H / 16)) };
+  mesh.userData.type = 'wall'; mesh.userData.wall = w;
+  scene.add(mesh); walls.push(w); interactive.push(mesh); paintOccluders.push(mesh);
+  drawWallBase(w);
+  return w;
+}
+makeWall(RX * 2, new V3(0, RH / 2, -RZ), 0, 'back');
+makeWall(RX * 2, new V3(0, RH / 2, RZ), Math.PI, 'front');
+makeWall(RZ * 2, new V3(-RX, RH / 2, 0), Math.PI / 2, 'left');
+makeWall(RZ * 2, new V3(RX, RH / 2, 0), -Math.PI / 2, 'right');
+function wallUV(w, p) {                                  // נקודה בעולם → מיקום על בד הקיר
+  let u;
+  if (w.name === 'back') u = (p.x + RX) / (2 * RX);
+  else if (w.name === 'front') u = (RX - p.x) / (2 * RX);
+  else if (w.name === 'left') u = (RZ - p.z) / (2 * RZ);
+  else u = (p.z + RZ) / (2 * RZ);
+  return { x: u * w.W, y: (1 - p.y / RH) * w.H };
+}
+
+// ---------- רהיטים ----------
+const surfaces = [];                                      // משטחים שאפשר להניח עליהם
+const solids = [];                                        // קופסאות שחוסמות הליכה וזריקות
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x3d4045, metalness: 0.85, roughness: 0.42, envMapIntensity: 0.8 });
+const rustMetal = new THREE.MeshStandardMaterial({ color: 0x5a524a, metalness: 0.7, roughness: 0.6, envMapIntensity: 0.6 });
+function box(w, h, d, mat, x, y, z, parent = scene) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m;
+}
+function furniture(mesh, kind) { mesh.userData.type = 'furniture'; mesh.userData.kind = kind; interactive.push(mesh); paintOccluders.push(mesh); }
+function addSurface(x0, x1, z0, z1, y, kind) { const s = { x0, x1, z0, z1, y, kind }; surfaces.push(s); return s; }
+function addSolid(x0, y0, z0, x1, y1, z1, kind, walkBlock = true) { const b = { box: new THREE.Box3(new V3(x0, y0, z0), new V3(x1, y1, z1)), kind, walkBlock }; solids.push(b); return b; }
+
+function shelfUnit(cx, cz, w, d, levels) {
+  const osb = new THREE.MeshStandardMaterial({ map: osbTex, roughness: 0.85, envMapIntensity: 0.4 });
+  const top = levels[levels.length - 1] + 0.08;
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+    const p = box(0.04, top, 0.04, metalMat, cx + sx * (w / 2 - 0.02), top / 2, cz + sz * (d / 2 - 0.02)); furniture(p, 'metal');
+  }
+  const out = [];
+  for (const y of levels) {
+    const b = box(w, 0.025, d, osb, cx, y, cz); furniture(b, 'wood');
+    const rail = box(w, 0.035, 0.012, metalMat, cx, y - 0.005, cz + d / 2); furniture(rail, 'metal');
+    out.push(addSurface(cx - w / 2 + 0.03, cx + w / 2 - 0.03, cz - d / 2 + 0.03, cz + d / 2 - 0.03, y + 0.0125, 'wood'));
+    addSolid(cx - w / 2, y - 0.03, cz - d / 2, cx + w / 2, y + 0.03, cz + d / 2, 'wood', false);
+  }
+  addSolid(cx - w / 2, 0, cz - d / 2, cx + w / 2, top, cz + d / 2, 'metal', true).projectile = false;
+  return out;
+}
+function table(cx, cz, w, d, h) {
+  const top = box(w, 0.05, d, new THREE.MeshStandardMaterial({ map: tableTex, roughness: 0.7, envMapIntensity: 0.5 }), cx, h - 0.025, cz); furniture(top, 'wood');
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const l = box(0.05, h - 0.05, 0.05, rustMetal, cx + sx * (w / 2 - 0.07), (h - 0.05) / 2, cz + sz * (d / 2 - 0.07)); furniture(l, 'metal'); }
+  const brace = box(w - 0.14, 0.04, 0.03, rustMetal, cx, 0.16, cz); furniture(brace, 'metal');
+  addSolid(cx - w / 2, h - 0.06, cz - d / 2, cx + w / 2, h, cz + d / 2, 'wood', false);
+  addSolid(cx - w / 2, 0, cz - d / 2, cx + w / 2, h, cz + d / 2, 'wood', true).projectile = false;
+  return addSurface(cx - w / 2 + 0.03, cx + w / 2 - 0.03, cz - d / 2 + 0.03, cz + d / 2 - 0.03, h, 'wood');
+}
+function crate(cx, cz, w, h, d) {
+  const mat = new THREE.MeshStandardMaterial({ map: crateTex, roughness: 0.85, envMapIntensity: 0.4 });
+  const g = new THREE.Group(); g.position.set(cx, 0, cz); scene.add(g);
+  const n = 4, ph = h / n;
+  for (let i = 0; i < n; i++) {                               // קרשים עם רווחים
+    const y = ph * i + ph / 2;
+    furniture(box(w, ph - 0.012, 0.02, mat, 0, y, d / 2 - 0.01, g), 'wood');
+    furniture(box(w, ph - 0.012, 0.02, mat, 0, y, -d / 2 + 0.01, g), 'wood');
+    furniture(box(0.02, ph - 0.012, d - 0.04, mat, w / 2 - 0.01, y, 0, g), 'wood');
+    furniture(box(0.02, ph - 0.012, d - 0.04, mat, -w / 2 + 0.01, y, 0, g), 'wood');
+  }
+  furniture(box(w, 0.02, d, mat, 0, h - 0.01, 0, g), 'wood');
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) furniture(box(0.05, h, 0.05, mat, sx * (w / 2 - 0.025), h / 2, sz * (d / 2 - 0.025), g), 'wood');
+  addSolid(cx - w / 2, 0, cz - d / 2, cx + w / 2, h, cz + d / 2, 'wood', true);
+  return addSurface(cx - w / 2 + 0.02, cx + w / 2 - 0.02, cz - d / 2 + 0.02, cz + d / 2 - 0.02, h, 'wood');
+}
+function drum(cx, cz) {
+  const r = 0.29, h = 0.88;
+  const mat = new THREE.MeshStandardMaterial({ color: 0x1f4f8a, metalness: 0.55, roughness: 0.45, envMapIntensity: 0.8 });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 40, 1), mat); body.position.set(cx, h / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body); furniture(body, 'metal');
+  for (const y of [0.04, 0.3, 0.58, 0.84]) { const ring = new THREE.Mesh(new THREE.TorusGeometry(r + 0.004, 0.01, 8, 40), mat); ring.rotation.x = Math.PI / 2; ring.position.set(cx, y, cz); scene.add(ring); }
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(r - 0.01, r - 0.01, 0.01, 40), rustMetal); lid.position.set(cx, h + 0.002, cz); lid.receiveShadow = true; scene.add(lid);
+  addSolid(cx - r, 0, cz - r, cx + r, h, cz + r, 'metal', true);
+  return addSurface(cx - r * 0.75, cx + r * 0.75, cz - r * 0.75, cz + r * 0.75, h + 0.007, 'metal');
+}
+
+// דלת פלדה ושלט יציאה
+(() => {
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5b6168, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.7 });
+  const frame = box(1.08, 2.18, 0.06, rustMetal, 2.4, 1.09, RZ - 0.03); furniture(frame, 'metal');
+  const door = box(0.96, 2.1, 0.05, doorMat, 2.4, 1.05, RZ - 0.06); furniture(door, 'metal');
+  const handle = box(0.16, 0.03, 0.04, metalMat, 2.06, 1.0, RZ - 0.1);
+  const c = makeCanvas(256, 96), x = c.getContext('2d');
+  x.fillStyle = '#0f8f43'; x.fillRect(0, 0, 256, 96); x.fillStyle = '#fff'; x.font = 'bold 54px Rubik, Arial'; x.textAlign = 'center'; x.fillText('יציאה', 128, 66);
+  const t = texFrom(c); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  const sign = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.13, 0.04), [rustMetal, rustMetal, rustMetal, rustMetal, new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 1.2 }), rustMetal]);
+  sign.rotation.y = Math.PI; sign.position.set(2.4, 2.38, RZ - 0.03); scene.add(sign);
+  const glow = new THREE.PointLight(0x33ff88, 0.25, 2.2, 2); glow.position.set(2.4, 2.3, RZ - 0.3); scene.add(glow);
+  // צינור לאורך התקרה
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, RX * 2, 20), rustMetal); pipe.rotation.z = Math.PI / 2; pipe.position.set(0, RH - 0.18, -RZ + 0.3); scene.add(pipe);
+  const pipe2 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, RZ * 2, 16), metalMat); pipe2.rotation.x = Math.PI / 2; pipe2.position.set(RX - 0.25, RH - 0.12, 0); scene.add(pipe2);
+})();
+
+// מנורות תלויות
+function lamp(x, z, shadow) {
+  const shadeMat = new THREE.MeshStandardMaterial({ color: 0x2e3a32, metalness: 0.55, roughness: 0.45, side: THREE.DoubleSide });
+  const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.7, 6), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  cord.position.set(x, RH - 0.35, z); scene.add(cord);
+  const shade = new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(0.03, 0.12), new THREE.Vector2(0.05, 0.1), new THREE.Vector2(0.14, 0.02), new THREE.Vector2(0.2, -0.04)], 32), shadeMat);
+  shade.position.set(x, RH - 0.82, z); scene.add(shade);
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.045, 20, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffd9a0, emissiveIntensity: 6 }));
+  bulb.position.set(x, RH - 0.84, z); scene.add(bulb);
+  const L = new THREE.SpotLight(0xffd7a8, 38, 0, 1.15, 0.65, 1.7);
+  L.position.set(x, RH - 0.86, z); L.target.position.set(x, 0, z); scene.add(L, L.target);
+  if (shadow) { L.castShadow = true; L.shadow.mapSize.set(isTouch ? 1024 : 2048, isTouch ? 1024 : 2048); L.shadow.bias = -0.0004; L.shadow.normalBias = 0.015; L.shadow.camera.near = 0.1; L.shadow.camera.far = 6; L.shadow.radius = 3; }
+  const fill = new THREE.PointLight(0xffd2a0, 3.2, 0, 1.6); fill.position.set(x, RH - 0.6, z); scene.add(fill); // אור שעולה לתקרה ולקירות
+  return L;
+}
+lamp(-0.4, -0.9, true);
+lamp(1.4, 1.5, true);
+lamp(-2.8, 1.0, false);
+scene.add(new THREE.HemisphereLight(0xfff1dc, 0x3a332c, 0.55));
+
+// =====================================================================
+//   חפצים שבירים
+// =====================================================================
+const MAT = {
+  glass: (tint = 0xffffff, att = null) => new THREE.MeshPhysicalMaterial({ color: tint, metalness: 0, roughness: 0.05, transmission: 0.96, thickness: 0.03, ior: 1.52, envMapIntensity: 2.2, specularIntensity: 1, clearcoat: 0.6, clearcoatRoughness: 0.02, attenuationColor: att ?? 0xd8ecea, attenuationDistance: att ? 0.06 : 0.25 }),
+  porcelain: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 0.9, side: THREE.DoubleSide }),
+  glaze: (c) => new THREE.MeshPhysicalMaterial({ color: c, vertexColors: true, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 0.9, side: THREE.DoubleSide }),
+  terracotta: () => new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.92, envMapIntensity: 0.3, side: THREE.DoubleSide }),
+};
+const GLASS_CLEAR = MAT.glass(0xffffff);
+const GLASS_GREEN = MAT.glass(0x9fd0a8, 0x1f6b35);
+const GLASS_AMBER = MAT.glass(0xffc98a, 0x8a4310);
+const GLASS_BLUE = MAT.glass(0xbcd9ff, 0x2a5fb0);
+const PORCELAIN = MAT.porcelain();
+const TERRA = MAT.terracotta();
+const GLAZES = [0x5aa596, 0x2b4aa0, 0x9c2a2a, 0xe0a83a, 0xf2efe8, 0x2f2f33, 0x7e5aa8, 0xd96a3a].map(c => MAT.glaze(c));
+
+function toV2(pts) { return pts.map(p => new THREE.Vector2(p[0], p[1])); }
+function shellPts(outer, t) {                             // קו מתאר חיצוני → קיר עם עובי
+  const n = outer.length, nor = [];
+  for (let i = 0; i < n; i++) {
+    const a = outer[Math.max(0, i - 1)], b = outer[Math.min(n - 1, i + 1)];
+    let tx = b[0] - a[0], ty = b[1] - a[1]; const L = Math.hypot(tx, ty) || 1; tx /= L; ty /= L;
+    nor.push([-ty, tx]);
+  }
+  const inner = [];
+  for (let i = n - 1; i >= 0; i--) { let x = outer[i][0] + nor[i][0] * t, y = outer[i][1] + nor[i][1] * t; if (i === 0) x = 0; inner.push([Math.max(0, x), y]); }
+  const last = outer[n - 1], nl = nor[n - 1], tan = [nl[1], -nl[0]];
+  const rim = [last[0] + nl[0] * t * 0.5 + tan[0] * t * 0.45, last[1] + nl[1] * t * 0.5 + tan[1] * t * 0.45];
+  return [...outer, rim, ...inner];
+}
+function colorize(geo, fn) {                              // צבע לכל נקודה (פסים, דוגמאות)
+  const p = geo.attributes.position, col = new Float32Array(p.count * 3), c = new THREE.Color();
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    fn(c.setRGB(1, 1, 1), Math.hypot(x, z), Math.atan2(z, x), y, x, z);
+    col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  return geo;
+}
+const GEO = {};
+function cachedGeo(key, make) { return GEO[key] || (GEO[key] = make()); }
+
+const RIMS = [0x1d3a8a, 0xb88a2b, 0x8c1c1c, 0x2d6a4f, null, null];
+function colorObj(hex) { return new THREE.Color(hex); }
+
+// --- יצירת כל סוג חפץ ---
+const MAKERS = {
+  plate() {
+    const rimHex = pick(RIMS), style = randi(0, 2);
+    const geo = cachedGeo('plate' + rimHex + style, () => {
+      const g = new THREE.LatheGeometry(toV2(shellPts([[0, 0.004], [0.055, 0.004], [0.06, 0], [0.066, 0], [0.07, 0.005], [0.095, 0.011], [0.118, 0.02], [0.13, 0.026]], 0.0045)), 56);
+      const rc = rimHex !== null ? colorObj(rimHex) : null;
+      return colorize(g, (c, r, a, y) => {
+        if (!rc) return;
+        if (r > 0.119 && r < 0.126) c.copy(rc);
+        if (style === 1 && r > 0.108 && r < 0.111) c.copy(rc);
+        if (style === 2 && r > 0.1 && r < 0.116 && Math.sin(a * 18) > 0.55 && y > 0.012) c.copy(rc);
+      });
+    });
+    return { geo, mat: PORCELAIN, kind: 'ceramic', name: 'צלחת', anger: 3 };
+  },
+  bowl() {
+    const rimHex = pick(RIMS);
+    const geo = cachedGeo('bowl' + rimHex, () => colorize(new THREE.LatheGeometry(toV2(shellPts([[0, 0.003], [0.03, 0.003], [0.033, 0], [0.038, 0], [0.04, 0.006], [0.06, 0.022], [0.075, 0.042], [0.082, 0.062]], 0.004)), 48),
+      (c, r, a, y) => { if (rimHex !== null && y > 0.052 && r > 0.07) c.copy(colorObj(rimHex)); }));
+    return { geo, mat: PORCELAIN, kind: 'ceramic', name: 'קערה', anger: 3 };
+  },
+  mug() {
+    const geo = cachedGeo('mug', () => {
+      const body = new THREE.LatheGeometry(toV2(shellPts([[0, 0], [0.037, 0], [0.04, 0.004], [0.041, 0.09], [0.0415, 0.098]], 0.005)), 48);
+      const arc = Math.PI * 1.08, h = new THREE.TorusGeometry(0.026, 0.0075, 10, 24, arc);
+      h.rotateZ(-arc / 2); h.translate(0.041, 0.05, 0);
+      const g = mergeGeometries([body, h]);
+      return colorize(g, (c, r, a, y) => { if (y > 0.088 && r < 0.045) c.setRGB(0.92, 0.92, 0.9); });
+    });
+    return { geo, mat: pick(GLAZES), kind: 'ceramic', name: 'ספל', anger: 3 };
+  },
+  vase() {
+    const v = randi(0, 2);
+    const geo = cachedGeo('vase' + v, () => {
+      const P = [
+        [[0, 0.004], [0.05, 0.004], [0.055, 0], [0.065, 0.004], [0.1, 0.08], [0.11, 0.14], [0.095, 0.22], [0.055, 0.28], [0.045, 0.31], [0.05, 0.34], [0.062, 0.355]],
+        [[0, 0.004], [0.045, 0.004], [0.05, 0], [0.06, 0.004], [0.1, 0.05], [0.115, 0.1], [0.09, 0.16], [0.035, 0.2], [0.028, 0.26], [0.036, 0.3]],
+        [[0, 0.004], [0.058, 0.004], [0.062, 0], [0.068, 0.01], [0.07, 0.26], [0.074, 0.28]],
+      ][v];
+      const top = P[P.length - 1][1];
+      return colorize(new THREE.LatheGeometry(toV2(shellPts(P, 0.006)), 56), (c, r, a, y) => {
+        const k = y / top; const s = 0.72 + 0.28 * k + Math.sin(a * 7 + y * 40) * 0.03; c.setRGB(s, s, s);   // זיגוג שמתרכז למטה
+        if (y < 0.012) c.setRGB(0.75, 0.6, 0.45);                                                          // בסיס חרס לא מזוגג
+      });
+    });
+    return { geo, mat: pick(GLAZES), kind: 'ceramic', name: 'אגרטל', anger: 5 };
+  },
+  amphora() {
+    const geo = cachedGeo('amphora', () => {
+      const P = [[0, 0.008], [0.08, 0.008], [0.09, 0], [0.11, 0.01], [0.19, 0.16], [0.21, 0.28], [0.18, 0.42], [0.1, 0.52], [0.085, 0.58], [0.095, 0.63], [0.115, 0.65]];
+      return colorize(new THREE.LatheGeometry(toV2(shellPts(P, 0.01)), 64), (c, r, a, y) => {
+        const s = 0.75 + 0.25 * (y / 0.65); c.setRGB(s, s, s);
+        if (y > 0.3 && y < 0.34) c.setRGB(0.95, 0.85, 0.55);
+      });
+    });
+    return { geo, mat: pick(GLAZES.slice(0, 4)), kind: 'ceramic', name: 'כד ענק', anger: 7 };
+  },
+  pot() {
+    const geo = cachedGeo('pot', () => colorize(new THREE.LatheGeometry(toV2(shellPts([[0, 0.006], [0.07, 0.006], [0.073, 0], [0.1, 0.15], [0.12, 0.152], [0.124, 0.19]], 0.009)), 48),
+      (c, r, a, y) => { const n = 0.94 + Math.sin(a * 23 + y * 90) * 0.03 + Math.random() * 0.04; c.setRGB(0.78 * n, 0.4 * n, 0.24 * n); if (y > 0.17) c.multiplyScalar(0.92); }));
+    return { geo, mat: TERRA, kind: 'terracotta', name: 'עציץ חרס', anger: 4 };
+  },
+  tumbler() {
+    const geo = cachedGeo('tumbler', () => new THREE.LatheGeometry(toV2([[0, 0], [0.03, 0], [0.032, 0.002], [0.036, 0.11], [0.0352, 0.1112], [0.0338, 0.11], [0.0296, 0.014], [0, 0.014]]), 48));
+    return { geo, mat: Math.random() < 0.25 ? GLASS_BLUE : GLASS_CLEAR, kind: 'glass', name: 'כוס', anger: 3 };
+  },
+  wineGlass() {
+    const geo = cachedGeo('wine', () => new THREE.LatheGeometry(toV2([[0, 0], [0.036, 0], [0.037, 0.003], [0.008, 0.007], [0.0045, 0.02], [0.0045, 0.085], [0.012, 0.095], [0.032, 0.11], [0.042, 0.14], [0.04, 0.175], [0.034, 0.2], [0.0332, 0.2008], [0.0325, 0.2], [0.038, 0.175], [0.04, 0.14], [0.03, 0.112], [0.01, 0.1], [0, 0.097]]), 48));
+    return { geo, mat: GLASS_CLEAR, kind: 'glass', name: 'כוס יין', anger: 4 };
+  },
+  bottle() {
+    const geo = cachedGeo('bottle', () => new THREE.LatheGeometry(toV2(shellPts([[0, 0.014], [0.02, 0.005], [0.03, 0], [0.036, 0.004], [0.037, 0.02], [0.037, 0.2], [0.03, 0.235], [0.016, 0.26], [0.0135, 0.27], [0.0135, 0.31], [0.016, 0.312], [0.016, 0.322], [0.0135, 0.325]], 0.003)), 48));
+    return { geo, mat: Math.random() < 0.7 ? GLASS_GREEN : GLASS_CLEAR, kind: 'glass', name: 'בקבוק', anger: 4 };
+  },
+  beer() {
+    const geo = cachedGeo('beer', () => new THREE.LatheGeometry(toV2(shellPts([[0, 0.007], [0.025, 0.002], [0.031, 0], [0.032, 0.004], [0.032, 0.13], [0.026, 0.16], [0.014, 0.19], [0.013, 0.215], [0.015, 0.218], [0.015, 0.225], [0.012, 0.227]], 0.0025)), 40));
+    return { geo, mat: GLASS_AMBER, kind: 'glass', name: 'בקבוק בירה', anger: 3 };
+  },
+  jar() {
+    const geo = cachedGeo('jar', () => new THREE.LatheGeometry(toV2(shellPts([[0, 0.004], [0.04, 0.004], [0.044, 0], [0.046, 0.006], [0.046, 0.11], [0.04, 0.125], [0.037, 0.13], [0.038, 0.145], [0.037, 0.15]], 0.003)), 48));
+    return { geo, mat: GLASS_CLEAR, kind: 'glass', name: 'צנצנת', anger: 3 };
+  },
+  piggy() {
+    const geo = cachedGeo('piggy', () => {
+      const body = new THREE.SphereGeometry(0.075, 36, 26); body.scale(1.28, 0.95, 1); body.translate(0, 0.095, 0);
+      const snout = new THREE.CylinderGeometry(0.03, 0.033, 0.03, 24, 2); snout.rotateZ(Math.PI / 2); snout.translate(0.103, 0.1, 0);
+      const parts = [body, snout];
+      for (const s of [-1, 1]) {
+        const ear = new THREE.ConeGeometry(0.02, 0.035, 12, 2); ear.rotateZ(-0.35); ear.translate(0.05, 0.17, s * 0.035); parts.push(ear);
+        for (const fx of [-1, 1]) { const leg = new THREE.CylinderGeometry(0.016, 0.018, 0.035, 14, 2); leg.translate(fx * 0.05, 0.018, s * 0.035); parts.push(leg); }
+      }
+      const tail = new THREE.TorusGeometry(0.01, 0.003, 6, 14); tail.translate(-0.1, 0.11, 0); parts.push(tail);
+      const g = mergeGeometries(parts);
+      return colorize(g, (c, r, a, y, x, z) => { if (x > 0.115) c.setRGB(0.85, 0.55, 0.6); if (y > 0.163 && Math.abs(x + 0.005) < 0.03 && Math.abs(z) < 0.004) c.setRGB(0.15, 0.1, 0.1); });
+    });
+    const m = MAT.glaze(0xff9fb4);
+    return { geo, mat: m, kind: 'ceramic', name: 'קופת חזיר', anger: 6, coins: true };
+  },
+};
+
+// ---------- רשימת החפצים שבחדר ----------
+const breakables = new Set();
+const dynamics = new Set();                              // חפצים שעפים/נופלים
+let brokenCount = 0, anger = 100, sprayTime = 0, calmShown = false;
+
+function addBreakable(spec, x, y, z, rotY = rand(0, 6.28)) {
+  const mesh = new THREE.Mesh(spec.geo, spec.mat);
+  mesh.position.set(x, y, z); mesh.rotation.y = rotY;
+  mesh.castShadow = !(spec.kind === 'glass'); mesh.receiveShadow = true;
+  if (!spec.geo.boundingBox) spec.geo.computeBoundingBox();
+  if (!spec.geo.boundingSphere) spec.geo.computeBoundingSphere();
+  const o = {
+    mesh, geo: spec.geo, mat: spec.mat, shardMat: spec.shardMat || spec.mat, kind: spec.kind, name: spec.name, anger: spec.anger || 3,
+    radius: spec.geo.boundingSphere.radius, center: spec.geo.boundingSphere.center.clone(), bbox: spec.geo.boundingBox,
+    support: null, attached: false, extras: spec.extras || [], coins: spec.coins, remnant: spec.remnant, flat: spec.flat, heavy: spec.heavy, flatInfo: spec.flatInfo,
+    v: new V3(), w: new V3(), thrown: false, age: 0,
+  };
+  mesh.userData.type = 'breakable'; mesh.userData.br = o;
+  scene.add(mesh); breakables.add(o); interactive.push(mesh);
+  return o;
+}
+function worldCenter(o, out = new V3()) { return out.copy(o.center).applyMatrix4(o.mesh.matrixWorld); }
+function removeFromArray(arr, x) { const i = arr.indexOf(x); if (i >= 0) arr.splice(i, 1); }
+
+// מסדרים חפצים על משטח
+function fillSurface(s, list, zPos, gap = 0.035) {
+  let x = s.x0 + 0.02;
+  for (const kind of list) {
+    const spec = MAKERS[kind]();
+    spec.geo.computeBoundingSphere();
+    const bb = spec.geo.boundingBox || (spec.geo.computeBoundingBox(), spec.geo.boundingBox);
+    const halfW = Math.max(bb.max.x, -bb.min.x, bb.max.z, -bb.min.z);
+    if (x + halfW * 2 > s.x1) break;
+    const z = zPos !== undefined ? zPos : (s.z0 + s.z1) / 2 + rand(-0.04, 0.04);
+    addBreakable(spec, x + halfW, s.y, z);
+    x += halfW * 2 + gap * rand(0.7, 1.4);
+  }
+}
+function stack(kind, n, x, y, z, step) {
+  let below = null;
+  for (let i = 0; i < n; i++) {
+    const o = addBreakable(MAKERS[kind](), x + rand(-0.003, 0.003), y + i * step, z + rand(-0.003, 0.003));
+    if (below) o.support = below;
+    below = o;
+  }
+}
+
+// ---------- מראה ----------
+let mirror = null;
+const cubeRT = new THREE.WebGLCubeRenderTarget(256, { type: THREE.HalfFloatType });
+const cubeCam = new THREE.CubeCamera(0.05, 20, cubeRT);
+const MIRROR_MAT = new THREE.MeshStandardMaterial({ color: 0xdfe6ea, metalness: 1, roughness: 0.02, envMap: cubeRT.texture, envMapIntensity: 1 });
+const MIRROR_POS = new V3(-RX + 0.045, 1.45, 0.4);
+(() => {
+  const frameMat = new THREE.MeshStandardMaterial({ map: tableTex, color: 0xd0a070, roughness: 0.55, envMapIntensity: 0.6 });
+  const g = new THREE.Group(); g.position.copy(MIRROR_POS); g.rotation.y = Math.PI / 2; scene.add(g);
+  const W = 0.74, H = 1.04, f = 0.06;
+  furniture(box(W + 2 * f, f, 0.05, frameMat, 0, H / 2 + f / 2, 0, g), 'wood');
+  furniture(box(W + 2 * f, f, 0.05, frameMat, 0, -H / 2 - f / 2, 0, g), 'wood');
+  furniture(box(f, H, 0.05, frameMat, W / 2 + f / 2, 0, 0, g), 'wood');
+  furniture(box(f, H, 0.05, frameMat, -W / 2 - f / 2, 0, 0, g), 'wood');
+  furniture(box(W, H, 0.01, new THREE.MeshStandardMaterial({ color: 0x2a2622, roughness: 0.9 }), 0, 0, -0.02, g), 'wood');
+  cubeCam.position.copy(MIRROR_POS).add(new V3(0.3, 0, 0)); scene.add(cubeCam);
+})();
+function makeMirror() {
+  const geo = cachedGeo('mirror', () => new THREE.BoxGeometry(0.74, 1.04, 0.006));
+  const o = addBreakable({ geo, mat: MIRROR_MAT, kind: 'mirror', name: 'מראה', anger: 9, remnant: true, flat: true, flatInfo: { w: 0.74, h: 1.04, t: 0.006 } }, MIRROR_POS.x, MIRROR_POS.y, MIRROR_POS.z, Math.PI / 2);
+  o.mesh.castShadow = false;
+  mirror = o;
+}
+
+// ---------- טלוויזיה ישנה ----------
+const tvCanvas = makeCanvas(160, 120), tvCtx = tvCanvas.getContext('2d');
+const tvTex = new THREE.CanvasTexture(tvCanvas); tvTex.colorSpace = THREE.SRGBColorSpace;
+let tvLight = null;
+function makeTV(surface) {
+  const cx = (surface.x0 + surface.x1) / 2, cz = (surface.z0 + surface.z1) / 2, y = surface.y;
+  const W = 0.56, H = 0.44, D = 0.44;
+  const bodyGeo = cachedGeo('tvbody', () => new THREE.BoxGeometry(W, H, D, 14, 11, 11).translate(0, H / 2, 0));
+  const bodyMat = new THREE.MeshPhysicalMaterial({ map: tvWoodTex, roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.2, envMapIntensity: 0.6 });
+  const group = new THREE.Group(); group.position.set(cx, y, cz); group.rotation.y = -Math.PI / 2; group.updateMatrixWorld();
+  // הגוף
+  const body = addBreakable({ geo: bodyGeo, mat: bodyMat, kind: 'plastic', name: 'טלוויזיה', anger: 10, heavy: true }, cx, y, cz, -Math.PI / 2);
+  // חלקים נוספים: מסגרת כסופה, כפתורים, אנטנה, שפופרת שחורה
+  const extras = [];
+  const add = (m, px, py, pz) => { m.position.set(px, py, pz); m.applyMatrix4(group.matrixWorld); m.castShadow = true; scene.add(m); extras.push(m); return m; };
+  const silver = new THREE.MeshStandardMaterial({ color: 0xb8bcc2, metalness: 0.8, roughness: 0.3 });
+  add(new THREE.Mesh(new THREE.BoxGeometry(0.43, 0.35, 0.01), new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6 })), -0.05, H / 2 + 0.005, D / 2 + 0.004);
+  add(new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.36, 0.012), silver), 0.215, H / 2, D / 2 + 0.005);
+  for (const ky of [0.29, 0.21]) { const k = add(new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.02, 20), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.4 })), 0.215, ky, D / 2 + 0.018); k.rotation.set(0, 0, Math.PI / 2); }
+  for (const s of [-1, 1]) { const a = add(new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 0.42, 6), silver), s * 0.09, H + 0.18, -0.05); a.rotation.set(s * 0.45, 0, 0); }
+  body.extras = extras;
+  // המסך (זכוכית שבירה) עם "שלג"
+  const screenGeo = cachedGeo('tvscreen', () => {
+    const g = new THREE.BoxGeometry(0.4, 0.31, 0.006, 26, 20, 1);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) { const x = p.getX(i) / 0.2, yy = p.getY(i) / 0.155; p.setZ(i, p.getZ(i) + 0.014 * (1 - x * x * 0.6 - yy * yy * 0.6)); }
+    g.computeVertexNormals(); g.translate(0, 0, 0); return g;
+  });
+  const screenMat = new THREE.MeshPhysicalMaterial({ color: 0x0b0d0c, emissive: 0xffffff, emissiveMap: tvTex, emissiveIntensity: 0.85, roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1 });
+  const sp = new V3(-0.05, H / 2 + 0.005, D / 2 + 0.012).applyMatrix4(group.matrixWorld);
+  const screen = addBreakable({ geo: screenGeo, mat: screenMat, shardMat: SCREEN_SHARD, kind: 'screen', name: 'מסך', anger: 6, flat: true, flatInfo: { w: 0.4, h: 0.31, t: 0.005, curve: true } }, sp.x, sp.y, sp.z, -Math.PI / 2);
+  screen.support = body; screen.attached = true;
+  screen.mesh.castShadow = false;
+  tvLight = new THREE.PointLight(0xbcd2ff, 0.9, 3, 2); tvLight.position.copy(sp).add(new V3(-0.25, 0, 0)); scene.add(tvLight);
+  screen.onBreak = () => { if (tvLight) { scene.remove(tvLight); tvLight = null; } };
+  body.onBreak = () => { if (tvLight) { scene.remove(tvLight); tvLight = null; } };
+}
+const SCREEN_SHARD = new THREE.MeshPhysicalMaterial({ color: 0x9aa3a0, metalness: 0, roughness: 0.05, transmission: 0.85, thickness: 0.005, ior: 1.5, envMapIntensity: 1.3 });
+function drawStatic(t) {
+  const d = tvCtx.createImageData(160, 120), a = d.data;
+  const bar = (t * 40) % 150 - 15;
+  for (let y = 0; y < 120; y++) {
+    const roll = Math.abs(y - bar) < 9 ? 40 : 0;
+    for (let x = 0; x < 160; x++) { const i = (y * 160 + x) * 4, v = Math.random() * 200 + roll; a[i] = v * 0.92; a[i + 1] = v * 0.96; a[i + 2] = v; a[i + 3] = 255; }
+  }
+  tvCtx.putImageData(d, 0, 0); tvTex.needsUpdate = true;
+}
+
+// ---------- בניית כל החדר ----------
+let SHELF_A, SHELF_B, TABLE1, TABLE2, CRATE, DRUM;
+SHELF_A = shelfUnit(-2.2, -RZ + 0.28, 2.0, 0.48, [0.1, 0.56, 1.02, 1.48, 1.94]);
+SHELF_B = shelfUnit(2.0, -RZ + 0.28, 2.0, 0.48, [0.1, 0.56, 1.02, 1.48, 1.94]);
+TABLE1 = table(-0.3, -0.9, 1.7, 0.9, 0.8);
+TABLE2 = table(1.6, 1.25, 1.1, 0.65, 0.76);
+CRATE = crate(RX - 0.45, -0.55, 0.62, 0.52, 0.62);
+DRUM = drum(-RX + 0.6, 1.9);
+
+function stockRoom() {
+  const SA = SHELF_A, SB = SHELF_B;
+  fillSurface(SA[0], ['pot', 'pot', 'jar', 'jar', 'pot', 'jar', 'pot']);
+  fillSurface(SA[1], ['vase', 'bowl', 'vase', 'mug', 'mug', 'vase', 'bowl', 'vase']);
+  fillSurface(SA[2], ['bottle', 'bottle', 'beer', 'beer', 'bottle', 'beer', 'bottle', 'beer', 'bottle', 'beer']);
+  fillSurface(SA[3], ['tumbler', 'tumbler', 'wineGlass', 'wineGlass', 'tumbler', 'jar', 'tumbler', 'wineGlass', 'tumbler']);
+  fillSurface(SA[4], ['vase', 'piggy', 'vase', 'vase', 'vase']);
+  fillSurface(SB[0], ['bottle', 'bottle', 'bottle', 'bottle', 'beer', 'beer', 'beer', 'beer', 'bottle', 'bottle']);
+  fillSurface(SB[1], ['mug', 'mug', 'mug', 'bowl', 'bowl', 'mug', 'mug', 'mug']);
+  stack('plate', 7, SB[2].x0 + 0.18, SB[2].y, (SB[2].z0 + SB[2].z1) / 2, 0.0115);
+  stack('plate', 6, SB[2].x0 + 0.48, SB[2].y, (SB[2].z0 + SB[2].z1) / 2, 0.0115);
+  stack('bowl', 4, SB[2].x0 + 0.76, SB[2].y, (SB[2].z0 + SB[2].z1) / 2, 0.02);
+  fillSurface({ ...SB[2], x0: SB[2].x0 + 0.9 }, ['jar', 'tumbler', 'tumbler', 'jar']);
+  fillSurface(SB[3], ['wineGlass', 'wineGlass', 'wineGlass', 'tumbler', 'tumbler', 'tumbler', 'wineGlass', 'wineGlass']);
+  fillSurface(SB[4], ['piggy', 'vase', 'vase', 'pot', 'vase']);
+  // שולחן מרכזי
+  const T = TABLE1, tz = (T.z0 + T.z1) / 2;
+  stack('plate', 8, T.x0 + 0.2, T.y, tz - 0.12, 0.0115);
+  stack('plate', 5, T.x0 + 0.2, T.y, tz + 0.2, 0.0115);
+  fillSurface({ ...T, x0: T.x0 + 0.38, z0: T.z0, z1: T.z0 + 0.3 }, ['tumbler', 'wineGlass', 'tumbler', 'wineGlass', 'tumbler', 'mug', 'mug', 'tumbler'], T.z0 + 0.12);
+  fillSurface({ ...T, x0: T.x0 + 0.38 }, ['vase', 'bowl', 'bottle', 'beer', 'jar', 'vase'], tz + 0.02);
+  fillSurface({ ...T, x0: T.x0 + 0.38 }, ['mug', 'plate', 'plate', 'plate', 'bottle'], T.z1 - 0.14);
+  // שולחן קטן
+  const S = TABLE2, sz = (S.z0 + S.z1) / 2;
+  stack('plate', 6, S.x0 + 0.17, S.y, sz, 0.0115);
+  fillSurface({ ...S, x0: S.x0 + 0.35 }, ['wineGlass', 'tumbler', 'mug', 'bottle', 'tumbler'], sz - 0.14);
+  fillSurface({ ...S, x0: S.x0 + 0.35 }, ['bowl', 'vase', 'beer', 'jar'], sz + 0.15);
+  // חבית
+  fillSurface(DRUM, ['bottle', 'beer', 'bottle'], (DRUM.z0 + DRUM.z1) / 2, 0.015);
+  // על הרצפה
+  addBreakable(MAKERS.amphora(), -0.65, 0, -RZ + 0.35);
+  addBreakable(MAKERS.pot(), 0.45, 0, -RZ + 0.3);
+  addBreakable(MAKERS.amphora(), RX - 0.45, 0, -RZ + 0.5);
+  addBreakable(MAKERS.amphora(), -RX + 0.5, 0, -1.6);
+  addBreakable(MAKERS.pot(), -RX + 0.45, 0, -0.9);
+  addBreakable(MAKERS.vase(), RX - 0.4, 0, 0.6);
+  addBreakable(MAKERS.pot(), RX - 0.45, 0, 1.2);
+  makeTV(CRATE);
+  makeMirror();
+  needCube = 2;
+}
+
+// =====================================================================
+//   ניפוץ: חותכים את החפץ לרסיסים (חלוקת וורונוי לפי משולשים)
+// =====================================================================
+const shards = [];
+const MAX_SHARDS = isTouch ? 900 : 1600;
+const FIB = (() => { const out = [], n = 40, g = Math.PI * (3 - Math.sqrt(5)); for (let i = 0; i < n; i++) { const y = 1 - (i / (n - 1)), r = Math.sqrt(Math.max(0, 1 - y * y)); out.push(new V3(Math.cos(g * i) * r, y, Math.sin(g * i) * r)); } return out.filter(v => v.y >= 0); })();
+let needCube = 0;
+
+function nonIndexed(geo) { return geo.userData.ni || (geo.userData.ni = geo.index ? geo.toNonIndexed() : geo); }
+
+function shatter(o, hitPoint, dir, power = 1, opts = {}) {
+  if (!breakables.has(o)) return;
+  breakables.delete(o); dynamics.delete(o);
+  removeFromArray(interactive, o.mesh);
+  scene.remove(o.mesh);
+  for (const e of o.extras) scene.remove(e);
+  o.mesh.updateMatrixWorld(true);
+  if (o.onBreak) o.onBreak();
+  const m = o.mesh.matrixWorld, nm = new THREE.Matrix3().getNormalMatrix(m);
+  const dirN = dir.clone().normalize();
+
+  // כל חתיכה: מערכי נקודות ונורמלים בעולם
+  let pieces = [], kept = [], hp, diag;
+  if (o.pieces) {                                            // שארית מראה: משחררים את החתיכות שנשארו
+    pieces = o.pieces; diag = o.radius * 2; hp = hitPoint.clone();
+  } else if (o.flatInfo) {                                   // זכוכית שטוחה: תאי וורונוי חדים
+    const F = o.flatInfo, lh = o.mesh.worldToLocal(hitPoint.clone());
+    const hx = clamp(lh.x, -F.w / 2, F.w / 2), hy = clamp(lh.y, -F.h / 2, F.h / 2);
+    diag = Math.hypot(F.w, F.h);
+    hp = new V3(hx, hy, 0).applyMatrix4(m);
+    const n = Math.round(clamp(14 + diag * 26, 16, 46) * (0.6 + power * 0.4));
+    const seeds = [];
+    for (let i = 0; i < n; i++) {
+      if (i < n * 0.6) { const a = rand(0, 6.283), r = Math.pow(Math.random(), 1.7) * diag * 0.5; seeds.push([clamp(hx + Math.cos(a) * r, -F.w / 2, F.w / 2), clamp(hy + Math.sin(a) * r, -F.h / 2, F.h / 2)]); }
+      else seeds.push([rand(-F.w / 2, F.w / 2), rand(-F.h / 2, F.h / 2)]);
+    }
+    const zf = F.curve ? (x, y) => 0.014 * (1 - 0.6 * (x / (F.w / 2)) ** 2 - 0.6 * (y / (F.h / 2)) ** 2) : () => 0;
+    for (let i = 0; i < n; i++) {
+      let poly = [[-F.w / 2, -F.h / 2], [F.w / 2, -F.h / 2], [F.w / 2, F.h / 2], [-F.w / 2, F.h / 2]];
+      for (let j = 0; j < n && poly.length >= 3; j++) if (j !== i) poly = clipHalf(poly, seeds[i], seeds[j]);
+      if (poly.length < 3) continue;
+      const piece = prism(poly, F.t, zf, m, nm);
+      const edge = poly.some(p => Math.abs(Math.abs(p[0]) - F.w / 2) < 0.002 || Math.abs(Math.abs(p[1]) - F.h / 2) < 0.002);
+      const far = Math.hypot(seeds[i][0] - hx, seeds[i][1] - hy) > diag * 0.22;
+      if (o.remnant && !opts.full && edge && far && Math.random() < 0.8) kept.push(piece); else pieces.push(piece);
+    }
+  } else {                                                   // צורה מעוגלת: מחלקים את המשולשים בין נקודות זרע
+    const geo = nonIndexed(o.geo);
+    const P = geo.attributes.position, N = geo.attributes.normal, C = geo.attributes.color, U = geo.attributes.uv;
+    const cnt = P.count, wp = new Float32Array(cnt * 3), wn = new Float32Array(cnt * 3), v = new V3();
+    for (let i = 0; i < cnt; i++) {
+      v.fromBufferAttribute(P, i).applyMatrix4(m); wp[i * 3] = v.x; wp[i * 3 + 1] = v.y; wp[i * 3 + 2] = v.z;
+      v.fromBufferAttribute(N, i).applyMatrix3(nm).normalize(); wn[i * 3] = v.x; wn[i * 3 + 1] = v.y; wn[i * 3 + 2] = v.z;
+    }
+    const bb = new THREE.Box3().setFromBufferAttribute(new THREE.BufferAttribute(wp, 3));
+    diag = bb.getSize(new V3()).length();
+    hp = hitPoint.clone().clamp(bb.min, bb.max);
+    let nSeeds = Math.round(clamp(5 + diag * 38, 6, 24) * (0.55 + power * 0.45));
+    if (o.kind === 'glass') nSeeds = Math.round(nSeeds * 1.3);
+    const seeds = [];
+    for (let i = 0; i < nSeeds; i++) {
+      if (i < nSeeds * 0.55) seeds.push(new V3(hp.x + gauss() * diag * 0.14, hp.y + gauss() * diag * 0.14, hp.z + gauss() * diag * 0.14).clamp(bb.min, bb.max));
+      else seeds.push(new V3(rand(bb.min.x, bb.max.x), rand(bb.min.y, bb.max.y), rand(bb.min.z, bb.max.z)));
+    }
+    const tris = cnt / 3, assign = new Int16Array(tris), counts = new Int32Array(nSeeds), jit = diag * 0.012;
+    for (let t = 0; t < tris; t++) {
+      const i = t * 9;
+      const cx = (wp[i] + wp[i + 3] + wp[i + 6]) / 3 + gauss() * jit, cy = (wp[i + 1] + wp[i + 4] + wp[i + 7]) / 3 + gauss() * jit, cz = (wp[i + 2] + wp[i + 5] + wp[i + 8]) / 3 + gauss() * jit;
+      let best = 0, bd = Infinity;
+      for (let s = 0; s < nSeeds; s++) { const sd = seeds[s], d = (cx - sd.x) ** 2 + (cy - sd.y) ** 2 + (cz - sd.z) ** 2; if (d < bd) { bd = d; best = s; } }
+      assign[t] = best; counts[best]++;
+    }
+    for (let s = 0; s < nSeeds; s++) {
+      if (!counts[s]) continue;
+      const n = counts[s] * 3;
+      const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = C ? new Float32Array(n * 3) : null, uv = U ? new Float32Array(n * 2) : null;
+      let k = 0;
+      for (let t = 0; t < tris; t++) {
+        if (assign[t] !== s) continue;
+        for (let j = 0; j < 3; j++, k++) {
+          const vi = t * 3 + j;
+          for (let a = 0; a < 3; a++) { pos[k * 3 + a] = wp[vi * 3 + a]; nor[k * 3 + a] = wn[vi * 3 + a]; }
+          if (col) { col[k * 3] = C.getX(vi); col[k * 3 + 1] = C.getY(vi); col[k * 3 + 2] = C.getZ(vi); }
+          if (uv) { uv[k * 2] = U.getX(vi); uv[k * 2 + 1] = U.getY(vi); }
+        }
+      }
+      pieces.push({ pos, nor, col, uv });
+    }
+  }
+
+  const made = [];
+  for (const pc of pieces) made.push(makeShard(o, pc, hp, dirN, diag, power, opts));
+  if (kept.length) {                                         // מה שנשאר במסגרת הופך לחפץ שבור חדש
+    const g = mergePieces(kept);
+    const r = addBreakable({ geo: g, mat: o.mat, shardMat: o.shardMat, kind: o.kind, name: o.name, anger: 3, flat: true }, 0, 0, 0, 0);
+    r.pieces = kept; r.mesh.castShadow = false;
+    if (o === mirror) mirror = r;
+  } else if (o === mirror) mirror = null;
+  trimShards();
+  // מטבעות מקופת החזיר
+  if (o.coins) for (let i = 0; i < 14; i++) spawnCoin(hp, dirN, power);
+  // אפקטים
+  spawnCrumbs(o, hp, dirN, power);
+  if (o.kind === 'ceramic' || o.kind === 'terracotta') spawnDust(hp, o.kind === 'terracotta' ? 0xb07a55 : 0xe8e2d8, o.kind === 'terracotta' ? 9 : 5);
+  if (o.kind === 'plastic' || o.kind === 'screen') { spawnSparks(hp, 26); spawnDust(hp, 0x8c8c8c, 6); }
+  sfxBreak(o.pieces ? 'glass' : o.kind, hp, power, o.coins);
+  addBroken(o);
+  needCube = Math.max(needCube, 1);
+  // חפצים שעמדו עליו נשברים גם הם
+  for (const b of [...breakables]) if (b.support === o) {
+    setTimeout(() => { if (breakables.has(b)) shatter(b, worldCenter(b), dirN.clone().add(new V3(0, -0.5, 0)), b.attached ? 0.6 : 0.45); }, b.attached ? 0 : rand(40, 140));
+  }
+  return made;
+}
+function clipHalf(poly, s, t) {                              // משאירים את הצד של הפוליגון שקרוב יותר ל-s
+  const nx = t[0] - s[0], ny = t[1] - s[1], mx = (s[0] + t[0]) / 2, my = (s[1] + t[1]) / 2;
+  const f = p => (p[0] - mx) * nx + (p[1] - my) * ny, out = [];
+  for (let k = 0; k < poly.length; k++) {
+    const a = poly[k], b = poly[(k + 1) % poly.length], fa = f(a), fb = f(b);
+    if (fa <= 0) out.push(a);
+    if ((fa <= 0) !== (fb <= 0)) { const u = fa / (fa - fb); out.push([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u]); }
+  }
+  return out;
+}
+function prism(poly, t, zf, m, nm) {                         // פוליגון שטוח → רסיס זכוכית עם עובי
+  const P = [], N = [];
+  const A = new V3(), B = new V3(), C = new V3(), nrm = new V3(), e1 = new V3(), e2 = new V3();
+  const tri = (a, b, c, want) => {
+    e1.subVectors(b, a); e2.subVectors(c, a); nrm.crossVectors(e1, e2).normalize();
+    if (nrm.dot(want) < 0) { const tmp = b; b = c; c = tmp; nrm.negate(); }
+    for (const q of [a, b, c]) { const w = q.clone().applyMatrix4(m); P.push(w.x, w.y, w.z); }
+    const wn = nrm.clone().applyMatrix3(nm).normalize();
+    for (let i = 0; i < 3; i++) N.push(wn.x, wn.y, wn.z);
+  };
+  const front = poly.map(p => new V3(p[0], p[1], zf(p[0], p[1]) + t / 2)), back = poly.map(p => new V3(p[0], p[1], zf(p[0], p[1]) - t / 2));
+  const fz = new V3(0, 0, 1), bz = new V3(0, 0, -1);
+  for (let k = 1; k < poly.length - 1; k++) { tri(front[0], front[k], front[k + 1], fz); tri(back[0], back[k + 1], back[k], bz); }
+  for (let k = 0; k < poly.length; k++) {
+    const k2 = (k + 1) % poly.length, out = new V3(poly[k2][1] - poly[k][1], -(poly[k2][0] - poly[k][0]), 0).normalize();
+    tri(front[k], back[k], back[k2], out); tri(front[k], back[k2], front[k2], out);
+  }
+  return { pos: new Float32Array(P), nor: new Float32Array(N) };
+}
+function mergePieces(list) {
+  let n = 0; for (const p of list) n += p.pos.length;
+  const pos = new Float32Array(n), nor = new Float32Array(n); let o = 0;
+  for (const p of list) { pos.set(p.pos, o); nor.set(p.nor, o); o += p.pos.length; }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+  g.computeBoundingBox(); g.computeBoundingSphere();
+  return g;
+}
+function makeShard(o, pc, hp, dirN, diag, power, opts) {
+  const n = pc.pos.length / 3, pos = pc.pos.slice(), cen = new V3();
+  for (let i = 0; i < n; i++) { cen.x += pos[i * 3]; cen.y += pos[i * 3 + 1]; cen.z += pos[i * 3 + 2]; }
+  cen.divideScalar(n);
+  for (let i = 0; i < n; i++) { pos[i * 3] -= cen.x; pos[i * 3 + 1] -= cen.y; pos[i * 3 + 2] -= cen.z; }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.BufferAttribute(pc.nor, 3));
+  if (pc.col) g.setAttribute('color', new THREE.BufferAttribute(pc.col, 3));
+  if (pc.uv) g.setAttribute('uv', new THREE.BufferAttribute(pc.uv, 2));
+  g.computeBoundingSphere();
+  const mesh = new THREE.Mesh(g, o.shardMat);
+  mesh.position.copy(cen);
+  mesh.castShadow = g.boundingSphere.radius > 0.03 && o.kind !== 'glass';
+  scene.add(mesh);
+  // דגימות להתנגשות + הציר הדק של הרסיס (כדי שינוח שטוח)
+  const samples = [], step = Math.max(1, Math.floor(n / 16));
+  for (let i = 0; i < n; i += step) samples.push(new V3(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]));
+  let thin = UP.clone(), minVar = Infinity;
+  for (const d of FIB) { let s2 = 0; for (const p of samples) { const q = p.dot(d); s2 += q * q; } if (s2 < minVar) { minVar = s2; thin = d.clone(); } }
+  // מהירות: לכיוון המכה + החוצה מנקודת הפגיעה
+  const away = cen.clone().sub(hp); const dist = away.length(); away.normalize();
+  const fall = Math.max(0, 1 - dist / (diag + 0.001));
+  const spd = (1.2 + 3.2 * power) * (0.35 + fall);
+  const vel = dirN.clone().multiplyScalar(spd * rand(0.5, 1.2)).addScaledVector(away, rand(0.4, 1.6) * (0.4 + power)).add(new V3(gauss() * 0.4, rand(0.2, 1.4) * power, gauss() * 0.4));
+  if (o.pieces) vel.multiplyScalar(0.35);
+  if (opts.vel) vel.add(opts.vel.clone().multiplyScalar(0.35));
+  const sh = { mesh, v: vel, w: new V3(gauss(), gauss(), gauss()).multiplyScalar(6 + 10 * power), samples, thin, awake: true, rest: 0, kind: o.kind, born: performance.now() };
+  shards.push(sh);
+  return sh;
+}
+function trimShards() {
+  while (shards.length > MAX_SHARDS) {
+    let idx = shards.findIndex(s => !s.awake);
+    if (idx < 0) idx = 0;
+    const s = shards[idx]; scene.remove(s.mesh); s.mesh.geometry.dispose(); shards.splice(idx, 1);
+  }
+}
+
+// מטבעות
+const coinGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.0025, 20);
+const coinMat = new THREE.MeshStandardMaterial({ color: 0xffcf5a, metalness: 1, roughness: 0.28 });
+function spawnCoin(p, dir, power) {
+  const mesh = new THREE.Mesh(coinGeo, coinMat); mesh.position.copy(p).add(new V3(gauss() * 0.03, gauss() * 0.03, gauss() * 0.03)); mesh.castShadow = true; scene.add(mesh);
+  const samples = [];
+  for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; samples.push(new V3(Math.cos(a) * 0.012, 0.00125 * (i % 2 ? 1 : -1), Math.sin(a) * 0.012)); }
+  shards.push({ mesh, v: dir.clone().multiplyScalar(rand(0.5, 2) * power).add(new V3(gauss(), rand(1, 3), gauss())), w: new V3(gauss(), gauss(), gauss()).multiplyScalar(14), samples, thin: UP.clone(), awake: true, rest: 0, kind: 'coin', born: performance.now() });
+}
+
+// פירורים קטנטנים (InstancedMesh אחד לכל הפירורים)
+const CRUMBS = 700;
+const crumbMesh = new THREE.InstancedMesh(new THREE.TetrahedronGeometry(0.006), new THREE.MeshStandardMaterial({ roughness: 0.25, metalness: 0.1, envMapIntensity: 1.2 }), CRUMBS);
+crumbMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+crumbMesh.frustumCulled = false; crumbMesh.count = CRUMBS;
+const crumbs = []; let crumbIdx = 0;
+const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
+for (let i = 0; i < CRUMBS; i++) { crumbMesh.setMatrixAt(i, hidden); crumbMesh.setColorAt(i, new THREE.Color(1, 1, 1)); crumbs.push({ p: new V3(), v: new V3(), q: new THREE.Quaternion(), s: 1, alive: false, awake: false }); }
+scene.add(crumbMesh);
+const _cm = new THREE.Matrix4(), _cs = new V3(), _col = new THREE.Color();
+function spawnCrumbs(o, p, dir, power) {
+  const n = o.kind === 'terracotta' ? 55 : o.kind === 'plastic' ? 20 : 40;
+  let base;
+  if (o.kind === 'glass' || o.kind === 'mirror' || o.kind === 'screen') base = new THREE.Color(0xdfeef0);
+  else if (o.kind === 'terracotta') base = new THREE.Color(0xa45a35);
+  else if (o.kind === 'plastic') base = new THREE.Color(0x3a2a1c);
+  else base = o.mat.color ? o.mat.color.clone().lerp(new THREE.Color(1, 1, 1), 0.4) : new THREE.Color(1, 1, 1);
+  for (let i = 0; i < n; i++) {
+    const c = crumbs[crumbIdx]; const idx = crumbIdx; crumbIdx = (crumbIdx + 1) % CRUMBS;
+    c.p.copy(p).add(new V3(gauss() * 0.02, gauss() * 0.02, gauss() * 0.02));
+    c.v.copy(dir).multiplyScalar(rand(0.5, 3) * power).add(new V3(gauss() * 1.5, rand(0.3, 2.6), gauss() * 1.5));
+    c.q.setFromEuler(new THREE.Euler(rand(0, 6), rand(0, 6), rand(0, 6)));
+    c.s = rand(0.4, 1.5); c.alive = true; c.awake = true;
+    crumbMesh.setColorAt(idx, _col.copy(base).multiplyScalar(rand(0.75, 1.1)));
+  }
+  crumbMesh.instanceColor.needsUpdate = true;
+}
+
+// אבק וניצוצות (ספרייטים)
+const softTex = (() => { const c = makeCanvas(64, 64), x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.4, 'rgba(255,255,255,.45)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const puffs = [];
+function spawnDust(p, color, n) {
+  for (let i = 0; i < n; i++) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color, transparent: true, opacity: 0.32, depthWrite: false }));
+    s.position.copy(p).add(new V3(gauss() * 0.04, gauss() * 0.04, gauss() * 0.04)); s.scale.setScalar(0.08);
+    scene.add(s); puffs.push({ s, v: new V3(gauss() * 0.4, rand(0.05, 0.4), gauss() * 0.4), life: 0, max: rand(0.9, 1.6), grow: rand(0.3, 0.6), op: 0.32, g: -0.15 });
+  }
+}
+function spawnSparks(p, n) {
+  for (let i = 0; i < n; i++) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color: 0xffd27a, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending }));
+    s.position.copy(p); s.scale.setScalar(0.025); scene.add(s);
+    puffs.push({ s, v: new V3(gauss() * 2, rand(0.5, 3), gauss() * 2), life: 0, max: rand(0.3, 0.7), grow: -0.02, op: 1, g: 9.8 });
+  }
+}
+function spawnMist(p, color) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex, color, transparent: true, opacity: 0.18, depthWrite: false }));
+  s.position.copy(p); s.scale.setScalar(0.05); scene.add(s);
+  puffs.push({ s, v: new V3(gauss() * 0.15, rand(0, 0.15), gauss() * 0.15), life: 0, max: 0.5, grow: 0.5, op: 0.18, g: 0 });
+}
+
+// =====================================================================
+//   פיזיקה
+// =====================================================================
+function supportHeight(x, z, y) {
+  let h = 0;
+  for (const s of surfaces) if (x > s.x0 && x < s.x1 && z > s.z0 && z < s.z1 && s.y <= y + 0.03 && s.y > h) h = s.y;
+  return h;
+}
+const _q = new THREE.Quaternion(), _w = new V3(), _a = new V3(), _tgt = new THREE.Quaternion();
+let tickBudget = 0;
+function integrateRotation(mesh, w, dt) {
+  const ang = w.length() * dt;
+  if (ang > 1e-5) { _q.setFromAxisAngle(_w.copy(w).divideScalar(w.length()), ang); mesh.quaternion.premultiply(_q); }
+}
+function updateShards(dt) {
+  for (const s of shards) {
+    if (!s.awake) continue;
+    const m = s.mesh, p = m.position;
+    s.v.y -= 9.8 * dt;
+    const prevY = p.y;
+    p.addScaledVector(s.v, dt);
+    integrateRotation(m, s.w, dt);
+    // קירות ותקרה
+    if (p.x < -RX + 0.01) { p.x = -RX + 0.01; s.v.x = Math.abs(s.v.x) * 0.3; }
+    if (p.x > RX - 0.01) { p.x = RX - 0.01; s.v.x = -Math.abs(s.v.x) * 0.3; }
+    if (p.z < -RZ + 0.01) { p.z = -RZ + 0.01; s.v.z = Math.abs(s.v.z) * 0.3; }
+    if (p.z > RZ - 0.01) { p.z = RZ - 0.01; s.v.z = -Math.abs(s.v.z) * 0.3; }
+    if (p.y > RH - 0.02) { p.y = RH - 0.02; s.v.y = -Math.abs(s.v.y) * 0.3; }
+    // הנקודה הנמוכה ביותר של הרסיס
+    let minY = Infinity;
+    for (const smp of s.samples) { const y = _a.copy(smp).applyQuaternion(m.quaternion).y; if (y < minY) minY = y; }
+    const h = supportHeight(p.x, p.z, prevY + minY);
+    if (p.y + minY < h) {
+      p.y += h - (p.y + minY);
+      if (s.v.y < -0.9) {
+        if (s.v.y < -1.6 && tickBudget > 0) { tickBudget--; sfxTick(s.kind, p, -s.v.y); }
+        s.v.y = -s.v.y * (s.kind === 'coin' ? 0.35 : 0.22);
+        s.v.x *= 0.55; s.v.z *= 0.55; s.w.multiplyScalar(0.55);
+      } else {
+        s.v.y = 0;
+        const f = Math.exp(-7 * dt); s.v.x *= f; s.v.z *= f; s.w.multiplyScalar(Math.exp(-9 * dt));
+        // מסתובב לאט כך שישכב שטוח
+        _a.copy(s.thin).applyQuaternion(m.quaternion);
+        _tgt.setFromUnitVectors(_a, _a.y >= 0 ? UP : tmpV2.set(0, -1, 0)).multiply(m.quaternion);
+        m.quaternion.slerp(_tgt, 1 - Math.exp(-6 * dt));
+        if (s.v.lengthSq() < 0.004 && s.w.lengthSq() < 0.1) { s.rest += dt; if (s.rest > 0.35) { s.awake = false; s.v.set(0, 0, 0); } }
+      }
+    }
+  }
+}
+function updateCrumbs(dt) {
+  let any = false;
+  for (let i = 0; i < CRUMBS; i++) {
+    const c = crumbs[i]; if (!c.alive) continue;
+    if (c.awake) {
+      c.v.y -= 9.8 * dt; const py = c.p.y;
+      c.p.addScaledVector(c.v, dt);
+      c.p.x = clamp(c.p.x, -RX + 0.01, RX - 0.01); c.p.z = clamp(c.p.z, -RZ + 0.01, RZ - 0.01);
+      const h = supportHeight(c.p.x, c.p.z, py) + 0.002;
+      if (c.p.y < h) { c.p.y = h; if (c.v.y < -0.6) { c.v.y *= -0.25; c.v.x *= 0.5; c.v.z *= 0.5; } else { c.v.set(0, 0, 0); c.awake = false; } }
+      any = true;
+    }
+    crumbMesh.setMatrixAt(i, _cm.compose(c.p, c.q, _cs.setScalar(c.s)));
+  }
+  if (any) crumbMesh.instanceMatrix.needsUpdate = true;
+}
+function updatePuffs(dt) {
+  for (let i = puffs.length - 1; i >= 0; i--) {
+    const f = puffs[i]; f.life += dt;
+    f.v.y -= f.g * dt; f.s.position.addScaledVector(f.v, dt); f.v.multiplyScalar(Math.exp(-1.5 * dt));
+    f.s.scale.addScalar(f.grow * dt);
+    const k = f.life / f.max; f.s.material.opacity = f.op * (1 - k);
+    if (f.life >= f.max || f.s.scale.x <= 0.002) { scene.remove(f.s); f.s.material.dispose(); puffs.splice(i, 1); }
+  }
+}
+
+// חפצים שעפים: זריקות ונפילות
+const _bc = new V3(), _oc = new V3();
+const CORNERS = [0, 1, 2, 3, 4, 5, 6, 7].map(i => new V3());
+function lowestCorner(o) {
+  const b = o.bbox; let min = Infinity, best = null;
+  for (let i = 0; i < 8; i++) {
+    const c = CORNERS[i].set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z).applyQuaternion(o.mesh.quaternion).add(o.mesh.position);
+    if (c.y < min) { min = c.y; best = c; }
+  }
+  return best.clone();
+}
+function updateDynamics(dt) {
+  for (const o of [...dynamics]) {
+    if (!breakables.has(o)) { dynamics.delete(o); continue; }
+    const p = o.mesh.position;
+    o.age += dt;
+    o.v.y -= 9.8 * dt;
+    const prev = p.clone();
+    p.addScaledVector(o.v, dt);
+    const prevC = new V3();
+    integrateRotation(o.mesh, o.w, dt);
+    o.mesh.updateMatrixWorld();
+    const speed = o.v.length();
+    const c = worldCenter(o, _oc);
+    const r = Math.min(o.radius, 0.12);
+    prevC.copy(c).addScaledVector(o.v, -dt);
+    // קירות
+    let wallHit = null;
+    if (c.x < -RX + r * 0.6) wallHit = walls[2]; else if (c.x > RX - r * 0.6) wallHit = walls[3];
+    else if (c.z < -RZ + r * 0.6) wallHit = walls[0]; else if (c.z > RZ - r * 0.6) wallHit = walls[1];
+    else if (c.y > RH - r * 0.6) wallHit = 'ceil';
+    if (wallHit) {
+      const hp = c.clone(); hp.x = clamp(hp.x, -RX + 0.01, RX - 0.01); hp.z = clamp(hp.z, -RZ + 0.01, RZ - 0.01);
+      if (wallHit !== 'ceil') { const uv = wallUV(wallHit, hp); scuff(wallHit, uv.x, uv.y, rand(0.8, 1.3)); }
+      const n = new V3(wallHit === walls[2] ? 1 : wallHit === walls[3] ? -1 : 0, wallHit === 'ceil' ? -1 : 0, wallHit === walls[0] ? 1 : wallHit === walls[1] ? -1 : 0);
+      const bounce = o.v.clone().reflect(n).multiplyScalar(0.25);
+      shatter(o, hp, bounce.add(n.multiplyScalar(1.2)), clamp(speed / 9, 0.6, 1.3), { vel: bounce });
+      continue;
+    }
+    // פגיעה בחפץ אחר
+    let hitOther = null;
+    if (speed > 2) for (const b of breakables) {
+      if (b === o || dynamics.has(b)) continue;
+      const bc = worldCenter(b, _bc);
+      if (bc.distanceToSquared(c) < (b.radius * 0.8 + r * 0.7) ** 2) { hitOther = b; break; }
+    }
+    if (hitOther) {
+      const hp = worldCenter(hitOther).lerp(c, 0.5);
+      shatter(hitOther, hp, o.v, clamp(speed / 8, 0.6, 1.3));
+      shatter(o, hp, o.v.clone().multiplyScalar(-0.3), clamp(speed / 9, 0.6, 1.2));
+      continue;
+    }
+    // רהיטים
+    let solidHit = false;
+    for (const s of solids) {
+      if (s.projectile === false) continue;
+      if (s.box.containsPoint(c) && !s.box.containsPoint(prevC)) {
+        if (speed > 2) { shatter(o, c, o.v.clone().multiplyScalar(-0.3).add(new V3(0, 1, 0)), clamp(speed / 9, 0.6, 1.2)); solidHit = true; sfxThud(s.kind, c, 0.6); break; }
+      }
+    }
+    if (solidHit) continue;
+    // רצפה ומשטחים
+    const low = lowestCorner(o);
+    const h = supportHeight(c.x, c.z, prev.y + (low.y - p.y) + 0.02);
+    if (low.y < h) {
+      const vy = -o.v.y;
+      if (speed > 2.4 || vy > 2.2) { low.y = h + 0.01; shatter(o, low, o.v.clone().setY(Math.abs(o.v.y) * 0.4), clamp(speed / 7, 0.5, 1.3)); continue; }
+      // נחיתה רכה: נעמד ישר
+      p.y += h - low.y; o.v.set(0, 0, 0); o.w.set(0, 0, 0);
+      const e = new THREE.Euler().setFromQuaternion(o.mesh.quaternion, 'YXZ'); o.mesh.rotation.set(0, e.y, 0);
+      o.mesh.updateMatrixWorld();
+      const low2 = lowestCorner(o); p.y += h - low2.y;
+      dynamics.delete(o); o.thrown = false;
+      sfxThud('wood', c, 0.25);
+    }
+    if (o.age > 8) { shatter(o, c, UP, 0.5); }
+  }
+}
+function knock(o, vel) {                                  // מעיפים חפץ מהמדף
+  if (!breakables.has(o) || dynamics.has(o) || o.heavy || o.flat) return;
+  o.v.copy(vel); o.w.set(gauss(), gauss(), gauss()).multiplyScalar(5); o.age = 0;
+  o.mesh.position.y += 0.005;
+  dynamics.add(o);
+}
+
+// =====================================================================
+//   צלילים (נוצרים בקוד עם Web Audio)
+// =====================================================================
+let actx = null, master = null, wet = null, noiseBuf = null, soundOn = true, hiss = null, voices = 0;
+function initAudio() {
+  if (actx) { if (actx.state === 'suspended') actx.resume(); return; }
+  try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  const comp = actx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4; comp.connect(actx.destination);
+  master = actx.createGain(); master.gain.value = 0.9; master.connect(comp);
+  noiseBuf = actx.createBuffer(1, actx.sampleRate * 2, actx.sampleRate);
+  const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  // הד של חדר בטון
+  const len = actx.sampleRate * 1.3, ir = actx.createBuffer(2, len, actx.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const b = ir.getChannelData(ch); for (let i = 0; i < len; i++) b[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+  const conv = actx.createConvolver(); conv.buffer = ir; wet = actx.createGain(); wet.gain.value = 0.28; wet.connect(conv); conv.connect(master);
+  // רעש של ספריי (תמיד רץ, הווליום עולה כשמרססים)
+  const src = actx.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+  const hp = actx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3200;
+  const bp = actx.createBiquadFilter(); bp.type = 'peaking'; bp.frequency.value = 7000; bp.gain.value = 6;
+  hiss = actx.createGain(); hiss.gain.value = 0;
+  src.connect(hp); hp.connect(bp); bp.connect(hiss); hiss.connect(master); src.start();
+}
+function bus(pos, vol) {
+  const g = actx.createGain(); g.gain.value = vol;
+  let pan = 0, dist = 1;
+  if (pos) {
+    const rel = pos.clone().sub(camera.position); dist = rel.length();
+    const right = new V3(1, 0, 0).applyQuaternion(camera.quaternion);
+    pan = clamp(rel.normalize().dot(right), -1, 1) * 0.8;
+    g.gain.value = vol * clamp(2.2 / (dist + 0.8), 0.25, 1.4);
+  }
+  if (actx.createStereoPanner) { const p = actx.createStereoPanner(); p.pan.value = pan; g.connect(p); p.connect(master); p.connect(wet); }
+  else { g.connect(master); g.connect(wet); }
+  return g;
+}
+function nz(dest, t, dur, type, freq, q, peak, decay = dur, freq2) {
+  const s = actx.createBufferSource(); s.buffer = noiseBuf;
+  const f = actx.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(freq, t); f.Q.value = q;
+  if (freq2) f.frequency.exponentialRampToValueAtTime(freq2, t + dur);
+  const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  s.connect(f); f.connect(g); g.connect(dest);
+  s.start(t, Math.random() * 1.5); s.stop(t + dur + 0.05);
+  voices++; s.onended = () => voices--;
+}
+function tone(dest, t, freq, dur, peak, type = 'sine', freq2) {
+  const o = actx.createOscillator(); o.type = type; o.frequency.setValueAtTime(freq, t);
+  if (freq2) o.frequency.exponentialRampToValueAtTime(freq2, t + dur);
+  const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + 0.02);
+  voices++; o.onended = () => voices--;
+}
+function sfxBreak(kind, pos, power, coins) {
+  if (!actx || !soundOn || voices > 90) return;
+  const t = actx.currentTime + 0.005, d = bus(pos, 0.55 + power * 0.35);
+  if (kind === 'glass' || kind === 'mirror' || kind === 'screen') {
+    nz(d, t, 0.25, 'highpass', 2600, 0.7, 0.9, 0.2);
+    nz(d, t, 0.45, 'bandpass', 6500, 1.2, 0.45, 0.4);
+    nz(d, t, 0.08, 'lowpass', 900, 0.8, 0.35, 0.07);
+    const n = kind === 'mirror' ? 26 : 16;
+    for (let i = 0; i < n; i++) { const tt = t + Math.pow(Math.random(), 1.6) * 0.5; tone(d, tt, rand(2600, 8200), rand(0.04, 0.16), rand(0.03, 0.12)); }
+    for (let i = 0; i < 10; i++) nz(d, t + rand(0.25, 0.8), 0.03, 'bandpass', rand(3000, 7000), 6, rand(0.05, 0.14), 0.03);
+    if (kind === 'screen') { nz(d, t, 0.35, 'lowpass', 500, 0.7, 1, 0.3); tone(d, t, 90, 0.25, 0.6, 'sine', 40); }
+  } else if (kind === 'ceramic') {
+    nz(d, t, 0.18, 'bandpass', 1900, 1.1, 1, 0.14);
+    nz(d, t, 0.1, 'lowpass', 700, 0.7, 0.55, 0.08);
+    tone(d, t, 170, 0.12, 0.35, 'sine', 70);
+    for (let i = 0; i < 12; i++) nz(d, t + rand(0.02, 0.55), 0.025, 'bandpass', rand(1800, 5200), 7, rand(0.08, 0.25), 0.025);
+    for (let i = 0; i < 5; i++) tone(d, t + rand(0, 0.2), rand(2400, 4600), rand(0.05, 0.1), rand(0.02, 0.06));
+    if (coins) for (let i = 0; i < 14; i++) { const tt = t + rand(0.05, 0.9); tone(d, tt, rand(3200, 4800), 0.18, 0.05); tone(d, tt, rand(5200, 6800), 0.12, 0.03); }
+  } else if (kind === 'terracotta') {
+    nz(d, t, 0.2, 'bandpass', 950, 0.8, 1, 0.16);
+    nz(d, t, 0.12, 'lowpass', 500, 0.7, 0.6, 0.1);
+    for (let i = 0; i < 22; i++) nz(d, t + rand(0.02, 0.6), 0.02, 'lowpass', rand(1500, 3000), 1, rand(0.05, 0.18), 0.02);
+  } else {
+    nz(d, t, 0.25, 'lowpass', 450, 0.8, 1, 0.22); tone(d, t, 110, 0.2, 0.7, 'sine', 45);
+    nz(d, t, 0.15, 'bandpass', 1300, 1.4, 0.7, 0.12);
+    for (let i = 0; i < 8; i++) nz(d, t + rand(0.02, 0.4), 0.03, 'bandpass', rand(900, 2500), 4, 0.15, 0.03);
+  }
+}
+function sfxTick(kind, pos, v) {
+  if (!actx || !soundOn || voices > 90) return;
+  const t = actx.currentTime, d = bus(pos, clamp(v / 6, 0.05, 0.35));
+  if (kind === 'glass' || kind === 'mirror' || kind === 'screen') tone(d, t, rand(3500, 8000), 0.05, 0.25);
+  else if (kind === 'coin') { tone(d, t, rand(3000, 4500), 0.15, 0.25); tone(d, t, rand(5500, 7000), 0.1, 0.12); }
+  else nz(d, t, 0.03, 'bandpass', rand(1500, 4000), 5, 0.4, 0.025);
+}
+function sfxWhoosh(pitch = 1) {
+  if (!actx || !soundOn) return;
+  const t = actx.currentTime, d = bus(null, 0.5);
+  nz(d, t, 0.26, 'bandpass', 300 * pitch, 1.8, 0.7, 0.25, 1600 * pitch);
+}
+function sfxThud(kind, pos, vol = 1) {
+  if (!actx || !soundOn) return;
+  const t = actx.currentTime, d = bus(pos, vol);
+  if (kind === 'metal') { for (const f of [430, 1010, 1730, 2650]) tone(d, t, f * rand(0.97, 1.03), rand(0.35, 0.7), 0.12); nz(d, t, 0.05, 'bandpass', 2500, 2, 0.4, 0.05); }
+  else if (kind === 'wall') { nz(d, t, 0.12, 'lowpass', 380, 0.8, 1, 0.1); tone(d, t, 80, 0.12, 0.6, 'sine', 50); }
+  else { nz(d, t, 0.1, 'lowpass', 600, 1, 0.9, 0.08); tone(d, t, 140, 0.1, 0.5, 'sine', 80); nz(d, t, 0.05, 'bandpass', 1400, 2, 0.3, 0.04); }
+}
+
+// =====================================================================
+//   כלים ביד (מחבט, ספריי, חפץ לזריקה)
+// =====================================================================
+const vmScene = new THREE.Scene();                       // הכלים ביד מצוירים מעל הכל, כדי שלא ייכנסו לקירות
+vmScene.environment = scene.environment;
+const vmRoot = new THREE.Group(); vmScene.add(vmRoot);
+vmScene.add(new THREE.HemisphereLight(0xfff1dc, 0x3a332c, 0.9));
+const vmSun = new THREE.DirectionalLight(0xffe0bc, 1.6); vmSun.position.set(0.4, 2, 0.6); vmScene.add(vmSun);
+const hand = new THREE.Group(); vmRoot.add(hand);
+const AMMO_GLASS = new Map();
+function ammoMat(m) {
+  if (!m.transmission) return m;
+  if (!AMMO_GLASS.has(m)) AMMO_GLASS.set(m, new THREE.MeshPhysicalMaterial({ color: m.attenuationDistance < 1 ? m.attenuationColor.clone().lerp(new THREE.Color(1, 1, 1), 0.3) : 0xeef6f8, transparent: true, opacity: 0.4, roughness: 0.04, metalness: 0, envMapIntensity: 1.6, clearcoat: 1 }));
+  return AMMO_GLASS.get(m);
+}
+const batPivot = new THREE.Group(); hand.add(batPivot);
+const bat = new THREE.Mesh(new THREE.LatheGeometry(toV2([[0, 0], [0.022, 0.002], [0.026, 0.012], [0.02, 0.022], [0.0135, 0.03], [0.0125, 0.2], [0.014, 0.3], [0.02, 0.42], [0.029, 0.55], [0.0325, 0.68], [0.033, 0.8], [0.03, 0.825], [0.018, 0.836], [0, 0.838]]), 32),
+  new THREE.MeshPhysicalMaterial({ map: batTex, roughness: 0.35, clearcoat: 0.8, clearcoatRoughness: 0.25, envMapIntensity: 0.7 }));
+bat.position.y = -0.12; batPivot.add(bat);
+const BAT_REST = { p: new V3(0.42, -0.5, -0.55), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.55, 0.3, -1.0)) };
+const BAT_UP = { p: new V3(0.36, -0.26, -0.36), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0.1, 0.5, -0.95)) };
+const BAT_END = { p: new V3(-0.2, -0.3, -0.5), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.45, 0.2, 1.25)) };
+batPivot.position.copy(BAT_REST.p); batPivot.quaternion.copy(BAT_REST.q);
+
+const can = new THREE.Group(); hand.add(can);
+const canBody = new THREE.Mesh(new THREE.CylinderGeometry(0.033, 0.033, 0.19, 28), new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 0.9, roughness: 0.25 }));
+const canBand = new THREE.Mesh(new THREE.CylinderGeometry(0.0335, 0.0335, 0.09, 28), new THREE.MeshStandardMaterial({ color: 0xff0000, metalness: 0.3, roughness: 0.4 }));
+const canTop = new THREE.Mesh(new THREE.SphereGeometry(0.033, 24, 12, 0, 6.3, 0, Math.PI / 2), canBody.material);
+const canNozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.011, 0.02, 16), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5 }));
+canTop.position.y = 0.095; canNozzle.position.y = 0.135; canBand.position.y = -0.02;
+can.add(canBody, canBand, canTop, canNozzle);
+can.position.set(0.3, -0.33, -0.5); can.rotation.set(-0.45, 0.3, -0.12); can.visible = false;
+
+const ammoHolder = new THREE.Group(); hand.add(ammoHolder);
+ammoHolder.position.set(0.3, -0.29, -0.5);
+let ammoSpec = null, ammoMesh = null, ammoReadyAt = 0;
+function nextAmmo() {
+  const kind = pick(['plate', 'plate', 'plate', 'tumbler', 'bottle', 'mug', 'bowl', 'beer', 'wineGlass']);
+  ammoSpec = MAKERS[kind]();
+  if (ammoMesh) ammoHolder.remove(ammoMesh);
+  ammoMesh = new THREE.Mesh(ammoSpec.geo, ammoMat(ammoSpec.mat));
+  ammoSpec.geo.computeBoundingSphere();
+  const s = 0.09 / Math.max(0.06, ammoSpec.geo.boundingSphere.radius);
+  ammoMesh.scale.setScalar(Math.min(1, s));
+  if (kind === 'plate' || kind === 'bowl') ammoMesh.rotation.set(1.2, 0, 0.2); else ammoMesh.rotation.set(0.3, 0, -0.3);
+  ammoMesh.position.y = -0.04;
+  ammoHolder.add(ammoMesh);
+  ammoHolder.userData.kind = kind;
+}
+
+// =====================================================================
+//   שליטה: מבט, הליכה, לחיצה
+// =====================================================================
+let tool = 'bat', started = false;
+const keys = {};
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let walkTarget = null, pendingSwing = null, walkTimer = 0;
+let swing = null, shake = 0;
+const REACH = 2.1;
+
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool').forEach(b => b.classList.toggle('on', b.dataset.tool === t));
+  document.getElementById('palette').hidden = t !== 'spray';
+  batPivot.visible = t === 'bat'; can.visible = t === 'spray'; ammoHolder.visible = t === 'throw';
+  if (t === 'throw' && !ammoSpec) nextAmmo();
+  hint({
+    bat: isTouch ? 'נוגעים בחפץ כדי לנפץ אותו · נגיעה ברצפה = ללכת לשם' : 'לוחצים על חפץ כדי לנפץ אותו · לחיצה על הרצפה = ללכת לשם',
+    throw: isTouch ? 'נוגעים איפה שרוצים לזרוק צלחת או כוס' : 'לוחצים לאן לזרוק: על הקיר, על המדף או על הרצפה',
+    spray: isTouch ? 'מרססים עם אצבע אחת · שתי אצבעות = להסתכל מסביב' : 'גוררים על הקיר כדי לרסס · כפתור ימני בעכבר = להסתכל מסביב',
+  }[t]);
+  walkTarget = null; pendingSwing = null;
+  stopSpray();
+}
+let hintTimer = 0;
+function hint(t, ms = 4200) { const h = document.getElementById('hint'); h.textContent = t; h.classList.remove('fade'); clearTimeout(hintTimer); hintTimer = setTimeout(() => h.classList.add('fade'), ms); }
+
+function setNdc(e) { const r = canvas.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); }
+function pickAt(e) {
+  setNdc(e); raycaster.setFromCamera(ndc, camera);
+  raycaster.far = 30;
+  const hits = raycaster.intersectObjects(interactive, false);
+  return hits[0] || null;
+}
+function camForward() { return new V3(0, 0, -1).applyQuaternion(camera.quaternion); }
+function camRight() { return new V3(1, 0, 0).applyQuaternion(camera.quaternion); }
+
+function doAction(e) {
+  if (tool === 'throw') { throwAt(e); return; }
+  if (tool !== 'bat') return;
+  const hit = pickAt(e); if (!hit) return;
+  const type = hit.object.userData.type;
+  const d = hit.distance;
+  if (type === 'floor') { walkTarget = hit.point.clone(); pendingSwing = null; walkTimer = 0; return; }
+  if (d <= REACH) startSwing(hit);
+  else {
+    const flat = hit.point.clone(); flat.y = player.pos.y;
+    const from = player.pos.clone(); const dir = from.sub(flat).setY(0).normalize();
+    walkTarget = hit.point.clone().addScaledVector(dir, 1.25); walkTimer = 0;
+    pendingSwing = { obj: hit.object, point: hit.point.clone() };
+  }
+}
+function startSwing(hit) {
+  if (swing) return;
+  swing = { t: 0, hit, done: false };
+  sfxWhoosh(1);
+}
+function resolveSwing(hit) {
+  const obj = hit.object, type = obj.userData.type;
+  const dir = camForward().multiplyScalar(0.8).addScaledVector(camRight(), -0.6).add(new V3(0, 0.15, 0)).normalize();
+  if (type === 'breakable') {
+    const o = obj.userData.br; if (!breakables.has(o)) return;
+    const p = hit.point.clone();
+    const near = [];
+    for (const b of breakables) { if (b === o) continue; const c = worldCenter(b); const dd = c.distanceTo(p) - b.radius; if (dd < 0.03) near.push(b); else if (dd < 0.45 && !b.flat) knock(b, dir.clone().multiplyScalar(rand(1.6, 3.2)).add(new V3(0, rand(0.5, 1.5), 0))); }
+    shatter(o, p, dir, 1.1);
+    for (const b of near) shatter(b, worldCenter(b), dir, 0.75);
+    shakeIt(0.5);
+  } else if (type === 'furniture') {
+    sfxThud(obj.userData.kind, hit.point, 1);
+    // מכה במדף/שולחן: כל מה שקרוב עף
+    for (const b of breakables) { if (b.flat) continue; const c = worldCenter(b); if (c.distanceTo(hit.point) < 0.6 && Math.abs(c.y - hit.point.y) < 0.35) knock(b, dir.clone().multiplyScalar(rand(1.5, 3.4)).add(new V3(0, rand(0.6, 1.8), 0))); }
+    shakeIt(0.35);
+  } else if (type === 'wall') {
+    sfxThud('wall', hit.point, 1);
+    const w = obj.userData.wall, uv = wallUV(w, hit.point); scuff(w, uv.x, uv.y, 1.4);
+    shakeIt(0.35);
+  } else if (type === 'floor') { sfxThud('wall', hit.point, 0.8); shakeIt(0.25); }
+}
+function shakeIt(a) { shake = Math.max(shake, a); }
+
+function throwAt(e) {
+  const now = performance.now();
+  if (now < ammoReadyAt || !ammoSpec) return;
+  setNdc(e); raycaster.setFromCamera(ndc, camera);
+  const dir = raycaster.ray.direction.clone();
+  const kind = ammoHolder.userData.kind;
+  const start = camera.position.clone().add(camRight().multiplyScalar(0.18)).add(new V3(0, -0.12, 0)).addScaledVector(dir, 0.35);
+  const o = addBreakable(ammoSpec, start.x, start.y, start.z, 0);
+  o.mesh.quaternion.copy(camera.quaternion);
+  if (kind === 'plate' || kind === 'bowl') { o.mesh.rotateX(rand(-0.3, 0.1)); o.w.set(0, 1, 0).applyQuaternion(o.mesh.quaternion).multiplyScalar(22); }
+  else { o.mesh.rotateX(rand(-0.5, 0.5)); o.w.set(gauss(), gauss(), gauss()).multiplyScalar(9); }
+  // מתחילים מהמרכז של החפץ במקום מהבסיס
+  o.mesh.updateMatrixWorld();
+  const off = worldCenter(o).sub(o.mesh.position); o.mesh.position.sub(off);
+  o.v.copy(dir).multiplyScalar(13).add(new V3(0, 1.1, 0));
+  o.thrown = true; o.age = 0;
+  dynamics.add(o);
+  ammoHolder.remove(ammoMesh); ammoMesh = null; ammoSpec = null;
+  ammoReadyAt = now + 320;
+  sfxWhoosh(1.3);
+  setTimeout(() => { if (!ammoSpec) nextAmmo(); }, 300);
+}
+
+// ---------- ספריי ----------
+const COLORS = ['#e3262f', '#ff7a1a', '#ffd400', '#22c55e', '#00c2ff', '#2f5bff', '#9b3bff', '#ff4fb3', '#ffffff', '#141414'];
+let sprayColor = COLORS[0], spraySize = 0.12, spraying = false, sprayEvt = null, lastSpray = null, sprayedAny = false;
+const drips = [];
+(() => {
+  const pal = document.getElementById('palette');
+  COLORS.forEach((c, i) => {
+    const b = document.createElement('button'); b.className = 'sw' + (i ? '' : ' on'); b.style.background = c; b.setAttribute('aria-label', 'צבע ' + (i + 1));
+    b.onclick = () => { sprayColor = c; pal.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === b)); canBand.material.color.set(c); };
+    pal.appendChild(b);
+  });
+  const lab = document.createElement('label'); lab.innerHTML = 'עובי <input id="size" type="range" min="4" max="40" value="12">';
+  pal.appendChild(lab);
+  lab.querySelector('input').oninput = e => { spraySize = e.target.value / 100; };
+  canBand.material.color.set(COLORS[0]);
+})();
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function sprayDab(w, x, y, flow) {
+  const ctx = w.ctx, [r, g, b] = hexRgb(sprayColor), R = spraySize * PPM;
+  ctx.save(); ctx.globalCompositeOperation = 'source-over';
+  const gr = ctx.createRadialGradient(x, y, 0, x, y, R);
+  gr.addColorStop(0, `rgba(${r},${g},${b},${0.2 * flow})`); gr.addColorStop(0.55, `rgba(${r},${g},${b},${0.09 * flow})`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.fill();
+  ctx.fillStyle = `rgba(${r},${g},${b},${0.55})`;                     // נקודות קטנות של ספריי אמיתי
+  const dots = Math.round(R * 0.9 * flow);
+  for (let i = 0; i < dots; i++) { const a = rand(0, 6.283), d = Math.abs(gauss()) * R * 0.75; ctx.beginPath(); ctx.arc(x + Math.cos(a) * d, y + Math.sin(a) * d, rand(0.4, 1.3), 0, 7); ctx.fill(); }
+  ctx.restore();
+  // הצבע מצטבר → טפטופים
+  const gx = Math.floor(x / 16), gy = Math.floor(y / 16), cols = Math.ceil(w.W / 16);
+  if (gx >= 0 && gy >= 0 && gx < cols) {
+    const i = gy * cols + gx; w.paintLevel[i] += flow;
+    if (w.paintLevel[i] > 9 && drips.length < 140 && Math.random() < 0.12 * flow) {
+      w.paintLevel[i] = 4;
+      drips.push({ w, x: x + gauss() * R * 0.25, y: y + R * 0.3, len: 0, max: rand(0.08, 0.5) * PPM, sp: rand(18, 40), wd: rand(1.5, 3.2), rgb: [r, g, b] });
+    }
+  }
+  w.dirty = true; sprayedAny = true;
+}
+function updateDrips(dt) {
+  for (let i = drips.length - 1; i >= 0; i--) {
+    const d = drips[i], ctx = d.w.ctx;
+    const step = d.sp * dt * (1 - d.len / d.max * 0.7);
+    ctx.strokeStyle = `rgba(${d.rgb},0.85)`; ctx.lineWidth = d.wd * (1 - d.len / d.max * 0.4); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(d.x, d.y + d.len); d.len += step; ctx.lineTo(d.x + gauss() * 0.15, d.y + d.len); ctx.stroke();
+    d.w.dirty = true;
+    if (d.len >= d.max) { ctx.fillStyle = `rgba(${d.rgb},0.9)`; ctx.beginPath(); ctx.arc(d.x, d.y + d.len, d.wd * 0.9, 0, 7); ctx.fill(); drips.splice(i, 1); }
+  }
+}
+function sprayRay() {
+  if (!sprayEvt) return null;
+  setNdc(sprayEvt); raycaster.setFromCamera(ndc, camera); raycaster.far = 9;
+  const hit = raycaster.intersectObjects(interactive, false)[0];
+  return hit && hit.object.userData.type === 'wall' ? hit : null;
+}
+function updateSpray(dt) {
+  if (hiss) hiss.gain.setTargetAtTime(spraying && soundOn ? 0.11 : 0, actx.currentTime, 0.03);
+  if (!spraying) return;
+  const hit = sprayRay();
+  can.position.y = -0.33 + Math.sin(performance.now() / 40) * 0.002;
+  if (!hit) { lastSpray = null; return; }
+  const w = hit.object.userData.wall, x = hit.uv.x * w.W, y = (1 - hit.uv.y) * w.H;
+  const flow = clamp(dt * 60, 0.3, 2);
+  if (lastSpray && lastSpray.w === w) {
+    const dx = x - lastSpray.x, dy = y - lastSpray.y, dist = Math.hypot(dx, dy), step = Math.max(2, spraySize * PPM * 0.25);
+    const n = Math.min(60, Math.floor(dist / step));
+    for (let i = 1; i <= n; i++) sprayDab(w, lastSpray.x + dx * i / (n + 1), lastSpray.y + dy * i / (n + 1), 0.6);
+  }
+  sprayDab(w, x, y, flow);
+  lastSpray = { w, x, y };
+  if (Math.random() < 0.5) spawnMist(hit.point.clone().add(hit.face.normal.clone().transformDirection(hit.object.matrixWorld).multiplyScalar(0.03)), sprayColor);
+  sprayTime += dt;
+  if (sprayTime > 1.5) { sprayTime = 0; setAnger(anger - 1); }
+}
+function stopSpray() { spraying = false; sprayEvt = null; lastSpray = null; }
+
+// ---------- אירועי עכבר ומגע ----------
+const pointers = new Map();
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('pointerdown', e => {
+  if (!started) return;
+  canvas.setPointerCapture(e.pointerId);
+  initAudio();
+  const p = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, mode: 'tap', t: performance.now() };
+  if (e.pointerType === 'mouse' && e.button !== 0) p.mode = 'look';
+  else if (tool === 'spray') {
+    if (pointers.size === 0) { p.mode = 'spray'; spraying = true; sprayEvt = e; }
+    else { stopSpray(); for (const q of pointers.values()) q.mode = 'look'; p.mode = 'look'; }
+  } else if (pointers.size > 0) { for (const q of pointers.values()) q.mode = 'look'; p.mode = 'look'; }
+  pointers.set(e.pointerId, p);
+});
+canvas.addEventListener('pointermove', e => {
+  const p = pointers.get(e.pointerId); if (!p) return;
+  const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+  if (p.mode === 'tap' && Math.hypot(e.clientX - p.sx, e.clientY - p.sy) > 7) p.mode = 'look';
+  if (p.mode === 'look') {
+    const k = (isTouch ? 0.0055 : 0.0042) / Math.max(1, pointers.size);
+    player.yaw -= dx * k; player.pitch = clamp(player.pitch - dy * k, -1.35, 1.25);
+    pendingSwing = null;
+  } else if (p.mode === 'spray') sprayEvt = e;
+});
+function endPointer(e) {
+  const p = pointers.get(e.pointerId); if (!p) return;
+  pointers.delete(e.pointerId);
+  if (p.mode === 'tap' && started) doAction(e);
+  if (p.mode === 'spray') stopSpray();
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); stopSpray(); });
+
+addEventListener('keydown', e => {
+  if (!started) return;
+  keys[e.code] = true;
+  if (e.code === 'Digit1') setTool('bat'); if (e.code === 'Digit2') setTool('throw'); if (e.code === 'Digit3') setTool('spray');
+  if (e.code === 'Space' && tool === 'throw') { throwAt({ clientX: innerWidth / 2, clientY: innerHeight / 2 }); e.preventDefault(); }
+});
+addEventListener('keyup', e => { keys[e.code] = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; stopSpray(); });
+document.querySelectorAll('#pad button').forEach(b => {
+  const k = 'pad_' + b.dataset.k;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); keys[k] = true; b.classList.add('on'); initAudio(); });
+  const up = () => { keys[k] = false; b.classList.remove('on'); };
+  b.addEventListener('pointerup', up); b.addEventListener('pointerleave', up); b.addEventListener('pointercancel', up);
+});
+
+function blockedXZ(p) {
+  const r = 0.32;
+  p.x = clamp(p.x, -RX + r, RX - r); p.z = clamp(p.z, -RZ + r, RZ - r);
+  for (const s of solids) {
+    if (!s.walkBlock) continue;
+    const b = s.box;
+    const cx = clamp(p.x, b.min.x, b.max.x), cz = clamp(p.z, b.min.z, b.max.z);
+    const dx = p.x - cx, dz = p.z - cz, d = Math.hypot(dx, dz);
+    if (d < r) {
+      if (d > 1e-4) { p.x = cx + dx / d * r; p.z = cz + dz / d * r; }
+      else { p.z = b.max.z + r; }
+    }
+  }
+}
+function updatePlayer(dt) {
+  let f = 0, s = 0, turn = 0;
+  if (keys.KeyW || keys.ArrowUp || keys.pad_fwd) f += 1;
+  if (keys.KeyS || keys.ArrowDown || keys.pad_back) f -= 1;
+  if (keys.KeyA) s -= 1; if (keys.KeyD) s += 1;
+  if (keys.ArrowLeft || keys.pad_tl || keys.KeyQ) turn += 1;
+  if (keys.ArrowRight || keys.pad_tr || keys.KeyE) turn -= 1;
+  player.yaw += turn * 1.9 * dt;
+  const sp = 2.3;
+  const fw = new V3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)), rt = new V3(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
+  if (f || s) { walkTarget = null; pendingSwing = null; player.pos.addScaledVector(fw, f * sp * dt).addScaledVector(rt, s * sp * dt); }
+  if (walkTarget) {
+    walkTimer += dt;
+    const to = walkTarget.clone().sub(player.pos).setY(0), d = to.length();
+    if (pendingSwing) {                                                    // מסתובבים לכיוון החפץ
+      const look = pendingSwing.point.clone().sub(player.pos);
+      const ty = Math.atan2(-look.x, -look.z);
+      let dy = ty - player.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+      player.yaw += dy * (1 - Math.exp(-6 * dt));
+      const tp = Math.atan2(look.y, Math.hypot(look.x, look.z));
+      player.pitch += (tp - player.pitch) * (1 - Math.exp(-5 * dt));
+    }
+    const before = player.pos.clone();
+    if (d > 0.05) player.pos.addScaledVector(to.normalize(), Math.min(d, sp * 1.1 * dt));
+    blockedXZ(player.pos);
+    const stuck = player.pos.distanceTo(before) < sp * 0.25 * dt && walkTimer > 0.3;
+    if (d <= 0.06 || stuck || walkTimer > 4) {
+      walkTarget = null;
+      if (pendingSwing) {
+        const ps = pendingSwing; pendingSwing = null;
+        const o = ps.obj;
+        const isBr = o.userData.type === 'breakable';
+        if (!isBr || breakables.has(o.userData.br)) {
+          const target = isBr ? worldCenter(o.userData.br) : ps.point;
+          if (player.pos.distanceTo(target) <= REACH + 0.9) startSwing({ object: o, point: target });
+        }
+      }
+    }
+  }
+  blockedXZ(player.pos);
+  // הליכה: נדנוד קטן של הראש
+  const moving = (f || s || walkTarget) ? 1 : 0;
+  bob += dt * 9 * moving;
+  camera.position.set(player.pos.x, player.pos.y + Math.sin(bob) * 0.012 * moving, player.pos.z);
+  camera.rotation.set(player.pitch, player.yaw, 0);
+  if (shake > 0) { camera.rotation.x += gauss() * shake * 0.012; camera.rotation.y += gauss() * shake * 0.012; shake = Math.max(0, shake - dt * 2.5); }
+  const narrow = (clamp(camera.aspect / 1.5, 0.3, 1) - 1) * 0.3;            // מסך צר (טלפון): מקרבים את הכלי למרכז
+  hand.position.set(narrow + Math.sin(bob * 0.5) * 0.006 * moving, Math.abs(Math.cos(bob * 0.5)) * 0.008 * moving, 0);
+}
+let bob = 0;
+function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+function updateSwing(dt) {
+  if (!swing) return;
+  swing.t += dt;
+  const t = swing.t;
+  const T1 = 0.07, T2 = 0.17, T3 = 0.48;
+  if (t < T1) { const k = easeInOut(t / T1); batPivot.position.lerpVectors(BAT_REST.p, BAT_UP.p, k); batPivot.quaternion.slerpQuaternions(BAT_REST.q, BAT_UP.q, k); }
+  else if (t < T2) { const k = Math.pow((t - T1) / (T2 - T1), 1.6); batPivot.position.lerpVectors(BAT_UP.p, BAT_END.p, k); batPivot.quaternion.slerpQuaternions(BAT_UP.q, BAT_END.q, k); }
+  else if (t < T3) { const k = easeInOut((t - T2) / (T3 - T2)); batPivot.position.lerpVectors(BAT_END.p, BAT_REST.p, k); batPivot.quaternion.slerpQuaternions(BAT_END.q, BAT_REST.q, k); }
+  else { batPivot.position.copy(BAT_REST.p); batPivot.quaternion.copy(BAT_REST.q); swing = null; return; }
+  if (!swing.done && t >= T1 + (T2 - T1) * 0.62) { swing.done = true; resolveSwing(swing.hit); }
+}
+
+// ---------- ניקוד ומד העצבים ----------
+const brokenEl = document.getElementById('broken'), angerEl = document.getElementById('anger'), angerTxt = document.getElementById('angerTxt');
+function addBroken(o) {
+  brokenCount++; brokenEl.textContent = brokenCount;
+  setAnger(anger - (o.anger || 3) * 0.6);
+}
+function setAnger(v) {
+  anger = clamp(v, 0, 100);
+  angerEl.style.width = anger + '%'; angerTxt.textContent = Math.round(anger) + '%';
+  if (anger <= 0 && !calmShown) {
+    calmShown = true;
+    setTimeout(() => {
+      document.getElementById('calmTxt').textContent = `שברת ${brokenCount} דברים${sprayedAny ? ' וציירת על הקירות' : ''}. מד העצבים ירד לאפס!`;
+      document.getElementById('calm').hidden = false; stopSpray(); pointers.clear();
+    }, 900);
+  }
+}
+
+// ---------- כפתורים ----------
+document.querySelectorAll('.tool').forEach(b => b.addEventListener('click', () => { initAudio(); setTool(b.dataset.tool); }));
+document.getElementById('soundBtn').onclick = e => { soundOn = !soundOn; e.currentTarget.textContent = soundOn ? '🔊' : '🔇'; initAudio(); };
+document.getElementById('cleanBtn').onclick = () => { for (const w of walls) { w.paintLevel.fill(0); drawWallBase(w); } drips.length = 0; needCube = 1; hint('הקירות נקיים, אפשר לצייר מחדש!'); };
+function newRoom() {
+  for (const o of [...breakables]) { scene.remove(o.mesh); for (const e of o.extras) scene.remove(e); }
+  breakables.clear(); dynamics.clear();
+  for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.type === 'breakable') interactive.splice(i, 1);
+  for (const s of shards) { scene.remove(s.mesh); if (s.mesh.geometry !== coinGeo) s.mesh.geometry.dispose(); }
+  shards.length = 0;
+  for (const c of crumbs) c.alive = false; for (let i = 0; i < CRUMBS; i++) crumbMesh.setMatrixAt(i, hidden); crumbMesh.instanceMatrix.needsUpdate = true;
+  if (tvLight) { scene.remove(tvLight); tvLight = null; }
+  stockRoom();
+  anger = 100; setAnger(100); calmShown = false;
+  hint('🧹 טאטאנו והבאנו חפצים חדשים לשבור!');
+}
+document.getElementById('newBtn').onclick = newRoom;
+document.getElementById('calmNewBtn').onclick = () => { document.getElementById('calm').hidden = true; newRoom(); };
+document.getElementById('keepBtn').onclick = () => { document.getElementById('calm').hidden = true; };
+document.getElementById('goBtn').onclick = () => {
+  initAudio(); started = true; document.getElementById('start').hidden = true;
+  if (isTouch) document.getElementById('pad').hidden = false;
+  setTool('bat');
+};
+if (isTouch) document.getElementById('keysTxt').textContent = 'גוררים עם האצבע כדי להסתכל מסביב · הכפתורים למטה כדי ללכת';
+
+// =====================================================================
+//   לולאת המשחק
+// =====================================================================
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+const clock = new THREE.Clock();
+let frame = 0, cubeTimer = 0;
+function loop() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  frame++;
+  tickBudget = Math.min(tickBudget + dt * 30, 6);
+  updatePlayer(dt);
+  updateSwing(dt);
+  const sub = dt > 0.02 ? 2 : 1;
+  for (let i = 0; i < sub; i++) { updateDynamics(dt / sub); updateShards(dt / sub); }
+  updateCrumbs(dt);
+  updatePuffs(dt);
+  updateSpray(dt);
+  updateDrips(dt);
+  for (const w of walls) if (w.dirty) { w.tex.needsUpdate = true; w.dirty = false; }
+  if (tvLight && frame % 2 === 0) { drawStatic(clock.elapsedTime); tvLight.intensity = 0.7 + Math.random() * 0.4; }
+  // השתקפות במראה מתעדכנת מדי פעם
+  cubeTimer += dt;
+  if (mirror && (needCube || (spraying && cubeTimer > 0.8))) {
+    cubeTimer = 0; needCube = Math.max(0, needCube - 1);
+    mirror.mesh.visible = false;
+    cubeCam.update(renderer, scene);
+    mirror.mesh.visible = true;
+  }
+  renderer.render(scene, camera);
+  camera.updateMatrixWorld();
+  vmRoot.position.copy(camera.position); vmRoot.quaternion.copy(camera.quaternion);
+  renderer.autoClear = false; renderer.clearDepth(); renderer.render(vmScene, camera); renderer.autoClear = true;
+  requestAnimationFrame(loop);
+}
+
+stockRoom();
+nextAmmo(); ammoHolder.visible = false; can.visible = false;
+camera.position.copy(player.pos);
+renderer.compile(scene, camera);
+requestAnimationFrame(loop);
+const go = document.getElementById('goBtn');
+go.disabled = false; go.textContent = '🥽 שמים משקפי מגן ונכנסים!';
+window.__rage = { step(n, dt = 1 / 60) { for (let i = 0; i < n; i++) { tickBudget = 0; updatePlayer(dt); updateSwing(dt); updateDynamics(dt); updateShards(dt); updateCrumbs(dt); updatePuffs(dt); updateSpray(dt); updateDrips(dt); } }, dynamics, scene, camera, player, breakables, shards, shatter, setTool, throwAt, doAction, walls, newRoom, keys, worldCenter, get anger() { return anger; } };
+</script>
+</body>
+</html>
