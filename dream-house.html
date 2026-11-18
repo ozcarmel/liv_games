@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הבית של חלום בחלום</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1d1b4b; --sun:#ffd23f; --pink:#ff5fa2; --grape:#7a5cff; --mint:#2fd1a0;
+    --display:"Secular One","Arial Rounded MT Bold",Arial,sans-serif; --body:"Rubik",Arial,sans-serif; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; direction:rtl; font-family:var(--body); color:#fff; font-size:17px;
+    background: radial-gradient(rgba(255,255,255,.5) 2px, transparent 2.5px) 0 0 / 61px 61px, linear-gradient(180deg,#2a1d6b,#140f3a);
+    padding:12px max(14px, env(safe-area-inset-right)) 24px max(14px, env(safe-area-inset-left)); }
+  .app { max-width: 900px; margin: 0 auto; }
+  h1 { font-family:var(--display); font-weight:400; font-size:clamp(1.6rem,5vw,2.2rem); color:var(--sun); margin:0 0 8px; text-shadow:3px 3px 0 var(--ink); }
+  .top { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+  .pill { background:var(--grape); border:3px solid var(--ink); border-radius:999px; padding:2px 14px; font-weight:700; white-space:nowrap; }
+  .pill.clock { background:var(--sun); color:var(--ink); font-family:var(--display); font-size:1.3rem; font-variant-numeric:tabular-nums; }
+  .need { display:flex; align-items:center; gap:6px; font-weight:700; font-size:.9rem; }
+  .need .t { width:60px; height:12px; border-radius:99px; border:2px solid var(--ink); background:rgba(0,0,0,.4); overflow:hidden; }
+  .need .t i { display:block; height:100%; width:0; background:var(--mint); transition:width .2s, background .2s; }
+  .tasks { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 10px; padding:0; list-style:none; }
+  .tasks li { background:rgba(255,255,255,.1); border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:4px 12px; font-weight:700; font-size:.95rem; }
+  .tasks li.done { background:var(--mint); color:var(--ink); border-color:var(--ink); text-decoration:line-through; }
+  .tasks li.next { border-color:var(--sun); box-shadow:0 0 0 2px var(--sun); }
+  .stagewrap { position:relative; }
+  canvas { display:block; width:100%; height:auto; aspect-ratio:8/5; border:4px solid var(--ink); border-radius:22px; box-shadow:7px 7px 0 var(--grape); touch-action:none; background:#0e1a2b; }
+  .toast { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); background:rgba(20,15,58,.92); border:3px solid var(--sun); border-radius:16px; padding:6px 16px; font-weight:700; opacity:0; transition:opacity .25s; pointer-events:none; text-align:center; max-width:90%; }
+  .toast.on { opacity:1; }
+  .actrow { text-align:center; margin-top:14px; min-height:56px; }
+  .btn { font-family:var(--display); font-size:1.3rem; color:var(--ink); background:var(--sun); border:4px solid var(--ink); border-radius:999px; padding:8px 28px; cursor:pointer; box-shadow:4px 4px 0 var(--ink); }
+  .btn:active { transform:translateY(2px); box-shadow:2px 2px 0 var(--ink); }
+  .btn:focus-visible { outline:4px solid #fff; outline-offset:3px; }
+  .btn.pink { background:var(--pink); }
+  .btn.small { font-size:1rem; padding:4px 16px; border-width:3px; box-shadow:3px 3px 0 var(--ink); }
+  .hint { text-align:center; margin:10px 0 0; opacity:.85; font-size:.95rem; }
+  .end { position:fixed; inset:0; background:rgba(10,5,40,.82); display:none; place-items:center; padding:16px; z-index:10; }
+  .end.on { display:grid; }
+  .endcard { background:#1d1560; border:4px solid var(--ink); border-radius:26px; box-shadow:8px 8px 0 var(--grape); padding:22px 26px; max-width:460px; width:100%; text-align:center; }
+  .endcard h2 { font-family:var(--display); font-weight:400; font-size:2.2rem; color:var(--sun); margin:0 0 8px; }
+  .endcard ul { list-style:none; padding:0; margin:12px 0; text-align:start; display:grid; gap:4px; }
+  .endcard li { padding:4px 10px; border-radius:10px; background:rgba(255,255,255,.08); }
+  .endcard li.ok::before { content:"✓ "; color:var(--mint); font-weight:700; }
+  .endcard li.no::before { content:"✗ "; color:#ff7a8a; font-weight:700; }
+  .q { font-family:var(--display); font-size:1.6rem; margin:8px 0 14px; }
+  .endcard .row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>הבית של חלום בחלום</h1>
+  <div class="top">
+    <span class="pill clock" id="clock" aria-label="שעה">20:00</span>
+    <span class="pill" id="roomTxt">מסדרון</span>
+    <span class="need">רעב <span class="t"><i id="nHunger"></i></span></span>
+    <span class="need">שירותים <span class="t"><i id="nBladder"></i></span></span>
+  </div>
+  <ul class="tasks" id="tasks" aria-label="משימות"></ul>
+  <div class="stagewrap">
+    <canvas id="cv" width="800" height="500" aria-label="הבית, מבט מלמעלה"></canvas>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+  <div class="actrow"><button class="btn" id="actBtn" type="button" hidden></button></div>
+  <p class="hint">חצים או W A S D להליכה. כשעומדים ליד משהו מופיע כפתור: אפשר ללחוץ עליו או על רווח.<br>בטלפון: מחזיקים אצבע על הבית והדמות הולכת אליה.</p>
+</div>
+
+<div class="end" id="end" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+  <div class="endcard">
+    <h2 id="endTitle">לילה טוב!</h2>
+    <p id="endTime"></p>
+    <ul id="endList"></ul>
+    <div class="q" id="endQ"></div>
+    <div class="row">
+      <button class="btn pink" id="dreamBtn" type="button">לחלום!</button>
+      <button class="btn small" id="againBtn" type="button">להתחיל ערב מחדש</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var W = 800, H = 500, cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+  var FONT = '"Secular One","Arial Rounded MT Bold",Arial,sans-serif';
+  function $(s) { return document.querySelector(s); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  /* ================= קלט ================= */
+  var keys = {}, actPressed = false;
+  addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase(); keys[k] = true;
+    if (["arrowleft","arrowright","arrowup","arrowdown"," "].indexOf(k) >= 0 && !$("#end").classList.contains("on")) e.preventDefault();
+    if ((k === " " || k === "e" || k === "enter") && !e.repeat && !$("#end").classList.contains("on") && document.activeElement && document.activeElement.tagName !== "BUTTON") actPressed = true;
+  });
+  addEventListener("keyup", function (e) { keys[e.key.toLowerCase()] = false; });
+  addEventListener("blur", function () { keys = {}; });
+  var ptr = { x: 0, y: 0, active: false, down: false };
+  function setPtr(e) { var r = cv.getBoundingClientRect(); ptr.x = (e.clientX - r.left) / r.width * W; ptr.y = (e.clientY - r.top) / r.height * H; ptr.active = true; }
+  cv.addEventListener("pointerdown", function (e) { setPtr(e); ptr.down = true; try { cv.setPointerCapture(e.pointerId); } catch (x) {} });
+  cv.addEventListener("pointermove", function (e) { if (ptr.down) setPtr(e); });
+  cv.addEventListener("pointerup", function () { ptr.down = false; ptr.active = false; });
+  cv.addEventListener("pointercancel", function () { ptr.down = false; ptr.active = false; });
+
+  /* ================= ציור: כלים ================= */
+  function rr(x, y, w, h, r, fill, stroke, lw) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2; ctx.stroke(); }
+  }
+  function ell(cx, cy, rx, ry, fill, stroke, lw) {
+    ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, 7);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2; ctx.stroke(); }
+  }
+  function shadow(x, y, w, h, r) { ctx.save(); ctx.globalAlpha = 0.3; rr(x + 3, y + 5, w, h, r || 6, "#000"); ctx.restore(); }
+  function vgrad(y0, y1, c0, c1) { var g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, c0); g.addColorStop(1, c1); return g; }
+  function hgrad(x0, x1, c0, c1) { var g = ctx.createLinearGradient(x0, 0, x1, 0); g.addColorStop(0, c0); g.addColorStop(1, c1); return g; }
+  function txt(s, x, y, size, color) {
+    ctx.font = size + "px " + FONT; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.direction = /[֐-׿]/.test(s) ? "rtl" : "ltr";
+    ctx.lineWidth = Math.max(3, size / 6); ctx.strokeStyle = "#1d1b4b"; ctx.lineJoin = "round"; ctx.strokeText(s, x, y);
+    ctx.fillStyle = color || "#fff"; ctx.fillText(s, x, y);
+  }
+
+  /* ================= מבנה הבית ================= */
+  var X0 = 40, Y0 = 30, X1 = 760, Y1 = 470, T = 12;
+  function R(x, y, w, h) { return { x: x, y: y, w: w, h: h }; }
+  var WALLS = [
+    R(X0 - 6, Y0 - 6, 732, T), R(X0 - 6, Y1 - 6, 526, T), R(640, Y1 - 6, 126, T),
+    R(X0 - 6, Y0 - 6, T, 452), R(X1 - 6, Y0 - 6, T, 452),
+    R(294, Y0, T, 90), R(294, 190, T, 70),
+    R(214, 260, T, 20), R(214, 340, T, 130), R(434, 260, T, 20), R(434, 340, T, 130),
+    R(40, 254, 196, T), R(286, 254, 74, T), R(430, 254, 110, T), R(610, 254, 150, T)
+  ];
+  var STAIRS = R(300, 390, 110, 70), SPAWN = { x: 370, y: 336 };
+
+  var ROOMS = [
+    [ // קומה למטה
+      { n: "מטבח", r: R(40, 30, 260, 230), k: "tile", a: "#fff4d4", b: "#ffe6a6" },
+      { n: "סלון", r: R(300, 30, 460, 230), k: "wood", a: "#dcae78", b: "#cf9f69" },
+      { n: "שירותים", r: R(40, 260, 180, 210), k: "tile", a: "#e2f4ff", b: "#c4e8fb" },
+      { n: "מסדרון", r: R(220, 260, 220, 210), k: "wood", a: "#c9996a", b: "#bd8c5d" },
+      { n: "פינת אוכל", r: R(440, 260, 320, 210), k: "wood", a: "#d9ac7a", b: "#cd9f6e" }
+    ],
+    [ // קומה למעלה
+      { n: "חדר שינה", r: R(40, 30, 260, 230), k: "carpet", a: "#d9ccff", b: "#c6b6fb" },
+      { n: "חדר משחקים", r: R(300, 30, 460, 230), k: "carpet", a: "#c9f5e3", b: "#b4ecd2" },
+      { n: "מקלחת", r: R(40, 260, 180, 210), k: "tile", a: "#dff2ff", b: "#bfe4f8" },
+      { n: "מסדרון", r: R(220, 260, 220, 210), k: "wood", a: "#c9996a", b: "#bd8c5d" },
+      { n: "חדר עבודה", r: R(440, 260, 320, 210), k: "wood", a: "#e2c298", b: "#d6b487" }
+    ]
+  ];
+  var WINDOWS = [
+    [R(70, Y0 - 6, 70, T), R(180, Y0 - 6, 70, T), R(420, Y0 - 6, 90, T), R(560, Y0 - 6, 90, T), R(X1 - 6, 120, T, 70)],
+    [R(90, Y0 - 6, 80, T), R(420, Y0 - 6, 90, T), R(580, Y0 - 6, 90, T), R(X1 - 6, 330, T, 70)]
+  ];
+
+  /* ================= ציור רהיטים ================= */
+  var DR = {};
+  DR.fridge = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 6);
+    rr(x, y, w, h, 6, hgrad(x, x + w, "#f6f9fc", "#cdd6e1"), "#8a96a6", 2);
+    rr(x + 4, y + 4, w - 8, h * 0.46, 4, null, "rgba(0,0,0,.12)", 1.5);
+    rr(x + w / 2 - 9, y + h - 9, 18, 4, 2, "#6b7685");
+    if (on) {
+      ctx.save(); var g = ctx.createRadialGradient(x + w / 2, y + h + 14, 2, x + w / 2, y + h + 14, 44); g.addColorStop(0, "rgba(255,247,190,.85)"); g.addColorStop(1, "rgba(255,247,190,0)");
+      ctx.fillStyle = g; ctx.fillRect(x - 30, y + h - 6, w + 60, 70); ctx.restore();
+      rr(x + w - 6, y + h - 2, 8, w - 4, 3, "#e8edf3", "#8a96a6", 1.5);
+    }
+  };
+  DR.counter = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 4); rr(x, y, w, h, 4, "#a56f43", "#6f4727", 2); rr(x + 2, y + 2, w - 4, h - 12, 3, "#f1ebe0");
+    ctx.strokeStyle = "rgba(0,0,0,.08)"; ctx.lineWidth = 1; for (var i = 1; i < w / 26; i++) { ctx.beginPath(); ctx.moveTo(x + i * 26, y + h - 10); ctx.lineTo(x + i * 26, y + h); ctx.stroke(); }
+  };
+  DR.stove = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    rr(x, y + 1, w, h - 2, 4, hgrad(x, x + w, "#e5e8ec", "#b9bfc8"), "#6b7480", 1.5);
+    [[0.28, 0.32], [0.72, 0.32], [0.28, 0.7], [0.72, 0.7]].forEach(function (p) { ell(x + w * p[0], y + h * p[1], 7, 7, "#2a2d33", "#555b66", 1.5); ell(x + w * p[0], y + h * p[1], 3.5, 3.5, null, "#7b8290", 1); });
+  };
+  DR.sink = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 8); rr(x, y, w, h, 8, "#f7fafc", "#9aa6b4", 2);
+    ell(x + w / 2, y + h / 2 + 2, w * 0.36, h * 0.32, on ? "#8fd3ff" : "#dbe6ef", "#9aa6b4", 1.5);
+    ell(x + w / 2, y + 5, 4, 3, "#8d97a5", "#5e6773", 1);
+    if (on) { ctx.strokeStyle = "rgba(120,200,255,.9)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x + w / 2, y + 7); ctx.lineTo(x + w / 2, y + h / 2); ctx.stroke(); }
+  };
+  DR.cabinet = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 4); rr(x, y, w, h, 4, "#e8a2c4", "#9b4d73", 2); rr(x + 3, y + 3, w - 6, h - 6, 3, null, "rgba(0,0,0,.2)", 1.5);
+    ctx.strokeStyle = "rgba(0,0,0,.18)"; ctx.beginPath(); ctx.moveTo(x + 4, y + h / 2); ctx.lineTo(x + w - 4, y + h / 2); ctx.stroke();
+    rr(x + w - 8, y + h * 0.25, 3, 8, 2, "#ffe08a"); rr(x + w - 8, y + h * 0.7, 3, 8, 2, "#ffe08a");
+  };
+  DR.table = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h, n = it.chairs || 2, i, cx;
+    for (i = 0; i < n; i++) { cx = x + (w * (i + 0.5)) / n; rr(cx - 15, y - 22, 30, 20, 6, "#b6804a", "#7d5430", 2); rr(cx - 15, y + h + 2, 30, 20, 6, "#b6804a", "#7d5430", 2); rr(cx - 12, y - 22, 24, 6, 3, "#9a6a3a"); rr(cx - 12, y + h + 16, 24, 6, 3, "#9a6a3a"); }
+    shadow(x, y, w, h, 8); rr(x, y, w, h, 8, vgrad(y, y + h, "#c88f58", "#b57c47"), "#7d5430", 2);
+    ctx.strokeStyle = "rgba(90,50,20,.18)"; ctx.lineWidth = 1; for (i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x + 6, y + (h * i) / 4); ctx.lineTo(x + w - 6, y + (h * i) / 4); ctx.stroke(); }
+    for (i = 0; i < n; i++) { cx = x + (w * (i + 0.5)) / n; ell(cx, y + h / 2, 12, 12, "#fff", "#b9c2cc", 1.5); ell(cx, y + h / 2, 7, 7, null, "#dfe5ea", 1); }
+    if (it.bowl) { ell(x + w / 2, y + h / 2, 11, 9, "#fff", "#9aa6b4", 1.5); ell(x + w / 2 - 4, y + h / 2 - 2, 3.5, 3.5, "#ff5a4d"); ell(x + w / 2 + 4, y + h / 2, 3.5, 3.5, "#ffd23f"); ell(x + w / 2, y + h / 2 + 3, 3.5, 3.5, "#7ed957"); }
+  };
+  DR.sofa = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 14); rr(x, y, w, h, 14, "#c0453a", "#7d241c", 2.5);
+    rr(x + 12, y + 6, w - 24, h - 22, 8, vgrad(y, y + h, "#d65a4d", "#bf4639"), "rgba(0,0,0,.2)", 1.5);
+    ctx.strokeStyle = "rgba(0,0,0,.2)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x + w / 2, y + 7); ctx.lineTo(x + w / 2, y + h - 17); ctx.stroke();
+    rr(x + 2, y + h - 16, w - 4, 14, 8, "#a0352c", "rgba(0,0,0,.25)", 1.5);
+    ell(x + w - 24, y + 18, 11, 9, "#ffd23f", "#b88f00", 1.5);
+  };
+  DR.armchair = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 14); rr(x, y, w, h, 14, "#4a7ec4", "#274c82", 2.5); rr(x + 8, y + 6, w - 16, h - 22, 8, vgrad(y, y + h, "#6b9be0", "#4a7ec4"), "rgba(0,0,0,.2)", 1.5); rr(x + 2, y + h - 14, w - 4, 12, 7, "#3a68a8", "rgba(0,0,0,.25)", 1.5);
+  };
+  DR.tv = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h, t = Date.now() / 300;
+    shadow(x, y, w, h, 4); rr(x, y, w, h, 4, "#5b3b22", "#3a2414", 2);
+    rr(x + 8, y + 3, w - 16, h - 12, 3, on ? "#2e5bff" : "#0e0f14", "#000", 2);
+    if (on) { for (var i = 0; i < 5; i++) { ctx.fillStyle = "hsla(" + ((t * 30 + i * 60) % 360) + ",90%,60%,.7)"; ctx.fillRect(x + 10 + i * ((w - 20) / 5), y + 5, (w - 20) / 5, h - 16); }
+      ctx.save(); var g = ctx.createRadialGradient(x + w / 2, y + h + 20, 4, x + w / 2, y + h + 20, 90); g.addColorStop(0, "rgba(120,160,255,.35)"); g.addColorStop(1, "rgba(120,160,255,0)"); ctx.fillStyle = g; ctx.fillRect(x - 60, y + h, w + 120, 120); ctx.restore(); }
+    else { ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.beginPath(); ctx.moveTo(x + 12, y + 4); ctx.lineTo(x + 40, y + 4); ctx.lineTo(x + 22, y + h - 10); ctx.lineTo(x + 12, y + h - 10); ctx.fill(); }
+  };
+  DR.bookshelf = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h, i, cx = x + 5, cols = ["#e0534a", "#3f7fd6", "#f2b630", "#4cb36a", "#8e5bd6", "#e88a3a", "#2fb3b3"];
+    shadow(x, y, w, h, 3); rr(x, y, w, h, 3, "#7a4c27", "#4a2d15", 2);
+    if (w >= h) { for (i = 0; cx < x + w - 6; i++) { var bw = 4 + ((i * 7) % 4); rr(cx, y + 4, bw, h - 8, 1, cols[i % cols.length]); cx += bw + 1; } }
+    else { var cy = y + 5; for (i = 0; cy < y + h - 6; i++) { var bh = 4 + ((i * 7) % 4); rr(x + 4, cy, w - 8, bh, 1, cols[i % cols.length]); cy += bh + 1; } }
+  };
+  DR.plant = function (it) {
+    var cx = it.x + it.w / 2, cy = it.y + it.h / 2;
+    shadow(it.x, it.y, it.w, it.h, 12);
+    for (var i = 0; i < 7; i++) { var a = (i / 7) * Math.PI * 2; ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); ell(it.w * 0.28, 0, it.w * 0.3, it.w * 0.13, i % 2 ? "#3f9a4a" : "#56b45e", "#2c6e35", 1); ctx.restore(); }
+    ell(cx, cy, 5, 5, "#8b5a2b", "#5a3a1a", 1);
+  };
+  DR.toilet = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h, cx = x + w / 2;
+    shadow(x, y, w, h, 8); rr(x + 2, y, w - 4, 14, 5, "#fff", "#9aa6b4", 2);
+    ell(cx, y + 30, w * 0.44, 18, "#fff", "#9aa6b4", 2); ell(cx, y + 31, w * 0.3, 12, on ? "#7cc8f5" : "#bfe0f2", "#9aa6b4", 1.5);
+    if (on) { ctx.strokeStyle = "rgba(255,255,255,.8)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, y + 31, 6, 0, Date.now() / 120 % 6.28); ctx.stroke(); }
+    rr(cx - 4, y + 3, 8, 3, 1.5, "#c9d2db");
+  };
+  DR.shower = function (it, on) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 6); rr(x, y, w, h, 6, "#dff2fb", "#7fb0c9", 3);
+    ctx.strokeStyle = "rgba(100,150,180,.35)"; ctx.lineWidth = 1; for (var i = 1; i < 5; i++) { ctx.beginPath(); ctx.moveTo(x + (w * i) / 5, y + 2); ctx.lineTo(x + (w * i) / 5, y + h - 2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x + 2, y + (h * i) / 5); ctx.lineTo(x + w - 2, y + (h * i) / 5); ctx.stroke(); }
+    ell(x + w - 16, y + h - 16, 5, 5, "#8d97a5", "#444", 1); ell(x + 18, y + 18, 10, 10, "#c9d2db", "#6b7685", 2); ell(x + 18, y + 18, 5, 5, "#8d97a5");
+    if (on) { ctx.strokeStyle = "rgba(110,190,255,.85)"; ctx.lineWidth = 2; for (var j = 0; j < 14; j++) { var px = x + 10 + ((j * 53 + Date.now() / 6) % (w - 20)), py = y + 10 + ((j * 37 + Date.now() / 4) % (h - 20)); ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px - 2, py + 6); ctx.stroke(); }
+      ctx.fillStyle = "rgba(255,255,255,.5)"; for (j = 0; j < 8; j++) ell(x + 14 + ((j * 29 + Date.now() / 40) % (w - 28)), y + 8 + ((j * 47) % (h - 16)), 6, 6, "rgba(255,255,255,.5)"); }
+    rr(x - 3, y - 3, w + 6, 4, 2, "rgba(255,255,255,.55)");
+  };
+  DR.basket = function (it) {
+    var cx = it.x + it.w / 2, cy = it.y + it.h / 2, r = it.w / 2; shadow(it.x, it.y, it.w, it.h, r);
+    ell(cx, cy, r, r, "#d9b27a", "#8c6a3a", 2); ctx.strokeStyle = "rgba(110,80,40,.5)"; ctx.lineWidth = 1.5; ell(cx, cy, r * 0.65, r * 0.65, null, "rgba(110,80,40,.5)", 1.5); ell(cx, cy, r * 0.3, r * 0.3, "#fff", "#c9d2db", 1);
+    ell(cx - 4, cy - 3, 6, 5, "#ff9ec0"); ell(cx + 5, cy + 3, 6, 5, "#8fd3ff");
+  };
+  DR.shoes = function (it) {
+    shadow(it.x, it.y, it.w, it.h, 3); rr(it.x, it.y, it.w, it.h, 3, "#9a6a3a", "#5e3d1e", 2);
+    ell(it.x + 12, it.y + it.h / 2, 8, 5, "#e0534a", "#7d241c", 1); ell(it.x + 26, it.y + it.h / 2, 8, 5, "#e0534a", "#7d241c", 1); ell(it.x + 40, it.y + it.h / 2, 7, 5, "#3f7fd6", "#274c82", 1);
+  };
+  DR.bed = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x - 4, y - 4, w + 8, h + 8, 8); rr(x - 4, y - 4, w + 8, h + 8, 8, "#7a4f2b", "#4a2d15", 2.5);
+    rr(x, y, w, h, 6, "#f4efe6"); rr(x + 8, y + 8, 46, 28, 9, "#fff", "#c9d2db", 2); rr(x + w - 54, y + 8, 46, 28, 9, "#fff", "#c9d2db", 2);
+    rr(x, y + h * 0.36, w, h * 0.64, 6, vgrad(y, y + h, "#8d6cff", "#6a4be0"), "#4a31b8", 2);
+    rr(x, y + h * 0.36, w, 16, 6, "#b6a1ff"); ctx.fillStyle = "rgba(255,255,255,.55)";
+    [[0.2, 0.6], [0.5, 0.78], [0.78, 0.62]].forEach(function (p) { ell(x + w * p[0], y + h * p[1], 3.5, 3.5, "#ffe58a"); });
+  };
+  DR.wardrobe = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 3); rr(x, y, w, h, 3, vgrad(y, y + h, "#9a6a3a", "#7d5430"), "#4a2d15", 2);
+    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x + w / 2, y + 3); ctx.lineTo(x + w / 2, y + h - 3); ctx.stroke();
+    rr(x + w / 2 - 6, y + h - 10, 3, 6, 1, "#ffe08a"); rr(x + w / 2 + 3, y + h - 10, 3, 6, 1, "#ffe08a"); rr(x + 3, y + 3, w - 6, 5, 2, "rgba(255,255,255,.2)");
+  };
+  DR.nightstand = function (it) {
+    var cx = it.x + it.w / 2, cy = it.y + it.h / 2; shadow(it.x, it.y, it.w, it.h, 4); rr(it.x, it.y, it.w, it.h, 4, "#a8773f", "#6b4724", 2);
+    var g = ctx.createRadialGradient(cx, cy, 2, cx, cy, 36); g.addColorStop(0, "rgba(255,230,140,.55)"); g.addColorStop(1, "rgba(255,230,140,0)"); ctx.fillStyle = g; ctx.fillRect(cx - 40, cy - 40, 80, 80);
+    ell(cx, cy, 8, 8, "#ffe58a", "#b88f00", 1.5);
+  };
+  DR.teddy = function (it) {
+    var cx = it.x + it.w / 2, cy = it.y + it.h / 2; shadow(it.x, it.y, it.w, it.h, 12);
+    ell(cx, cy + 6, 11, 10, "#b97b45", "#7a4c27", 1.5); ell(cx - 8, cy - 8, 5, 5, "#b97b45", "#7a4c27", 1.2); ell(cx + 8, cy - 8, 5, 5, "#b97b45", "#7a4c27", 1.2);
+    ell(cx, cy - 4, 10, 9, "#c88c55", "#7a4c27", 1.5); ell(cx - 3.5, cy - 5, 1.6, 1.6, "#222"); ell(cx + 3.5, cy - 5, 1.6, 1.6, "#222"); ell(cx, cy - 1, 3.5, 2.6, "#e8c6a0", "#7a4c27", 1);
+  };
+  DR.tent = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 4); rr(x, y, w, h, 4, "#ffb347", "#b36b12", 2); ctx.strokeStyle = "#e08e1b"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w, y + h); ctx.moveTo(x + w, y); ctx.lineTo(x, y + h); ctx.stroke();
+    ell(x + w / 2, y + h / 2, 5, 5, "#fff", "#b36b12", 1.5);
+    ctx.fillStyle = "#ff5fa2"; ctx.beginPath(); ctx.moveTo(x + 4, y + 4); ctx.lineTo(x + 20, y + 4); ctx.lineTo(x + 4, y + 20); ctx.fill();
+  };
+  DR.chest = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h, cols = ["#e0534a", "#3f7fd6", "#f2b630", "#4cb36a"];
+    shadow(x, y, w, h, 5); rr(x, y, w, h, 5, "#2f9e8a", "#1b6557", 2); rr(x + 4, y + 4, w - 8, h - 8, 3, null, "rgba(0,0,0,.2)", 1.5);
+    for (var i = 0; i < 4; i++) rr(x + 10 + i * ((w - 30) / 4 + 4), y + 10, 14, 14, 2, cols[i], "rgba(0,0,0,.25)", 1);
+  };
+  DR.beanbag = function (it) {
+    var cx = it.x + it.w / 2, cy = it.y + it.h / 2; shadow(it.x, it.y, it.w, it.h, 24);
+    ell(cx, cy, it.w / 2, it.h / 2, "#9b6bff", "#5a36b8", 2); ell(cx - 8, cy - 8, it.w * 0.2, it.h * 0.16, "rgba(255,255,255,.3)");
+  };
+  DR.easel = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h; shadow(x, y, w, h, 3);
+    rr(x, y, w, h, 3, "#fff", "#9a6a3a", 3); ell(x + 12, y + 18, 6, 6, "#e0534a"); ell(x + 26, y + 30, 7, 7, "#3f7fd6"); ell(x + 18, y + 44, 5, 5, "#f2b630"); ell(x + 32, y + 14, 4, 4, "#4cb36a");
+    rr(x - 2, y + h - 6, w + 4, 6, 2, "#9a6a3a");
+  };
+  DR.desk = function (it) {
+    var x = it.x, y = it.y, w = it.w, h = it.h;
+    shadow(x, y, w, h, 5); rr(x, y, w, h, 5, vgrad(y, y + h, "#9c6a3b", "#835629"), "#4a2d15", 2);
+    rr(x + 20, y + 6, 46, 30, 3, "#2b2f38", "#111", 1.5); rr(x + 24, y + 9, 38, 20, 2, "#79c2ff"); rr(x + 18, y + 8, 50, 3, 1, "#555b66");
+    ell(x + w - 24, y + h / 2, 7, 7, "#fff", "#b9c2cc", 1.5); ell(x + w - 24, y + h / 2, 4, 4, "#6b4226");
+    rr(x + 80, y + 12, 22, 4, 1, "#e0534a");
+  };
+  DR.chair = function (it) { rr(it.x, it.y, it.w, it.h, 8, "#b6804a", "#7d5430", 2); rr(it.x + 2, it.y + it.h - 8, it.w - 4, 6, 3, "#9a6a3a"); };
+
+  var RUG = function (r, c1, c2) { rr(r.x, r.y, r.w, r.h, 14, c1, c2, 3); rr(r.x + 8, r.y + 8, r.w - 16, r.h - 16, 10, null, "rgba(255,255,255,.55)", 2); };
+
+  /* ================= רהיטים לפי קומה ================= */
+  function I(id, dr, x, y, w, h, o) { o = o || {}; var it = { id: id, dr: dr, x: x, y: y, w: w, h: h, solid: o.solid !== false, act: o.act, name: o.name, chairs: o.chairs, bowl: o.bowl, hl: o.hl }; if (o.sx) { it.sx = o.sx; it.sy = o.sy; it.sw = o.sw; it.sh = o.sh; } return it; }
+  var RUGS = [
+    [[R(556, 86, 200, 150), "#e86a8a", "#a63a5a"], [R(494, 322, 200, 132), "#7a5cff", "#4a31b8"], [R(552, 436, 96, 28), "#8b6b4a", "#5a3f26"], [R(62, 350, 100, 50), "#7ad0d6", "#3a8f96"]],
+    [[R(66, 150, 160, 92), "#ff9ec0", "#b84d77"], [R(424, 90, 230, 120), "#ffd966", "#b8921f"], [R(64, 330, 70, 40), "#9bd3f0", "#4a90b5"]]
+  ];
+  var ITEMS = [
+    [ // למטה
+      I("fridge", "fridge", 52, 36, 46, 42, { act: "eat", name: "מקרר" }),
+      I("stove", "stove", 104, 36, 58, 36, { name: "כיריים" }),
+      I("kc1", "counter", 164, 36, 32, 36, {}), I("ksink", "sink", 198, 38, 44, 32, { name: "כיור" }), I("kc2", "counter", 244, 36, 40, 36, {}),
+      I("sweets", "cabinet", 52, 90, 26, 64, { act: "sweets", name: "ארון מתוקים" }),
+      I("ktable", "table", 130, 142, 110, 56, { chairs: 2, bowl: true, sx: 114, sy: 118, sw: 142, sh: 106 }),
+      I("shelf", "bookshelf", 330, 36, 100, 26, { act: "read", name: "ספרים" }),
+      I("tv", "tv", 640, 36, 100, 32, { act: "tv", name: "טלוויזיה" }),
+      I("sofa", "sofa", 596, 156, 126, 52, { act: "rest", name: "ספה" }),
+      I("armc", "armchair", 330, 150, 58, 56, { name: "כורסה" }),
+      I("lplant", "plant", 722, 224, 28, 28, {}), I("hplant", "plant", 402, 270, 24, 24, {}),
+      I("toilet", "toilet", 58, 274, 44, 46, { act: "toilet", name: "שירותים" }),
+      I("sink0", "sink", 152, 270, 50, 34, { act: "teeth", name: "כיור" }),
+      I("bask0", "basket", 150, 414, 44, 44, { name: "סל כביסה" }),
+      I("shoes", "shoes", 240, 438, 54, 22, {}),
+      I("dtable", "table", 510, 344, 180, 60, { chairs: 3, bowl: true, sx: 494, sy: 322, sw: 212, sh: 106 })
+    ],
+    [ // למעלה
+      I("bed", "bed", 56, 46, 118, 104, { act: "sleep", name: "המיטה שלי", sx: 52, sy: 42, sw: 126, sh: 112 }),
+      I("nstand", "nightstand", 182, 46, 34, 34, {}),
+      I("ward", "wardrobe", 234, 36, 54, 48, { act: "pj", name: "ארון בגדים" }),
+      I("teddy", "teddy", 246, 200, 32, 32, { act: "teddy", name: "דובי", solid: false }),
+      I("tent", "tent", 650, 150, 84, 84, { act: "tent", name: "אוהל" }),
+      I("chest", "chest", 340, 40, 84, 44, { name: "ארגז צעצועים" }),
+      I("easel", "easel", 560, 40, 44, 58, { name: "כן ציור" }),
+      I("bean", "beanbag", 440, 150, 60, 60, { name: "פוף", solid: false }),
+      I("tv2", "tv", 650, 36, 100, 32, { act: "game", name: "משחקי וידאו" }),
+      I("shower", "shower", 130, 384, 80, 76, { act: "shower", name: "מקלחת" }),
+      I("sink1", "sink", 152, 270, 50, 34, { act: "teeth", name: "כיור" }),
+      I("bask1", "basket", 58, 420, 42, 42, { name: "סל כביסה" }),
+      I("hplant2", "plant", 402, 270, 24, 24, {}),
+      I("desk", "desk", 520, 266, 178, 46, { act: "pc", name: "מחשב" }),
+      I("chair", "chair", 586, 322, 30, 28, { solid: false }),
+      I("lib", "bookshelf", 722, 300, 28, 120, { act: "read", name: "ספרים" }),
+      I("cplant", "plant", 722, 436, 28, 28, {})
+    ]
+  ];
+  function find(id) { for (var f = 0; f < 2; f++) for (var i = 0; i < ITEMS[f].length; i++) if (ITEMS[f][i].id === id) return { it: ITEMS[f][i], floor: f }; return null; }
+
+  /* ================= מצב המשחק ================= */
+  var S = { floor: 0, gm: 20 * 60, hunger: 68, bladder: 52, done: {}, calm: 0, bad: 0, sugar: 0, busy: null, ended: false, near: null, fade: 0, stairCool: 0 };
+  var P = { x: SPAWN.x, y: SPAWN.y, r: 11, dir: "d", walk: 0, moving: false };
+  var TASKS = [
+    { id: "eat", t: "לאכול משהו במטבח" }, { id: "toilet", t: "ללכת לשירותים" }, { id: "teeth", t: "לצחצח שיניים" },
+    { id: "shower", t: "להתקלח (למעלה)" }, { id: "pj", t: "ללבוש פיג׳מה" }, { id: "sleep", t: "ללכת לישון" }
+  ];
+  var TARGET = { eat: "fridge", toilet: "toilet", teeth: "sink0", shower: "shower", pj: "ward", sleep: "bed" };
+
+  function toast(msg) { var t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("on"); }, 2300); }
+  function clockTxt() { var m = Math.floor(S.gm) % 1440; return pad(Math.floor(m / 60)) + ":" + pad(m % 60); }
+
+  var ACTS = {
+    eat:    { label: "להכין סנדוויץ׳ מהמקרר", dur: 3.5, min: 20, can: function () { return S.done.eat ? "כבר אכלת" : S.hunger < 15 ? "עוד לא רעב" : ""; }, done: function () { S.hunger = Math.max(0, S.hunger - 65); S.done.eat = 1; toast("אכלת סנדוויץ׳. טעים!"); } },
+    sweets: { label: "לקחת עוגיות מהארון", dur: 2.5, min: 10, can: function () { return S.sugar >= 2 ? "הארון ריק, כבר אכלת הכול" : ""; }, done: function () { S.hunger = Math.max(0, S.hunger - 25); S.sugar++; S.bad += 9; toast("עוגיות! מתוק... אבל קשה להירדם אחרי סוכר"); } },
+    toilet: { label: "ללכת לשירותים", dur: 2.2, min: 5, can: function () { return S.done.toilet ? "כבר היית" : S.bladder < 20 ? "עוד לא צריך שירותים" : ""; }, done: function () { S.bladder = 0; S.done.toilet = 1; toast("הכול בסדר. אפשר לשטוף ידיים!"); } },
+    teeth:  { label: "לצחצח שיניים", dur: 2.6, min: 4, can: function () { return S.done.teeth ? "כבר צחצחת שיניים" : ""; }, done: function () { S.done.teeth = 1; toast("שיניים נקיות וחיוך נוצץ!"); } },
+    shower: { label: "להתקלח", dur: 4, min: 15, can: function () { return S.done.shower ? "כבר התקלחת" : ""; }, done: function () { S.done.shower = 1; S.calm += 4; toast("מקלחת חמה... איזה כיף!"); } },
+    pj:     { label: "ללבוש פיג׳מה", dur: 1.6, min: 5, can: function () { return S.done.pj ? "כבר לבשת פיג׳מה" : ""; }, done: function () { S.done.pj = 1; toast("הפיג׳מה נעימה ורכה!"); } },
+    read:   { label: "לקרוא ספר", dur: 3, min: 15, can: function () { return S.calm >= 14 ? "אפשר לנוח רק כמה פעמים בערב" : ""; }, done: function () { S.calm += 7; toast("סיפור יפה. מרגישים רגועים!"); } },
+    rest:   { label: "לנוח על הספה", dur: 2.4, min: 12, can: function () { return S.calm >= 14 ? "אפשר לנוח רק כמה פעמים בערב" : ""; }, done: function () { S.calm += 5; toast("נחמד לנוח קצת."); } },
+    teddy:  { label: "לחבק את הדובי", dur: 2, min: 5, can: function () { return S.done.teddy ? "הדובי כבר מחובק" : ""; }, done: function () { S.done.teddy = 1; S.calm += 5; toast("חיבוק חם מהדובי!"); } },
+    tent:   { label: "להתכרבל באוהל", dur: 2.6, min: 10, can: function () { return S.calm >= 14 ? "אפשר לנוח רק כמה פעמים בערב" : ""; }, done: function () { S.calm += 5; toast("באוהל שקט וחמים."); } },
+    tv:     { label: "לראות טלוויזיה", dur: 3, min: 30, done: function () { S.bad += 8; toast("הסרט היה מרגש... קצת יותר מדי"); } },
+    game:   { label: "לשחק משחק וידאו", dur: 3, min: 25, done: function () { S.bad += 9; toast("עוד שלב אחד... ועוד אחד!"); } },
+    pc:     { label: "לשחק במחשב", dur: 3, min: 25, done: function () { S.bad += 9; toast("המסך בהיר, העיניים עייפות"); } },
+    sleep:  { label: "ללכת לישון", dur: 2, min: 3, done: function () { endNight(); } }
+  };
+
+  /* ================= תנועה והתנגשות ================= */
+  function solids() {
+    var out = WALLS.slice();
+    ITEMS[S.floor].forEach(function (it) { if (!it.solid) return; out.push(it.sx != null ? R(it.sx, it.sy, it.sw, it.sh) : R(it.x, it.y, it.w, it.h)); });
+    return out;
+  }
+  function hit(x, y, r, list) {
+    for (var i = 0; i < list.length; i++) { var b = list[i], cx = clamp(x, b.x, b.x + b.w), cy = clamp(y, b.y, b.y + b.h); if ((x - cx) * (x - cx) + (y - cy) * (y - cy) < r * r) return true; }
+    return false;
+  }
+  function distRect(x, y, b) { var cx = clamp(x, b.x, b.x + b.w), cy = clamp(y, b.y, b.y + b.h); return Math.hypot(x - cx, y - cy); }
+  function roomAt(x, y) { var rs = ROOMS[S.floor]; for (var i = 0; i < rs.length; i++) { var r = rs[i].r; if (x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h) return rs[i].n; } return "בחוץ"; }
+  function setFloor(i, pos) { S.floor = i; P.x = pos ? pos.x : SPAWN.x; P.y = pos ? pos.y : SPAWN.y; S.fade = 0.35; S.stairCool = 1; }
+
+  /* ================= ציור הבית ================= */
+  function drawRoom(rm) {
+    var r = rm.r, i, j;
+    ctx.fillStyle = rm.a; ctx.fillRect(r.x, r.y, r.w, r.h);
+    if (rm.k === "tile") {
+      ctx.fillStyle = rm.b; for (i = 0; i < r.w; i += 30) for (j = 0; j < r.h; j += 30) if (((i + j) / 30) % 2 === 0) ctx.fillRect(r.x + i, r.y + j, Math.min(30, r.w - i), Math.min(30, r.h - j));
+      ctx.strokeStyle = "rgba(0,0,0,.07)"; ctx.lineWidth = 1; for (i = 0; i <= r.w; i += 30) { ctx.beginPath(); ctx.moveTo(r.x + i, r.y); ctx.lineTo(r.x + i, r.y + r.h); ctx.stroke(); } for (j = 0; j <= r.h; j += 30) { ctx.beginPath(); ctx.moveTo(r.x, r.y + j); ctx.lineTo(r.x + r.w, r.y + j); ctx.stroke(); }
+    } else if (rm.k === "wood") {
+      for (j = 0; j < r.h; j += 22) { ctx.fillStyle = (j / 22) % 2 ? rm.b : rm.a; ctx.fillRect(r.x, r.y + j, r.w, 22); ctx.fillStyle = "rgba(0,0,0,.1)"; ctx.fillRect(r.x, r.y + j + 21, r.w, 1); }
+      ctx.strokeStyle = "rgba(0,0,0,.07)"; ctx.lineWidth = 1; for (j = 0; j < r.h; j += 22) { var off = ((j / 22) * 53) % 90; for (i = off; i < r.w; i += 90) { ctx.beginPath(); ctx.moveTo(r.x + i, r.y + j); ctx.lineTo(r.x + i, r.y + j + 22); ctx.stroke(); } }
+    } else {
+      ctx.strokeStyle = rm.b; ctx.lineWidth = 3; ctx.strokeRect(r.x + 9, r.y + 9, r.w - 18, r.h - 18);
+    }
+  }
+  function drawStairs() {
+    var s = STAIRS, up = S.floor === 0, n = 8, i;
+    shadow(s.x, s.y, s.w, s.h, 3); rr(s.x, s.y, s.w, s.h, 3, "#7a5535", "#3d2713", 2.5);
+    for (i = 0; i < n; i++) { var sx = s.x + 3 + i * ((s.w - 6) / n); ctx.fillStyle = vgrad(s.y, s.y + s.h, i % 2 ? "#c79a63" : "#b98c57", "#a77d4b"); ctx.fillRect(sx, s.y + 3, (s.w - 6) / n - 1, s.h - 6); ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(sx + (s.w - 6) / n - 2, s.y + 3, 1.5, s.h - 6); }
+    rr(s.x - 2, s.y, 5, s.h, 2, "#5a3a1e"); rr(s.x + s.w - 3, s.y, 5, s.h, 2, "#5a3a1e");
+    ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.beginPath(); var cx = s.x + s.w / 2, cy = s.y + s.h / 2;
+    if (up) { ctx.moveTo(cx, cy - 14); ctx.lineTo(cx + 14, cy + 8); ctx.lineTo(cx - 14, cy + 8); } else { ctx.moveTo(cx, cy + 14); ctx.lineTo(cx + 14, cy - 8); ctx.lineTo(cx - 14, cy - 8); } ctx.fill();
+    txt(up ? "למעלה" : "למטה", cx, s.y - 10, 15, "#fff");
+  }
+  function drawKid(x, y, dir, walk, moving, pj, busyAnim) {
+    var sw = moving ? Math.sin(walk * 11) * 4 : 0, shirt = pj ? "#7a5cff" : "#ff8a5c", pants = pj ? "#5b4bd6" : "#3b6fb6", up = dir === "u", side = dir === "l" || dir === "r", sg = dir === "l" ? -1 : 1;
+    ctx.save(); ctx.globalAlpha = 0.3; ell(x, y + 13, 13, 6, "#000"); ctx.restore();
+    ell(x - 5, y + 10 + sw, 4.5, 6.5, pants, "#222", 1.2); ell(x + 5, y + 10 - sw, 4.5, 6.5, pants, "#222", 1.2);
+    ell(x, y + 2, 11, 12, shirt, "#1d1b4b", 1.6);
+    if (pj) { ctx.fillStyle = "rgba(255,255,255,.7)"; [[-4, 0], [4, 5], [-2, 7]].forEach(function (p) { ell(x + p[0], y + p[1], 1.4, 1.4, "rgba(255,255,255,.8)"); }); }
+    ell(x - 12, y + 2 - sw / 2, 3.6, 6, shirt, "#1d1b4b", 1.4); ell(x + 12, y + 2 + sw / 2, 3.6, 6, shirt, "#1d1b4b", 1.4);
+    ell(x - 12, y + 8 - sw / 2, 3, 3, "#ffe0c2", "#7d5a3a", 1); ell(x + 12, y + 8 + sw / 2, 3, 3, "#ffe0c2", "#7d5a3a", 1);
+    ell(x, y - 10, 10.5, 10.5, "#ffe0c2", "#1d1b4b", 1.6);
+    ctx.fillStyle = "#5a3418";
+    if (up) { ctx.beginPath(); ctx.arc(x, y - 10, 10.8, 0, 7); ctx.fill(); }
+    else if (side) { ctx.beginPath(); ctx.arc(x, y - 10, 10.8, sg < 0 ? -Math.PI * 0.4 : Math.PI * 1.4 - Math.PI * 2 + Math.PI, sg < 0 ? Math.PI * 1.1 : Math.PI * 0.4 + Math.PI, false); ctx.fill(); ell(x + sg * 5, y - 9, 1.6, 2, "#222"); }
+    else { ctx.beginPath(); ctx.arc(x, y - 10, 10.8, Math.PI * 1.02, Math.PI * 1.98); ctx.fill(); ctx.fillRect(x - 10, y - 12, 4, 6); ctx.fillRect(x + 6, y - 12, 4, 6); ell(x - 3.6, y - 8, 1.7, 2.1, "#222"); ell(x + 3.6, y - 8, 1.7, 2.1, "#222"); ctx.strokeStyle = "#a8504a"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y - 5, 2.6, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke(); }
+    if (pj) { ctx.fillStyle = "#ff5fa2"; ctx.strokeStyle = "#1d1b4b"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(x - 10, y - 14); ctx.quadraticCurveTo(x - 2, y - 32, x + 12, y - 24); ctx.lineTo(x + 9, y - 14); ctx.closePath(); ctx.fill(); ctx.stroke(); ell(x + 12, y - 24, 3.4, 3.4, "#fff", "#1d1b4b", 1.2); }
+  }
+  function nextTask() { for (var i = 0; i < TASKS.length; i++) if (!S.done[TASKS[i].id]) return TASKS[i]; return null; }
+  function drawMarker() {
+    var nt = nextTask(); if (!nt || S.ended) return;
+    var f = find(TARGET[nt.id]), tx, ty;
+    if (!f) return;
+    if (f.floor !== S.floor) { tx = STAIRS.x + STAIRS.w / 2; ty = STAIRS.y - 30; } else { tx = f.it.x + f.it.w / 2; ty = f.it.y - 14; }
+    var b = Math.sin(Date.now() / 220) * 5;
+    ctx.fillStyle = "#ffd23f"; ctx.strokeStyle = "#1d1b4b"; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(tx, ty + b + 12); ctx.lineTo(tx + 11, ty + b - 6); ctx.lineTo(tx - 11, ty + b - 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  function draw() {
+    var fl = S.floor, g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#14352f"); g.addColorStop(1, "#0d2220"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ROOMS[fl].forEach(drawRoom);
+    RUGS[fl].forEach(function (u) { RUG(u[0], u[1], u[2]); });
+    drawStairs();
+    var busyIt = S.busy && S.busy.it;
+    ITEMS[fl].forEach(function (it) { DR[it.dr](it, busyIt === it || (busyIt && it.hl === busyIt.id)); });
+    // טלוויזיה/כיור מופעלים לפי הפעולה (לפי סוג)
+    // דלת כניסה
+    if (fl === 0) { ctx.fillStyle = "#b5651d"; ctx.fillRect(560, Y1 - 6, 80, T); ctx.fillStyle = "#ffd23f"; ctx.beginPath(); ctx.arc(628, Y1, 3, 0, 7); ctx.fill(); }
+    // חלונות
+    WINDOWS[fl].forEach(function (w) { ctx.fillStyle = "#12204a"; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.fillStyle = "rgba(160,200,255,.45)"; ctx.fillRect(w.x + 2, w.y + 2, w.w - 4, w.h - 4); ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.strokeRect(w.x, w.y, w.w, w.h); });
+    // קירות
+    WALLS.forEach(function (w) { ctx.fillStyle = "#2b2257"; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.fillStyle = "rgba(255,255,255,.22)"; ctx.fillRect(w.x, w.y, w.w, Math.min(3, w.h)); });
+    WINDOWS[fl].forEach(function (w) { ctx.fillStyle = "#12204a"; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.fillStyle = "rgba(160,200,255,.5)"; ctx.fillRect(w.x + 2, w.y + 2, w.w - 4, w.h - 4); ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.strokeRect(w.x, w.y, w.w, w.h); });
+    // שמות חדרים
+    ROOMS[fl].forEach(function (rm) { ctx.globalAlpha = 0.6; txt(rm.n, rm.r.x + rm.r.w / 2, rm.r.y + rm.r.h - 14, 15, "#fff"); ctx.globalAlpha = 1; });
+    // הדמות
+    var hide = S.busy && S.busy.act === ACTS.shower;
+    if (!hide) drawKid(P.x, P.y, P.dir, P.walk, P.moving, S.done.pj);
+    // שם פריט קרוב
+    if (S.near && !S.busy) txt(S.near.name || "", S.near.x + S.near.w / 2, S.near.y - 16, 16, "#ffd23f");
+    drawMarker();
+    // התקדמות פעולה
+    if (S.busy) { var b = S.busy, k = clamp(b.t / b.act.dur, 0, 1), bx = clamp(P.x - 34, 8, W - 76), by = Math.max(10, P.y - 44); rr(bx, by, 68, 12, 6, "rgba(0,0,0,.6)", "#1d1b4b", 2); rr(bx + 2, by + 2, 64 * k, 8, 4, "#ffd23f"); }
+    // חושך הלילה
+    var dark = clamp((S.gm - 1200) / 360, 0, 1) * 0.3; if (dark > 0) { ctx.fillStyle = "rgba(10,10,70," + dark + ")"; ctx.fillRect(0, 0, W, H); }
+    if (S.fade > 0) { ctx.fillStyle = "rgba(10,5,40," + (S.fade / 0.35) * 0.85 + ")"; ctx.fillRect(0, 0, W, H); }
+  }
+
+  /* ================= סוף הערב ================= */
+  function quality() {
+    var q = 28, n = 0; ["eat", "toilet", "teeth", "shower", "pj"].forEach(function (k) { if (S.done[k]) { q += 9; n++; } });
+    q += Math.min(S.calm, 14); q -= S.bad;
+    var late = (S.gm - 22 * 60); if (late > 0) q -= late * 0.22; else if (S.gm <= 21.75 * 60) q += 5;
+    if (S.hunger > 70) q -= 8; if (S.bladder > 70) q -= 8;
+    return Math.round(clamp(q, 0, 100));
+  }
+  function endNight() {
+    if (S.ended) return; S.ended = true; S.busy = null;
+    S.done.sleep = 1; refreshTasks();
+    var q = quality(); S.q = q;
+    $("#endTime").textContent = "הלכת לישון בשעה " + clockTxt() + ".";
+    var ul = $("#endList"); ul.innerHTML = "";
+    TASKS.slice(0, 5).forEach(function (t) { var li = document.createElement("li"); li.className = S.done[t.id] ? "ok" : "no"; li.textContent = t.t.replace(" (למעלה)", ""); ul.appendChild(li); });
+    $("#endQ").textContent = "איכות שינה: " + q + "% " + (q >= 70 ? "(שינה מתוקה)" : q >= 40 ? "(שינה סבירה)" : "(לילה לא קל)");
+    $("#end").classList.add("on"); $("#dreamBtn").focus();
+  }
+  $("#dreamBtn").addEventListener("click", function () { location.href = "dream-in-dream.html?q=" + S.q + "&from=house"; });
+  $("#againBtn").addEventListener("click", function () { location.href = "dream-house.html"; });
+
+  /* ================= משימות ו-HUD ================= */
+  function refreshTasks() {
+    var ul = $("#tasks"), nt = nextTask(); ul.innerHTML = "";
+    TASKS.forEach(function (t) { var li = document.createElement("li"); li.textContent = t.t; if (S.done[t.id]) li.className = "done"; else if (nt && nt.id === t.id) li.className = "next"; ul.appendChild(li); });
+  }
+  function bar(id, v) { var e = $(id); e.style.width = clamp(v, 0, 100) + "%"; e.style.background = v > 75 ? "#ff5f7a" : v > 45 ? "#ffd23f" : "#2fd1a0"; }
+  var actBtn = $("#actBtn");
+  actBtn.addEventListener("click", function () { startAct(S.near); actBtn.blur(); });
+  function startAct(it) {
+    if (!it || !it.act || S.busy || S.ended) return;
+    var a = ACTS[it.act], msg = a.can ? a.can() : "";
+    if (msg) { toast(msg); return; }
+    if (it.act === "sleep" && !S.done.pj) { /* מותר, אבל יורד באיכות */ }
+    S.busy = { act: a, it: it, t: 0 };
+  }
+
+  /* ================= לולאה ================= */
+  var last = 0, tickClock = 0;
+  function frame(ts) {
+    var dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+    if (!S.ended) {
+      var dMin = 0;
+      if (S.busy) {
+        var b = S.busy; b.t += dt; dMin = b.act.min * dt / b.act.dur; P.moving = false;
+        if (b.t >= b.act.dur) { var a = b.act; S.busy = null; a.done(); refreshTasks(); }
+      } else {
+        var vx = (keys.arrowright || keys.d ? 1 : 0) - (keys.arrowleft || keys.a ? 1 : 0), vy = (keys.arrowdown || keys.s ? 1 : 0) - (keys.arrowup || keys.w ? 1 : 0);
+        if (!vx && !vy && ptr.active) { var dx = ptr.x - P.x, dy = ptr.y - P.y, d = Math.hypot(dx, dy); if (d > 8) { vx = dx / d; vy = dy / d; } }
+        else if (vx && vy) { vx *= 0.707; vy *= 0.707; }
+        P.moving = !!(vx || vy);
+        if (P.moving) { P.walk += dt; if (Math.abs(vx) > Math.abs(vy)) P.dir = vx > 0 ? "r" : "l"; else P.dir = vy > 0 ? "d" : "u"; }
+        var list = solids(), sp = 170 * dt, nx = clamp(P.x + vx * sp, P.r, W - P.r);
+        if (!hit(nx, P.y, P.r, list)) P.x = nx;
+        var ny = clamp(P.y + vy * sp, P.r, H - P.r); if (!hit(P.x, ny, P.r, list)) P.y = ny;
+        dMin = dt / 0.9;
+        S.stairCool = Math.max(0, S.stairCool - dt);
+        if (S.stairCool === 0 && P.x > STAIRS.x && P.x < STAIRS.x + STAIRS.w && P.y > STAIRS.y && P.y < STAIRS.y + STAIRS.h) setFloor(1 - S.floor);
+      }
+      S.gm += dMin; S.hunger = Math.min(100, S.hunger + 0.1 * dMin); S.bladder = Math.min(100, S.bladder + 0.13 * dMin);
+      // פריט קרוב עם פעולה
+      var best = null, bd = 30; if (!S.busy) ITEMS[S.floor].forEach(function (it) { if (!it.act) return; var d2 = distRect(P.x, P.y, R(it.x, it.y, it.w, it.h)); if (d2 < bd) { bd = d2; best = it; } });
+      S.near = best;
+      if (actPressed) { actPressed = false; startAct(S.near); }
+      if (S.gm >= 25 * 60 && !S.ended) { toast("כבר מאוחר מאוד! נרדמת במקום..."); endNight(); }
+    }
+    S.fade = Math.max(0, S.fade - dt);
+    actPressed = false;
+    draw();
+    tickClock += dt; if (tickClock > 0.15) { tickClock = 0; $("#clock").textContent = clockTxt(); $("#roomTxt").textContent = roomAt(P.x, P.y); bar("#nHunger", S.hunger); bar("#nBladder", S.bladder); refreshTasks.last !== JSON.stringify(S.done) && (refreshTasks(), refreshTasks.last = JSON.stringify(S.done));
+      if (S.near && !S.busy && !S.ended) { actBtn.hidden = false; actBtn.textContent = ACTS[S.near.act].label; } else if (S.busy) { actBtn.hidden = true; } else { actBtn.hidden = true; } }
+    requestAnimationFrame(frame);
+  }
+  refreshTasks();
+  requestAnimationFrame(frame);
+
+  // לבדיקות: ?floor=2&time=21:30
+  try { var q = new URLSearchParams(location.search); if (q.get("floor") === "2") setFloor(1); if (q.get("time")) { var tm = q.get("time").split(":"); S.gm = +tm[0] * 60 + +tm[1]; } if (q.get("pj")) S.done.pj = 1; } catch (e) {}
+  window.__house = { S: S, P: P, ITEMS: ITEMS, startAct: startAct, setFloor: setFloor };
+})();
+</script>
+</body>
+</html>

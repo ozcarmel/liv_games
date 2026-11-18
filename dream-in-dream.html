@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>חלום בחלום</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #140f3a;
+    --night2: #2a1d6b;
+    --sun: #ffd23f;
+    --pink: #ff5fa2;
+    --grape: #7a5cff;
+    --mint: #2fd1a0;
+    --ink: #1d1b4b;
+    --paper: #ffffff;
+    --display: "Secular One", "Arial Rounded MT Bold", Arial, sans-serif;
+    --body: "Rubik", Arial, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--night); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    direction: rtl;
+    font-family: var(--body);
+    font-size: 18px;
+    color: #fff;
+    background:
+      radial-gradient(rgba(255,255,255,.55) 2px, transparent 2.5px) 0 0 / 61px 61px,
+      radial-gradient(rgba(255,255,255,.35) 1.5px, transparent 2px) 30px 30px / 47px 47px,
+      linear-gradient(180deg, var(--night2), var(--night));
+    padding: 16px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left));
+  }
+  .app { max-width: 880px; margin: 0 auto; }
+  h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; }
+  h1 {
+    font-size: clamp(3rem, 12vw, 5.6rem); line-height: 1.05;
+    color: var(--sun);
+    -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill;
+    text-shadow: 4px 5px 0 var(--ink);
+  }
+  h2 { font-size: clamp(1.8rem, 6vw, 2.6rem); color: var(--sun); text-shadow: 3px 3px 0 var(--ink); }
+  p { margin: 0; }
+  .screen { display: none; }
+  .screen.on { display: block; animation: pop .35s ease; }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+  .btn {
+    font-family: var(--display); font-size: 1.5rem; color: var(--ink);
+    background: var(--sun); border: 4px solid var(--ink); border-radius: 999px;
+    padding: 10px 34px; cursor: pointer; box-shadow: 5px 5px 0 var(--ink);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 5px 8px 0 var(--ink); }
+  .btn:active { transform: translateY(2px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn:focus-visible, .chip:focus-visible { outline: 4px solid #fff; outline-offset: 4px; }
+  .btn.pink { background: var(--pink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* פתיחה */
+  #title { text-align: center; padding-top: 6vh; }
+  .moon { font-size: 5rem; display: inline-block; animation: bob 3.5s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-12px) rotate(6deg); } }
+  .sub { font-size: 1.25rem; margin: 18px auto 28px; max-width: 30ch; line-height: 1.5; }
+  .steps { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 0 0 32px; padding: 0; list-style: none; }
+  .steps li {
+    background: rgba(255,255,255,.12); border: 3px solid rgba(255,255,255,.4); border-radius: 18px;
+    padding: 10px 16px; font-weight: 700; font-size: 1rem;
+  }
+
+  /* ערב */
+  .card {
+    background: rgba(20, 15, 58, .72); border: 4px solid var(--ink); border-radius: 26px;
+    box-shadow: 8px 8px 0 var(--grape); padding: 22px clamp(14px, 4vw, 28px) 26px;
+  }
+  .lead { margin: 6px 0 18px; opacity: .9; }
+  .label { font-family: var(--display); font-size: 1.3rem; margin: 18px 0 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .label small { font-family: var(--body); font-size: .95rem; opacity: .8; }
+  .chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); gap: 10px; }
+  .chip {
+    display: flex; align-items: center; gap: 10px; text-align: start;
+    font: 700 1rem var(--body); color: #fff;
+    background: rgba(255,255,255,.1); border: 3px solid rgba(255,255,255,.35); border-radius: 18px;
+    padding: 10px 14px; cursor: pointer; min-height: 52px;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .chip .em { font-size: 1.7rem; line-height: 1; }
+  .chip:hover:not(:disabled) { transform: translateY(-2px); background: rgba(255,255,255,.18); }
+  .chip[aria-pressed="true"], .chip[aria-checked="true"] { background: var(--mint); color: var(--ink); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  .chip:disabled { opacity: .4; cursor: not-allowed; }
+  .meter { margin-top: 22px; }
+  .meter-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px; gap: 10px; }
+  .track { height: 26px; border-radius: 999px; border: 3px solid var(--ink); background: rgba(0,0,0,.35); overflow: hidden; }
+  .track i { display: block; height: 100%; width: 50%; background: var(--mint); transition: width .3s ease, background .3s ease; }
+  .go { text-align: center; margin-top: 24px; }
+
+  /* חלום */
+  .hud { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-weight: 700; }
+  .hud .depth { white-space: nowrap; background: var(--grape); border: 3px solid var(--ink); border-radius: 999px; padding: 4px 14px; font-size: 1rem; }
+  .hud .bar { flex: 1; height: 16px; border-radius: 999px; border: 3px solid var(--ink); background: rgba(0,0,0,.4); overflow: hidden; }
+  .hud .bar i { display: block; height: 100%; width: 0; background: var(--sun); }
+  .hud .scoreTxt { font-family: var(--display); font-size: 1.5rem; min-width: 4.5ch; text-align: end; font-variant-numeric: tabular-nums; }
+  canvas {
+    display: block; width: 100%; height: auto; aspect-ratio: 8 / 5;
+    border: 4px solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--grape);
+    touch-action: none; user-select: none; -webkit-user-select: none; background: #000;
+  }
+  .hint { text-align: center; margin-top: 16px; font-weight: 700; min-height: 1.5em; }
+
+  /* בוקר */
+  #morning { text-align: center; }
+  .sun { font-size: 4.5rem; display: inline-block; animation: bob 3.5s ease-in-out infinite; }
+  .mood { font-size: 1.3rem; margin: 10px 0 18px; }
+  .stars { font-size: 2.6rem; letter-spacing: .1em; margin: 4px 0 8px; }
+  .total { font-family: var(--display); font-size: 2.4rem; color: var(--sun); }
+  .total small { font-family: var(--body); font-size: 1rem; color: #fff; display: block; opacity: .85; }
+  .results { list-style: none; padding: 0; margin: 18px 0 8px; display: grid; gap: 8px; text-align: start; }
+  .results li { background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.3); border-radius: 14px; padding: 10px 14px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .results li b { color: var(--sun); }
+  .best { margin: 10px 0 20px; opacity: .9; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- מסך פתיחה -->
+  <section id="title" class="screen on">
+    <div class="moon" aria-hidden="true">🌙</div>
+    <h1>חלום בחלום</h1>
+    <p class="sub">קודם מכינים את הלילה, ואחר כך חולמים. מה שתחלמו תלוי באיך ישנתם!</p>
+    <ul class="steps">
+      <li>🛏️ מתכוננים לשינה</li>
+      <li>💤 חולמים</li>
+      <li>🌞 מתעוררים</li>
+    </ul>
+    <button class="btn" id="startBtn">מתחילים!</button>
+  </section>
+
+  <!-- ערב: ניהול שינה -->
+  <section id="evening" class="screen">
+    <div class="card">
+      <h2>🌆 ערב: מכינים את הלילה</h2>
+      <p class="lead">בחרו עד 4 הרגלים ושעת שינה. שינה טובה מביאה חלומות נעימים!</p>
+
+      <div class="label">מה עושים לפני השינה? <small id="pickCount">0 מתוך 4</small></div>
+      <div class="chips" id="habits"></div>
+
+      <div class="label">באיזו שעה הולכים לישון?</div>
+      <div class="chips" id="bedtimes" role="radiogroup" aria-label="שעת שינה"></div>
+
+      <div class="meter">
+        <div class="meter-row"><span>איכות שינה צפויה</span><span id="qLabel"></span></div>
+        <div class="track" role="meter" aria-valuemin="0" aria-valuemax="100" id="qTrack" aria-label="איכות שינה צפויה"><i id="qFill"></i></div>
+      </div>
+
+      <div class="go"><button class="btn pink" id="sleepBtn">לישון! 😴</button></div>
+    </div>
+  </section>
+
+  <!-- חלום -->
+  <section id="dream" class="screen">
+    <div class="hud">
+      <span class="depth" id="depth"></span>
+      <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+      <span class="scoreTxt" id="scoreTxt">0</span>
+    </div>
+    <canvas id="cv" width="800" height="500" aria-label="אזור החלום"></canvas>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <!-- בוקר -->
+  <section id="morning" class="screen">
+    <div class="card">
+      <div class="sun" aria-hidden="true">🌞</div>
+      <h2>בוקר טוב!</h2>
+      <p class="mood" id="mood"></p>
+      <div class="stars" id="stars" aria-label=""></div>
+      <div class="total"><span id="totalNum">0</span><small>נקודות חלום</small></div>
+      <ul class="results" id="results"></ul>
+      <p class="best" id="best"></p>
+      <button class="btn" id="againBtn">ללילה חדש 🌙</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ===================== כלים ===================== */
+  var $ = function (s) { return document.querySelector(s); };
+  var W = 800, H = 500;
+  var cv = $("#cv"), ctx = cv.getContext("2d");
+  var rnd = function (a, b) { return a + Math.random() * (b - a); };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var FONT = '"Secular One", "Arial Rounded MT Bold", Arial, sans-serif';
+
+  function show(id) {
+    ["title", "evening", "dream", "morning"].forEach(function (s) {
+      $("#" + s).classList.toggle("on", s === id);
+    });
+    state.screen = id;
+    window.scrollTo(0, 0);
+  }
+
+  var state = { screen: "title", picks: [], bed: 1, q: 50 };
+
+  /* ===================== קלט ===================== */
+  var keys = {};
+  addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    keys[k] = true;
+    if (state.screen === "dream" && ["arrowleft", "arrowright", "arrowup", "arrowdown", " "].indexOf(k) >= 0) e.preventDefault();
+  });
+  addEventListener("keyup", function (e) { keys[e.key.toLowerCase()] = false; });
+  addEventListener("blur", function () { keys = {}; });
+
+  var ptr = { x: W / 2, y: H / 2, active: false, down: false };
+  function setPtr(e) {
+    var r = cv.getBoundingClientRect();
+    ptr.x = (e.clientX - r.left) / r.width * W;
+    ptr.y = (e.clientY - r.top) / r.height * H;
+    ptr.active = true;
+  }
+  cv.addEventListener("pointerdown", function (e) { setPtr(e); ptr.down = true; try { cv.setPointerCapture(e.pointerId); } catch (x) {} });
+  cv.addEventListener("pointermove", function (e) { if (e.pointerType === "mouse" || ptr.down) setPtr(e); });
+  cv.addEventListener("pointerup", function (e) { ptr.down = false; if (e.pointerType !== "mouse") ptr.active = false; });
+  cv.addEventListener("pointercancel", function () { ptr.down = false; ptr.active = false; });
+  cv.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") ptr.active = false; });
+
+  function axisX() { return (keys.arrowright || keys.d ? 1 : 0) - (keys.arrowleft || keys.a ? 1 : 0); }
+  function axisY() { return (keys.arrowdown || keys.s ? 1 : 0) - (keys.arrowup || keys.w ? 1 : 0); }
+
+  /* ===================== ציור: עזרים ===================== */
+  function text(str, x, y, size, color, align, stroke) {
+    ctx.font = size + "px " + FONT;
+    ctx.textAlign = align || "center";
+    ctx.textBaseline = "middle";
+    ctx.direction = /[֐-׿]/.test(str) ? "rtl" : "ltr";
+    if (stroke !== false) { ctx.lineWidth = Math.max(3, size / 7); ctx.strokeStyle = "#1d1b4b"; ctx.lineJoin = "round"; ctx.strokeText(str, x, y); }
+    ctx.fillStyle = color || "#fff";
+    ctx.fillText(str, x, y);
+  }
+  function emoji(e, x, y, size, rot) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (rot) ctx.rotate(rot);
+    ctx.font = size + "px 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(e, 0, 0);
+    ctx.restore();
+  }
+  function drawKid(x, y, r, mood) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.lineWidth = 2.5; ctx.strokeStyle = "#1d1b4b";
+    ctx.fillStyle = "#7a5cff";
+    ctx.beginPath(); ctx.ellipse(0, r * 0.95, r * 0.85, r * 0.65, 0, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#ffe0c2";
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#ff5fa2";
+    ctx.beginPath(); ctx.moveTo(-r, -r * 0.2); ctx.quadraticCurveTo(-r * 0.3, -r * 1.9, r * 1.15, -r * 1.25);
+    ctx.lineTo(r, -r * 0.3); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(r * 1.15, -r * 1.25, r * 0.28, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#1d1b4b";
+    if (mood === "scared") {
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(-r * 0.35, -r * 0.05, r * 0.26, 0, 7); ctx.arc(r * 0.35, -r * 0.05, r * 0.26, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#1d1b4b";
+      ctx.beginPath(); ctx.arc(-r * 0.35, -r * 0.05, r * 0.1, 0, 7); ctx.arc(r * 0.35, -r * 0.05, r * 0.1, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, r * 0.5, r * 0.16, r * 0.22, 0, 0, 7); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.arc(-r * 0.35, 0, r * 0.1, 0, 7); ctx.arc(r * 0.35, 0, r * 0.1, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(0, r * 0.25, r * 0.35, 0.15 * Math.PI, 0.85 * Math.PI); ctx.lineWidth = 2.5; ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function cloud(x, y, w, color) {
+    ctx.fillStyle = color || "#fff";
+    var h = w * 0.3;
+    ctx.beginPath();
+    ctx.arc(x - w * 0.28, y, h, 0, 7); ctx.arc(x, y - h * 0.5, h * 1.25, 0, 7); ctx.arc(x + w * 0.28, y, h, 0, 7);
+    ctx.rect(x - w * 0.28, y, w * 0.56, h);
+    ctx.fill();
+  }
+  function floaters(list, dt) {
+    for (var i = list.length - 1; i >= 0; i--) {
+      var f = list[i];
+      f.t += dt; f.y -= 45 * dt;
+      if (f.t > 0.9) { list.splice(i, 1); continue; }
+      ctx.globalAlpha = 1 - f.t / 0.9;
+      text(f.s, f.x, f.y, 26, f.c || "#ffd23f");
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  /* ===================== מיני-משחקים ===================== */
+  var MK = {};
+
+  /* ---- סיוט: בורחים מהצל ---- */
+  MK.nightmare = function (q) {
+    var g = { dur: 24, score: 0, t: 0, par: 24, hint: "ברחו מהצל! אספו כדורי אור. הזיזו עם החצים או עם האצבע", pop: [] };
+    g.p = { x: W / 2, y: H * 0.7, r: 15 };
+    g.mons = [];
+    var n = q < 35 ? 2 : 1;
+    for (var i = 0; i < n; i++) g.mons.push({ x: i ? W - 60 : 60, y: 60, r: i ? 26 : 34, sp: (46 + (100 - q) * 0.5) * (i ? 0.85 : 1), dash: 0, cd: 3.5 + i * 1.5, warn: 0 });
+    g.orbs = [];
+    function newOrb() { g.orbs.push({ x: rnd(50, W - 50), y: rnd(50, H - 50), ph: rnd(0, 6) }); }
+    for (i = 0; i < 3; i++) newOrb();
+    g.update = function (dt) {
+      var p = g.p, vx = axisX(), vy = axisY();
+      if (!vx && !vy && ptr.active) {
+        var dx = ptr.x - p.x, dy = ptr.y - p.y, d = Math.hypot(dx, dy);
+        if (d > 8) { vx = dx / d; vy = dy / d; }
+      } else if (vx && vy) { vx *= 0.707; vy *= 0.707; }
+      p.x = clamp(p.x + vx * 190 * dt, p.r, W - p.r);
+      p.y = clamp(p.y + vy * 190 * dt, p.r, H - p.r);
+      g.mons.forEach(function (m) {
+        m.cd -= dt;
+        if (m.warn > 0) {
+          m.warn -= dt;
+          if (m.warn <= 0) m.dash = 0.55;
+        } else {
+          if (m.cd <= 0) { m.warn = 0.6; m.cd = rnd(4, 6); }
+          var sp = m.sp * (m.dash > 0 ? 2.6 : 1);
+          if (m.dash > 0) m.dash -= dt;
+          var dx2 = p.x - m.x, dy2 = p.y - m.y, d2 = Math.hypot(dx2, dy2) || 1;
+          m.x += dx2 / d2 * sp * dt; m.y += dy2 / d2 * sp * dt;
+        }
+        if (Math.hypot(p.x - m.x, p.y - m.y) < m.r + p.r - 6 && !g.over) { g.over = true; g.reason = "caught"; }
+      });
+      for (var i = g.orbs.length - 1; i >= 0; i--) {
+        var o = g.orbs[i];
+        if (Math.hypot(p.x - o.x, p.y - o.y) < p.r + 14) {
+          g.orbs.splice(i, 1); g.score += 3; newOrb();
+          g.pop.push({ x: o.x, y: o.y, t: 0, s: "+3" });
+        }
+      }
+      if (g.t + dt >= g.dur && !g.over) g.bonus = 10;
+    };
+    g.draw = function () {
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#1a0b2e"); bg.addColorStop(1, "#05020d");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = "rgba(255,255,255,.05)"; ctx.lineWidth = 2;
+      for (var x = 0; x < W; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (var y = 0; y < H; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      // חושך סביב השחקן
+      var vg = ctx.createRadialGradient(g.p.x, g.p.y, 60, g.p.x, g.p.y, 260);
+      vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.78)");
+      ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+      // כדורי אור
+      g.orbs.forEach(function (o) {
+        var r = 12 + Math.sin(g.t * 5 + o.ph) * 2.5;
+        var gl = ctx.createRadialGradient(o.x, o.y, 2, o.x, o.y, r * 2.6);
+        gl.addColorStop(0, "rgba(255,230,120,1)"); gl.addColorStop(1, "rgba(255,210,63,0)");
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(o.x, o.y, r * 2.6, 0, 7); ctx.fill();
+        ctx.fillStyle = "#fff6c4"; ctx.beginPath(); ctx.arc(o.x, o.y, r * 0.7, 0, 7); ctx.fill();
+      });
+      // מפלצות
+      g.mons.forEach(function (m) {
+        var wob = Math.sin(g.t * 6 + m.r) * 3;
+        ctx.fillStyle = "#0a0414";
+        ctx.beginPath(); ctx.arc(m.x, m.y + wob, m.r, Math.PI, 0);
+        for (var i = 0; i < 5; i++) ctx.lineTo(m.x + m.r - (i + 0.5) * (m.r * 0.4), m.y + wob + m.r * (i % 2 ? 0.7 : 1.1));
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = "rgba(180,60,255,.5)"; ctx.lineWidth = 3; ctx.stroke();
+        ctx.fillStyle = m.warn > 0 ? "#ff3b3b" : "#ff7ab8";
+        var ey = m.y - m.r * 0.15 + wob;
+        ctx.beginPath(); ctx.ellipse(m.x - m.r * 0.38, ey, m.r * 0.2, m.r * 0.28, 0, 0, 7); ctx.ellipse(m.x + m.r * 0.38, ey, m.r * 0.2, m.r * 0.28, 0, 0, 7); ctx.fill();
+        if (m.warn > 0) text("!", m.x, m.y - m.r - 22, 40, "#ff3b3b");
+      });
+      drawKid(g.p.x, g.p.y, g.p.r, "scared");
+      floaters(g.pop, g.dt);
+    };
+    return g;
+  };
+
+  /* ---- חלום מצחיק: תופסים דברים מצחיקים ---- */
+  MK.funny = function (q) {
+    var g = { dur: 26, score: 0, t: 0, par: 22, hint: "תפסו את הדברים המצחיקים בסל, ובלי ברוקולי! 🥦", pop: [] };
+    g.bx = W / 2; g.items = []; g.spawn = 0.3; g.wob = 0;
+    var good = ["🧦", "🐱", "🍕", "🦆", "🎈", "🍩", "🦄", "🐸"];
+    g.update = function (dt) {
+      var ax = axisX();
+      if (ax) g.bx += ax * 460 * dt; else if (ptr.active) g.bx += (ptr.x - g.bx) * Math.min(1, dt * 12);
+      g.bx = clamp(g.bx, 50, W - 50);
+      g.wob = Math.max(0, g.wob - dt);
+      g.spawn -= dt;
+      if (g.spawn <= 0) {
+        g.spawn = rnd(0.45, 0.8);
+        var bad = Math.random() < 0.2;
+        g.items.push({ e: bad ? "🥦" : good[Math.floor(Math.random() * good.length)], bad: bad, x: rnd(40, W - 40), y: -30, vy: rnd(120, 210) + g.t * 3, rot: 0, vr: rnd(-2, 2) });
+      }
+      for (var i = g.items.length - 1; i >= 0; i--) {
+        var it = g.items[i];
+        it.y += it.vy * dt; it.rot += it.vr * dt;
+        if (it.y > H - 100 && it.y < H - 40 && Math.abs(it.x - g.bx) < 62) {
+          g.items.splice(i, 1);
+          if (it.bad) { g.score = Math.max(0, g.score - 1); g.wob = 0.5; g.pop.push({ x: it.x, y: it.y, t: 0, s: "אוף! -1", c: "#ff7a7a" }); }
+          else { var pts = it.e === "🦄" ? 2 : 1; g.score += pts; g.pop.push({ x: it.x, y: it.y, t: 0, s: "+" + pts }); }
+        } else if (it.y > H + 40) g.items.splice(i, 1);
+      }
+    };
+    g.draw = function () {
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#ffb3d9"); bg.addColorStop(0.6, "#ffe6a3"); bg.addColorStop(1, "#b8f2d8");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      emoji("🌞", 90, 80, 90);
+      cloud(520, 90, 180, "rgba(255,255,255,.85)"); cloud(300, 160, 130, "rgba(255,255,255,.7)");
+      g.items.forEach(function (it) { emoji(it.e, it.x, it.y, 44, it.rot); if (it.e === "🐱") emoji("🎩", it.x + 2, it.y - 22, 22, it.rot); });
+      var bx = g.bx + (g.wob > 0 ? Math.sin(g.t * 60) * 6 : 0);
+      emoji("🧺", bx, H - 62, 92);
+      floaters(g.pop, g.dt);
+    };
+    return g;
+  };
+
+  /* ---- חלום בעננים: קופצים מענן לענן ---- */
+  MK.sky = function (q) {
+    var g = { dur: 30, score: 0, t: 0, par: 45, hint: "קפצו מענן לענן ואספו כוכבים! הזיזו ימינה ושמאלה", pop: [] };
+    var p = { x: W / 2, y: 0, vy: -520, r: 15 };
+    g.p = p; g.cam = -300; g.minY = 0; g.stars = 0;
+    g.plats = [{ x: W / 2, y: 40, w: 150, sq: 0, star: false }];
+    var top = 40;
+    function gen() {
+      while (top > g.cam - 120) {
+        top -= rnd(70, 105);
+        g.plats.push({ x: rnd(70, W - 70), y: top, w: 100, sq: 0, star: Math.random() < 0.4 });
+      }
+      g.plats = g.plats.filter(function (pl) { return pl.y < g.cam + H + 80; });
+    }
+    gen();
+    g.update = function (dt) {
+      var vx = axisX();
+      if (!vx && ptr.active) { var dx = ptr.x - p.x; vx = Math.abs(dx) > 10 ? Math.sign(dx) * Math.min(1, Math.abs(dx) / 60) : 0; }
+      p.x += vx * 320 * dt;
+      if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
+      var prevFeet = p.y + p.r;
+      p.vy += 1100 * dt; p.y += p.vy * dt;
+      var feet = p.y + p.r;
+      if (p.vy > 0) {
+        for (var i = 0; i < g.plats.length; i++) {
+          var pl = g.plats[i];
+          if (prevFeet <= pl.y + 4 && feet >= pl.y && Math.abs(p.x - pl.x) < pl.w / 2 + 6) { p.vy = -540; pl.sq = 0.25; break; }
+        }
+      }
+      g.plats.forEach(function (pl) {
+        pl.sq = Math.max(0, pl.sq - dt);
+        if (pl.star && Math.hypot(p.x - pl.x, p.y - (pl.y - 48)) < 30) {
+          pl.star = false; g.stars++; g.pop.push({ x: pl.x, y: pl.y - 48 - g.cam, t: 0, s: "+3" });
+        }
+      });
+      g.cam = Math.min(g.cam, p.y - 240);
+      g.minY = Math.min(g.minY, p.y);
+      g.score = g.stars * 3 + Math.floor(-g.minY / 60);
+      gen();
+      if (p.y - g.cam > H + 40 && !g.over) { g.over = true; g.reason = "fell"; }
+    };
+    g.draw = function () {
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#5fa8ff"); bg.addColorStop(1, "#ffc2e6");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      // כוכבים ברקע שמשתנים עם הגובה
+      var hh = clamp(-g.minY / 3000, 0, 0.7);
+      ctx.fillStyle = "rgba(20,15,90," + hh + ")"; ctx.fillRect(0, 0, W, H);
+      for (var i = 0; i < 18; i++) { ctx.fillStyle = "rgba(255,255,255," + (0.15 + hh) + ")"; ctx.beginPath(); ctx.arc((i * 137) % W, (i * 71 + g.cam * 0.1 % H + H * 4) % H, 2, 0, 7); ctx.fill(); }
+      g.plats.forEach(function (pl) {
+        var sy = pl.y - g.cam;
+        var s = 1 - pl.sq * 0.6;
+        ctx.save(); ctx.translate(pl.x, sy); ctx.scale(1, s); cloud(0, 0, pl.w * 1.15, "#fff"); ctx.restore();
+        if (pl.star) emoji("⭐", pl.x, sy - 48 + Math.sin(g.t * 4 + pl.x) * 4, 34);
+      });
+      drawKid(g.p.x, g.p.y - g.cam, g.p.r, "happy");
+      floaters(g.pop, g.dt);
+    };
+    return g;
+  };
+
+  /* ---- אין חלום: רק שקט וכבשים ---- */
+  var QUIET = [
+    "אין חלום הלילה. המוח שלך ירד להפסקה. 🧠",
+    "אין חלום. הכבשים עסוקות בספירה עצמית. 🐑",
+    "שינה עמוקה כמו דוב. אין חלום, רק חיבוק של כרית. 🐻",
+    "החלום יצא לחופש והשאיר פתק: חוזר מחר. 🏖️"
+  ];
+  MK.none = function (q) {
+    var g = { dur: 9, score: 0, t: 0, par: 0, hint: "אין חלום הלילה, רק שקט. אפשר ללחוץ ולראות כבשים קופצות", pop: [], line: QUIET[Math.floor(Math.random() * QUIET.length)], sheep: [], count: 0 };
+    function jump() { g.sheep.push({ t: 0 }); }
+    g.update = function (dt) {
+      g.sheep.forEach(function (s) { s.t += dt; });
+      g.sheep = g.sheep.filter(function (s) { return s.t < 2.2; });
+      g.auto = (g.auto || 0) - dt;
+      if (g.auto <= 0) { jump(); g.count++; g.auto = 1.8; }
+      if (ptr.down && !g.held) { g.held = true; jump(); g.count++; }
+      if (!ptr.down) g.held = false;
+      if (keys[" "] && !g.sp) { g.sp = true; jump(); g.count++; } if (!keys[" "]) g.sp = false;
+    };
+    g.draw = function () {
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#0b0830"); bg.addColorStop(1, "#1f1a5c");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      for (var i = 0; i < 40; i++) { ctx.fillStyle = "rgba(255,255,255," + (0.3 + 0.3 * Math.sin(g.t * 2 + i)) + ")"; ctx.beginPath(); ctx.arc((i * 211) % W, (i * 97) % (H * 0.6), 1.6, 0, 7); ctx.fill(); }
+      emoji("🌙", W - 110, 90, 90);
+      ctx.fillStyle = "#16124a"; ctx.fillRect(0, H - 110, W, 110);
+      ctx.fillStyle = "#8a6a4a";
+      ctx.fillRect(W / 2 - 4, H - 190, 8, 90); ctx.fillRect(W / 2 - 50, H - 175, 100, 7); ctx.fillRect(W / 2 - 50, H - 150, 100, 7);
+      g.sheep.forEach(function (s) {
+        var k = s.t / 2.2, x = 40 + k * (W - 80), y = H - 130 - Math.sin(clamp((k - 0.35) / 0.3, 0, 1) * Math.PI) * 110;
+        emoji("🐑", x, y, 52, -Math.sin(clamp((k - 0.35) / 0.3, 0, 1) * Math.PI) * 0.3);
+      });
+      text(g.line, W / 2, 70, 26, "#fff", "center");
+      text("כבשים שנספרו: " + g.count, W / 2, H - 40, 24, "#ffd23f");
+    };
+    return g;
+  };
+
+  var META = {
+    nightmare: { name: "סיוט!", em: "😱", color: "#ff5f7a" },
+    funny:     { name: "חלום מצחיק", em: "🤪", color: "#ffd23f" },
+    sky:       { name: "חלום בעננים", em: "☁️", color: "#8fd3ff" },
+    none:      { name: "אין חלום", em: "🌙", color: "#b8b0ff" }
+  };
+
+  /* ===================== ערב: ניהול שינה ===================== */
+  var HABITS = [
+    { id: "caf",   em: "🥤", name: "משקה עם קפאין",  v: -18 },
+    { id: "scr",   em: "📱", name: "מסך עד מאוחר",   v: -16 },
+    { id: "pizza", em: "🍕", name: "ארוחה כבדה",     v: -10 },
+    { id: "game",  em: "🎮", name: "משחק מרגש",      v: -8 },
+    { id: "book",  em: "📖", name: "סיפור לפני שינה", v: 14 },
+    { id: "bath",  em: "🛁", name: "מקלחת חמה",      v: 10 },
+    { id: "milk",  em: "🥛", name: "חלב חם",         v: 10 },
+    { id: "teddy", em: "🧸", name: "חיבוק לדובי",    v: 8 }
+  ];
+  var BEDS = [
+    { t: "20:30", note: "מוקדם מאוד", v: 8 },
+    { t: "22:00", note: "מושלם", v: 14 },
+    { t: "23:30", note: "קצת מאוחר", v: -4 },
+    { t: "01:00", note: "ממש מאוחר", v: -20 }
+  ];
+  var MAXPICK = 4;
+
+  function quality() {
+    var q = 45 + BEDS[state.bed].v;
+    state.picks.forEach(function (id) { q += HABITS.filter(function (h) { return h.id === id; })[0].v; });
+    return clamp(q, 0, 100);
+  }
+  function renderEvening() {
+    var hb = $("#habits"); hb.innerHTML = "";
+    HABITS.forEach(function (h) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      var on = state.picks.indexOf(h.id) >= 0;
+      b.setAttribute("aria-pressed", on);
+      b.disabled = !on && state.picks.length >= MAXPICK;
+      b.innerHTML = '<span class="em" aria-hidden="true"></span><span></span>';
+      b.children[0].textContent = h.em; b.children[1].textContent = h.name;
+      b.addEventListener("click", function () {
+        var i = state.picks.indexOf(h.id);
+        if (i >= 0) state.picks.splice(i, 1); else if (state.picks.length < MAXPICK) state.picks.push(h.id);
+        renderEvening();
+      });
+      hb.appendChild(b);
+    });
+    var bt = $("#bedtimes"); bt.innerHTML = "";
+    BEDS.forEach(function (bd, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", state.bed === i);
+      b.innerHTML = '<span class="em" aria-hidden="true">🕘</span><span></span>';
+      b.children[1].textContent = bd.t + " (" + bd.note + ")";
+      b.addEventListener("click", function () { state.bed = i; renderEvening(); });
+      bt.appendChild(b);
+    });
+    $("#pickCount").textContent = state.picks.length + " מתוך " + MAXPICK;
+    var q = quality(); state.q = q;
+    var f = $("#qFill");
+    f.style.width = Math.max(4, q) + "%";
+    f.style.background = q >= 70 ? "#2fd1a0" : q >= 40 ? "#ffd23f" : "#ff5f7a";
+    $("#qLabel").textContent = q + "% · " + (q >= 70 ? "ישנים כמו תינוק" : q >= 40 ? "שינה סבירה" : "לילה לא קל");
+    $("#qTrack").setAttribute("aria-valuenow", q);
+  }
+
+  /* ===================== הלילה ===================== */
+  var run = null, g = null, tr = null, lastT = 0;
+
+  function weighted(w, skip) {
+    var keysW = Object.keys(w).filter(function (k) { return k !== skip; });
+    var sum = keysW.reduce(function (a, k) { return a + w[k]; }, 0), r = Math.random() * sum;
+    for (var i = 0; i < keysW.length; i++) { r -= w[keysW[i]]; if (r <= 0) return keysW[i]; }
+    return keysW[keysW.length - 1];
+  }
+  function pickTypes(q) {
+    var w = { nightmare: 0.1 + 0.6 * (1 - q / 100), funny: 0.15 + 0.3 * q / 100, sky: 0.15 + 0.3 * q / 100, none: 0.12 };
+    var first = weighted(w);
+    var types = [first];
+    if (first !== "none") {
+      var inner = { nightmare: w.nightmare, funny: w.funny, sky: w.sky };
+      if (Math.random() < 0.3) {
+        types.push(weighted(inner, first));
+        if (Math.random() < 0.25) types.push(weighted(inner, types[1]));
+      }
+    }
+    return types;
+  }
+
+  function startNight(forced) {
+    var q = state.q;
+    var types = forced || pickTypes(q);
+    run = { q: q, types: types, i: 0, total: 0, results: [] };
+    show("dream");
+    beginSegment();
+  }
+  function beginSegment() {
+    var t = run.types[run.i];
+    g = MK[t](run.q);
+    g.type = t; g.t = 0; g.dt = 0; g.intro = 1.7; g.endT = 0;
+    if (run.i > 0) g.dur *= 0.75;
+    ptr.down = false;
+    var depthTxt = run.types.length > 1 ? "חלום " + (run.i + 1) + " מתוך " + run.types.length : "חלום";
+    $("#depth").textContent = depthTxt;
+    $("#hint").textContent = g.hint;
+    $("#barFill").style.width = "0%";
+  }
+  function endSegment() {
+    var res = { type: g.type, score: g.score + (g.bonus || 0), reason: g.reason, par: g.par };
+    run.results.push(res);
+    run.total += res.score;
+    var nextI = run.i + 1;
+    if (nextI < run.types.length) {
+      var depth = nextI;
+      var txt = depth === 1 ? "חלום בתוך חלום!" : "חלום בתוך חלום בתוך חלום!";
+      var sub = res.reason === "caught" || res.reason === "fell" ? "התעוררת... או שלא? 😵" : "רגע, זה עדיין חלום...";
+      run.i = nextI;
+      tr = { t: 0, dur: 2.4, text: txt, sub: sub };
+    } else {
+      finishNight();
+    }
+  }
+
+  function tick(dt) {
+    if (tr) {
+      tr.t += dt;
+      drawSwirl();
+      if (tr.t >= tr.dur) { tr = null; beginSegment(); }
+      return;
+    }
+    if (!g) return;
+    g.dt = dt;
+    if (g.intro > 0) {
+      g.intro -= dt;
+      g.draw();
+      drawFrame();
+      var m = META[g.type];
+      ctx.fillStyle = "rgba(10,5,40,.55)"; ctx.fillRect(0, 0, W, H);
+      var k = clamp(1 - g.intro / 0.35, 0, 1);
+      emoji(m.em, W / 2, H / 2 - 60, 90 * (0.5 + 0.5 * k));
+      text(m.name, W / 2, H / 2 + 20, 64, m.color);
+      return;
+    }
+    if (!g.over) {
+      g.t += dt;
+      g.update(dt);
+      if (g.t >= g.dur && !g.over) { g.over = true; g.reason = "done"; }
+    } else {
+      g.endT += dt;
+    }
+    g.draw();
+    drawFrame();
+    if (g.over) {
+      ctx.fillStyle = "rgba(10,5,40,.5)"; ctx.fillRect(0, 0, W, H);
+      var msg = g.reason === "caught" ? "😱 נבהלת! התעוררת" : g.reason === "fell" ? "☁️ נפלת! התעוררת" : g.type === "none" ? "🌅 השקט נגמר" : "🌅 החלום נגמר";
+      text(msg, W / 2, H / 2, 54, "#fff");
+      if (g.endT > 1.4) { g.endT = -999; endSegment(); return; }
+    }
+    $("#barFill").style.width = clamp(g.t / g.dur * 100, 0, 100) + "%";
+    $("#scoreTxt").textContent = run.total + g.score + (g.bonus && g.over && g.reason === "done" ? g.bonus : 0);
+  }
+
+  // מסגרת צבעונית לחלום בתוך חלום
+  function drawFrame() {
+    if (run.i === 0) return;
+    var cols = ["#ff5fa2", "#7a5cff", "#2fd1a0"];
+    for (var d = 0; d < run.i; d++) {
+      ctx.strokeStyle = cols[d % 3]; ctx.lineWidth = 8;
+      var o = 4 + d * 11;
+      ctx.beginPath();
+      for (var x = 0; x <= W; x += 20) ctx.lineTo(x, o + Math.sin(g.t * 3 + x * 0.05) * 3);
+      ctx.stroke();
+      ctx.beginPath();
+      for (var x2 = 0; x2 <= W; x2 += 20) ctx.lineTo(x2, H - o + Math.sin(g.t * 3 + x2 * 0.05) * 3);
+      ctx.stroke();
+    }
+  }
+  function drawSwirl() {
+    ctx.fillStyle = "#120a3a"; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.translate(W / 2, H / 2);
+    var cols = ["#ff5fa2", "#7a5cff", "#2fd1a0", "#ffd23f"];
+    for (var k = 0; k < 14; k++) {
+      ctx.save(); ctx.rotate(tr.t * (k % 2 ? 1.6 : -1.6) + k * 0.5);
+      ctx.strokeStyle = cols[k % 4]; ctx.globalAlpha = 0.55; ctx.lineWidth = 14;
+      ctx.beginPath(); ctx.arc(0, 0, 20 + k * 22 + (tr.t * 40) % 22, 0, Math.PI * (0.5 + (k % 3) * 0.3)); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore(); ctx.globalAlpha = 1;
+    var s = 1 + Math.sin(tr.t * 8) * 0.04 * Math.min(1, tr.t * 3);
+    ctx.save(); ctx.translate(W / 2, H / 2 - 20); ctx.scale(s, s);
+    text(tr.text, 0, 0, 54, "#ffd23f");
+    text(tr.sub, 0, 62, 28, "#fff");
+    ctx.restore();
+  }
+
+  /* ===================== בוקר ===================== */
+  var RESULT_LINE = {
+    nightmare: function (r) { return r.reason === "caught" ? "הצל תפס אותך" : "ניצחת את הסיוט!"; },
+    funny: function () { return "תפסת דברים מצחיקים"; },
+    sky: function (r) { return r.reason === "fell" ? "נפלת מהענן" : "טיפסת בין העננים"; },
+    none: function () { return "ישנת עמוק, בלי חלומות"; }
+  };
+  function stars(r) {
+    if (r.type === "none") return run.q >= 60 ? 3 : run.q >= 30 ? 2 : 1;
+    var ratio = r.par ? r.score / r.par : 1;
+    return ratio >= 1 ? 3 : ratio >= 0.55 ? 2 : 1;
+  }
+  function finishNight() {
+    g = null;
+    var avg = Math.round(run.results.reduce(function (a, r) { return a + stars(r); }, 0) / run.results.length);
+    var best = 0;
+    try { best = parseInt(localStorage.getItem("dreamBest") || "0", 10) || 0; } catch (e) {}
+    var isBest = run.total > best;
+    if (isBest) { best = run.total; try { localStorage.setItem("dreamBest", String(best)); } catch (e) {} }
+
+    var q = run.q;
+    $("#mood").textContent = q >= 70 ? "התעוררת מלאת אנרגיה! 🌞" : q >= 40 ? "בוקר סביר. עוד אפשר להשתפר ☕" : "אוף, עייפות... אולי בלי קפאין הערב? 😵";
+    var st = $("#stars");
+    st.textContent = "⭐⭐⭐".slice(0, avg) + "☆☆☆".slice(0, 3 - avg);
+    st.setAttribute("aria-label", avg + " כוכבים מתוך 3");
+    $("#totalNum").textContent = run.total;
+    var ul = $("#results"); ul.innerHTML = "";
+    run.results.forEach(function (r, i) {
+      var m = META[r.type], li = document.createElement("li");
+      var a = document.createElement("span"), b = document.createElement("b");
+      a.textContent = m.em + " " + (run.results.length > 1 ? (i + 1) + ". " : "") + m.name + ": " + RESULT_LINE[r.type](r);
+      b.textContent = r.score + " נק׳";
+      li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+    });
+    $("#best").textContent = isBest ? "🏆 שיא חדש: " + best + " נקודות!" : "השיא שלך: " + best + " נקודות";
+    show("morning");
+  }
+
+  /* ===================== חיבורים ===================== */
+  $("#startBtn").addEventListener("click", function () { state.picks = []; state.bed = 1; renderEvening(); show("evening"); });
+  $("#sleepBtn").addEventListener("click", function () { startNight(); });
+  var fromHouse = false;
+  $("#againBtn").addEventListener("click", function () {
+    if (fromHouse) { location.href = "dream-house.html"; return; }
+    state.picks = []; state.bed = 1; renderEvening(); show("evening");
+  });
+
+  function frame(ts) {
+    var dt = Math.min(0.05, (ts - lastT) / 1000 || 0);
+    lastT = ts;
+    if (state.screen === "dream") tick(dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // לבדיקות: ?dream=nightmare,funny&q=80
+  try {
+    var params = new URLSearchParams(location.search), d = params.get("dream");
+    if (params.get("from") === "house" && !d && params.get("q")) {
+      // הגענו מהבית: איכות השינה כבר נקבעה, והחלום מתחיל ישר
+      fromHouse = true;
+      state.q = clamp(parseInt(params.get("q"), 10) || 50, 0, 100);
+      startNight();
+    } else if (d) {
+      state.q = parseInt(params.get("q") || "60", 10);
+      var list = d.split(",").filter(function (x) { return MK[x]; });
+      if (list.length) startNight(list);
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
