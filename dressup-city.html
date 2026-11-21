@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>עיר הקניות</title>
+<style>
+:root{--ink:#3b2f4a;--pink:#ff5d9e;--bg:#fff7fb;--line:#f1d3e3;--theme:#d6336c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);background:#bfe3a8}
+canvas#world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hud{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;pointer-events:none}
+.hud>*{pointer-events:auto}
+.title{background:#fff;border-radius:16px;padding:8px 18px;font-weight:800;font-size:20px;color:var(--pink);box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;background:#fff;color:var(--ink);padding:9px 16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.btn:hover{background:#ffeaf3}
+.btn.big{background:var(--pink);color:#fff;font-size:18px;padding:12px 26px}
+.prompt{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);font:inherit;font-weight:800;font-size:20px;border:0;border-radius:20px;background:var(--pink);color:#fff;padding:14px 28px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);animation:pop .5s ease infinite alternate}
+@keyframes pop{to{transform:translateX(-50%) scale(1.06)}}
+.hint{position:fixed;bottom:14px;right:14px;left:14px;text-align:center;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);transition:opacity 1s;pointer-events:none}
+.ov{position:fixed;inset:0;background:rgba(40,20,50,.55);display:flex;align-items:center;justify-content:center;z-index:10}
+.sheet{width:min(1100px,96vw);height:min(760px,94vh);background:var(--bg);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.sheet.small{width:min(760px,96vw);height:min(600px,92vh)}
+.shead{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--theme);color:#fff}
+.stitle{font-size:24px;font-weight:800}
+.sbody{flex:1;display:flex;min-height:0}
+.list{flex:1;overflow:auto;padding:14px 16px}
+.prev{width:min(340px,38%);background:linear-gradient(#ffd6e7,#fff3f8);display:flex;align-items:center;justify-content:center;padding:10px}
+.prev svg{height:100%;max-height:100%;width:auto;max-width:100%}
+.sec{margin-bottom:22px}
+.sec h3{margin:0 0 8px;font-size:18px}
+.sw-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #cdb9c6;cursor:pointer;padding:0}
+.sw.on{box-shadow:0 0 0 3.5px var(--pink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.card{font:inherit;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 4px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}
+.card:hover{border-color:#ff9cc4}
+.card.on{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,93,158,.25)}
+.card svg{width:100%;aspect-ratio:1;display:block}
+.card b{font-size:13px;text-align:center;line-height:1.15}
+.card.rm .x{width:60%;aspect-ratio:1;border:4px solid #c9b3c1;border-radius:50%;position:relative;margin:10px 0}
+.card.rm .x::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:4px;background:#c9b3c1;transform:translateX(-50%) rotate(45deg)}
+.chips{display:flex;flex-direction:column;gap:8px}
+.chip{display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
+.chip .btn{padding:4px 12px;box-shadow:none;border:2px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+@media (max-width:700px){
+ .sbody{flex-direction:column}
+ .prev{order:-1;width:100%;height:36vh;padding:4px}
+ .title{font-size:16px;padding:6px 12px}
+ .stitle{font-size:19px}
+}
+.hud{flex-wrap:wrap}
+.hudmid{background:#fff;border-radius:16px;padding:7px 16px;font-weight:700;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;gap:14px;align-items:center}
+.hudmid .tm{font-variant-numeric:tabular-nums;font-size:20px;font-weight:800;color:var(--pink)}
+.hudmid.warn .tm{color:#e63946;animation:blink .6s infinite alternate}
+@keyframes blink{to{opacity:.35}}
+.hudbtns{display:flex;gap:8px}
+.btn.go{background:var(--pink);color:#fff}
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#3b2f4a;color:#fff;padding:10px 18px;border-radius:14px;z-index:30;font-weight:700;max-width:92vw;text-align:center}
+.introbox{height:auto;max-height:94vh;overflow:auto}
+.introbody{padding:18px 26px 26px;text-align:center}
+.introbody h1{color:var(--pink);margin:4px 0 6px;font-size:34px}
+.introbody ul{text-align:right;line-height:1.7;margin:12px auto 18px;max-width:520px}
+.stagebody{flex:1;min-height:0;overflow:auto;padding:16px;background:radial-gradient(circle at 50% 0%,#7b5cc4,#2a1f3d 72%);color:#fff}
+.stg-main{display:flex;gap:24px;align-items:center;justify-content:center;flex-wrap:wrap}
+.stg-av svg{height:min(48vh,400px);width:auto;display:block;filter:drop-shadow(0 10px 18px rgba(0,0,0,.5))}
+.stg-side{min-width:270px;max-width:430px;flex:1}
+.stg-side h2{margin:0 0 12px}
+.jrow{display:flex;gap:10px;margin-bottom:12px}
+.judge{flex:1;background:rgba(255,255,255,.13);border-radius:14px;padding:8px;text-align:center}
+.jn{font-weight:800}.jr{font-size:12px;opacity:.8}
+.js{margin-top:6px;font-size:30px;font-weight:800;color:#ffd166;opacity:.3}
+.js.show{opacity:1;animation:pp .5s}
+@keyframes pp{from{transform:scale(.3)}to{transform:scale(1)}}
+.tot{font-size:20px;margin:8px 0;min-height:44px}
+.tot b{font-size:36px;color:#ffd166}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.mini span{background:rgba(255,255,255,.15);border-radius:10px;padding:4px 10px;font-size:14px}
+.pod{display:flex;direction:ltr;align-items:flex-end;justify-content:center;gap:10px;margin:6px 0 12px}
+.pcol{display:flex;flex-direction:column;align-items:center;width:min(30vw,210px)}
+.pav svg{height:min(30vh,230px);width:auto;display:block}
+.pname{font-weight:800;margin-top:4px}.psc{color:#ffd166;font-weight:800}
+.pblock{width:100%;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#fff}
+.p1 .pblock{height:110px;background:linear-gradient(#ffd166,#e0a526)}
+.p2 .pblock{height:80px;background:linear-gradient(#dfe6e9,#aab4b8)}
+.p3 .pblock{height:56px;background:linear-gradient(#e0a070,#b87333)}
+.result{text-align:center;background:rgba(255,255,255,.13);border-radius:16px;padding:12px 16px;max-width:660px;margin:0 auto}
+.result h2{margin:0 0 6px;font-size:26px}
+.result.win h2{color:#ffd166}
+.result ul{text-align:right;margin:6px 0 10px;padding-inline-start:20px;line-height:1.6}
+.others{opacity:.9;font-size:14px;margin-bottom:10px}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;animation:fall linear forwards;z-index:40;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (max-width:700px){.hudmid{order:3;width:100%;justify-content:center}}
+.banner{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:25;pointer-events:none;background:rgba(40,20,50,.35)}
+.banner div{background:#fff;color:var(--pink);font-weight:800;font-size:32px;padding:22px 36px;border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.35);text-align:center;max-width:90vw;animation:pp .4s}
+.stbtn{background:none;border:0;cursor:pointer;padding:2px;transition:transform .15s}
+.stbtn:hover{transform:scale(1.25)}
+.strow{display:flex;gap:4px;margin:8px 0}
+.stg-side p{margin:0 0 8px;opacity:.9}
+</style>
+</head>
+<body>
+<canvas id="world"></canvas>
+<div class="hud">
+  <div class="title">עיר הקניות</div>
+  <div class="hudmid" id="hudMid"><span>נושא: <b id="hudTheme"></b></span><span class="tm" id="hudTime">6:00</span></div>
+  <div class="hudbtns"><button class="btn" id="btnLook">הלוק שלי</button><button class="btn go" id="btnFinish">לתחרות</button></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="banner" id="banner" hidden><div id="bannerText"></div></div>
+<div class="hint" id="hint">ללכת: מקשי החיצים, או ללחוץ על המסך. כדי להיכנס לחנות: ללכת אל הדלת שלה, או ללחוץ על החנות.</div>
+<button class="prompt" id="prompt" hidden></button>
+
+<div class="ov" id="shop" hidden>
+  <div class="sheet" id="sheet">
+    <div class="shead"><div class="stitle" id="stitle"></div><button class="btn" id="btnLeave">יציאה מהחנות</button></div>
+    <div class="sbody"><div class="list" id="list"></div><div class="prev" id="prev"></div></div>
+  </div>
+</div>
+
+<div class="ov" id="look" hidden>
+  <div class="sheet small">
+    <div class="shead"><div class="stitle">הלוק שלי</div><button class="btn" id="btnLookClose">סגירה</button></div>
+    <div class="sbody"><div class="list" id="lookList"></div><div class="prev" id="lookPrev"></div></div>
+  </div>
+</div>
+
+<div class="ov" id="intro" hidden>
+  <div class="sheet small introbox">
+    <div class="shead"><div class="stitle">תחרות האופנה</div></div>
+    <div class="introbody">
+      <p>הנושא של התחרות:</p>
+      <h1 id="introTheme"></h1>
+      <p id="introTip"></p>
+      <ul>
+        <li>יש לך 6 דקות לטייל בעיר, להיכנס לחנויות ולהרכיב לוק שמתאים לנושא.</li>
+        <li>כשהשעון נגמר (או כשתלחצי "לתחרות"), חמש מתחרות ושלוש שופטות עולות לבמה.</li>
+        <li>את השופטת: את מדרגת את הלוקים של המתחרות בכוכבים, מ-0 עד 5. את הלוק שלך את לא מדרגת, אלא שלוש שופטות שבודקות התאמה לנושא, לוק שלם ושילוב צבעים.</li>
+        <li>מקום ראשון ומקום שני מנצחים.</li>
+      </ul>
+      <button class="btn big" id="btnStart">מתחילות!</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="stage" hidden>
+  <div class="sheet" style="height:min(740px,94vh)">
+    <div class="shead"><div class="stitle" id="stgTitle"></div><button class="btn" id="btnSkip">דילוג לפודיום</button></div>
+    <div class="stagebody" id="stageBody"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =====================================================================
+   עיר הקניות - משחק לבישה
+   כדי להוסיף חנות חדשה: להוסיף פריט לרשימה SHOPS (בהמשך) ואת השם שלה ל-LAYOUT.
+   כדי להוסיף בגד חדש: להוסיף שורה אחת עם def(...) בחלק של הפריטים.
+   ===================================================================== */
+
+// ---------- כלי עזר ----------
+let uid = 0;
+const $ = s => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function sh(hex, a) { // להכהות (a שלילי) או להבהיר (a חיובי), באחוזים
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const f = v => clamp(Math.round(a < 0 ? v * (1 + a / 100) : v + (255 - v) * a / 100), 0, 255);
+  return '#' + [f(r), f(g), f(b)].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+const mir = s => `<g transform="translate(200 0) scale(-1 1)">${s}</g>`;
+const pair = s => s + mir(s);
+const F = (c, k = -35) => `fill="${c}" stroke="${sh(c, k)}" stroke-width="1.4" stroke-linejoin="round"`;
+const star = (cx, cy, R, r, n = 5) => {
+  const p = [];
+  for (let i = 0; i < n * 2; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / n, rad = i % 2 ? r : R;
+    p.push((cx + Math.cos(a) * rad).toFixed(1) + ',' + (cy + Math.sin(a) * rad).toFixed(1));
+  }
+  return p.join(' ');
+};
+const heart = (cx, cy, s) => `M${cx},${cy + s} C${cx - s * 1.4},${cy - s * .1} ${cx - s * .9},${cy - s} ${cx},${cy - s * .4} C${cx + s * .9},${cy - s} ${cx + s * 1.4},${cy - s * .1} ${cx},${cy + s} Z`;
+
+// ---------- פלטות צבעים ----------
+const CL = ['#ff5d9e','#e63946','#ff9f43','#feca57','#7bd389','#1dd1a1','#48dbfb','#2e86de','#6c5ce7','#b388eb','#ffffff','#b2bec3','#2d3436','#8d6e63'];
+const HAIRC = ['#2b2118','#4a3326','#6d4c41','#a0522d','#c0392b','#e8c07d','#f3e3a3','#f4f4f4','#ff8fb8','#a66cff','#4aa3ff','#3ddc97'];
+const LIPC = ['#d63a4a','#ff6f91','#e8837a','#c44569','#8e2a4a','#ff9f43','#a66cff','#f5b7b1'];
+const EYEC = ['#a66cff','#4aa3ff','#3ddc97','#ff8fb8','#feca57','#8d6e63','#2d3436','#e6b8ff'];
+const CHEEKC = ['#ff8fb8','#ff6f91','#ffb199','#e57373','#d4a5ff','#ffd0a0'];
+const SKINC = ['#fde2cf','#f6d3b6','#f1c9a5','#e3b085','#cf9a6b','#b07a4e','#8d5a3b','#6a4129','#4a2c1c'];
+const METAL = ['#f6c744','#e0e0e0','#e9b7a8','#ffffff','#ff5d9e','#48dbfb'];
+const SODAC = ['#e63946','#2e86de','#27ae60','#f39c12','#8e44ad','#f1c40f'];
+const ICEC = ['#ffd1e6','#fff1b8','#9b6b4a','#a8e6cf','#c7b3ff','#ffb75e'];
+const FROSTC = ['#ff8fb8','#fff4d6','#8b5a3c','#a8e6cf','#c7b3ff','#ffd166'];
+const DEFAULT_SKIN = '#f1c9a5';
+
+// ---------- הפריטים ----------
+const ITEMS = {top:{},bottom:{},dress:{},shoes:{},bag:{},hat:{},glasses:{},neck:{},ears:{},wrist:{},hair:{},lips:{},eyes:{},cheeks:{},skin:{},hand:{}};
+const def = (slot, id, name, front, back, dc) => { ITEMS[slot][id] = {id, name, front, back, dc: dc || null}; };
+
+// --- חולצות ---
+const topBody = (c, y2) => `<path d="M62,127 L88,119 Q100,133 112,119 L138,127 L135,160 L131,${y2} L69,${y2} L65,160 Z" ${F(c)}/>`;
+const shortSl = c => pair(`<path d="M60,124 L38,158 L55,169 L67,142 Z" ${F(c)}/>`);
+const longSl = (c, w = 19) => pair(`<line x1="60" y1="130" x2="46" y2="199" stroke="${sh(c,-35)}" stroke-width="${w+2}" stroke-linecap="round"/><line x1="60" y1="130" x2="46" y2="199" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`);
+def('top','tee','חולצה קצרה', c => shortSl(c) + topBody(c, 204));
+def('top','tank','גופייה', c => `<path d="M76,120 L88,120 Q100,138 112,120 L124,120 L128,160 L131,204 L69,204 L72,160 Z" ${F(c)}/>`);
+def('top','crop','חולצת בטן', c => shortSl(c) + topBody(c, 168));
+def('top','long','חולצה ארוכה', c => longSl(c) + topBody(c, 206));
+def('top','hoodie','קפוצ׳ון', c => `<ellipse cx="100" cy="124" rx="31" ry="13" ${F(sh(c,-18))}/>` + longSl(c, 21) + topBody(c, 214) +
+  `<rect x="78" y="178" width="44" height="24" rx="7" fill="${sh(c,-14)}" stroke="${sh(c,-38)}"/><line x1="92" y1="128" x2="91" y2="152" stroke="#fff" stroke-width="2"/><line x1="108" y1="128" x2="109" y2="152" stroke="#fff" stroke-width="2"/>`);
+def('top','shirt','חולצה מכופתרת', c => longSl(c) + topBody(c, 208) +
+  `<path d="M86,118 L100,140 L82,134 Z" fill="${sh(c,70)}" stroke="${sh(c,-30)}"/><path d="M114,118 L100,140 L118,134 Z" fill="${sh(c,70)}" stroke="${sh(c,-30)}"/><line x1="100" y1="140" x2="100" y2="208" stroke="${sh(c,-35)}"/><circle cx="100" cy="154" r="1.9" fill="${sh(c,-45)}"/><circle cx="100" cy="172" r="1.9" fill="${sh(c,-45)}"/><circle cx="100" cy="190" r="1.9" fill="${sh(c,-45)}"/>`);
+def('top','stripes','חולצת פסים', c => {
+  const id = 'cp' + (++uid); let s = '';
+  for (let y = 132; y < 206; y += 14) s += `<rect x="55" y="${y}" width="90" height="6" fill="#fff" opacity=".75"/>`;
+  return shortSl(c) + topBody(c, 204) + `<clipPath id="${id}"><path d="M62,127 L88,119 Q100,133 112,119 L138,127 L135,160 L131,204 L69,204 L65,160 Z"/></clipPath><g clip-path="url(#${id})">${s}</g>`;
+});
+def('top','hearttee','חולצת לב', c => shortSl(c) + topBody(c, 204) + `<path d="${heart(100,166,11)}" fill="#fff" opacity=".92"/>`);
+def('top','startee','חולצת כוכב', c => shortSl(c) + topBody(c, 204) + `<polygon points="${star(100,166,15,6.5)}" fill="#fff" opacity=".92"/>`);
+
+// --- מכנסיים וחצאיות ---
+const legsF = (c, y2, w = 29) => {
+  const o = sh(c, -35), L = (x1, x2, col, ww) => `<line x1="${x1}" y1="214" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${ww}"/>`;
+  return L(84,82,o,w+2) + L(116,118,o,w+2) + L(84,82,c,w) + L(116,118,c,w);
+};
+const hips = c => `<path d="M69,190 L131,190 L135,226 L65,226 Z" fill="${c}"/>`;
+const waist = c => `<rect x="69" y="190" width="62" height="7" fill="${sh(c,-30)}"/>`;
+def('bottom','jeans','ג׳ינס', c => legsF(c, 338) + hips(c) + waist(c), null, '#3f6fb5');
+def('bottom','shorts','מכנסיים קצרים', c => legsF(c, 266) + hips(c) + waist(c), null, '#ff9f43');
+def('bottom','miniskirt','חצאית קצרה', c => `<path d="M69,190 L131,190 L147,266 L53,266 Z" ${F(c)}/>`, null, '#ff5d9e');
+def('bottom','longskirt','חצאית ארוכה', c => `<path d="M69,190 L131,190 L156,334 L44,334 Z" ${F(c)}/>`, null, '#6c5ce7');
+def('bottom','pleated','חצאית קפלים', c => {
+  let s = `<path d="M69,190 L131,190 L150,290 L50,290 Z" ${F(c)}/>`;
+  for (let i = 1; i < 8; i++) { const t = i / 8; s += `<line x1="${69+62*t}" y1="192" x2="${50+100*t}" y2="288" stroke="${sh(c,-28)}" stroke-width="1.2"/>`; }
+  return s;
+}, null, '#2e86de');
+def('bottom','leggings','טייץ', c => legsF(c, 340, 27) + hips(c) + `<rect x="69" y="190" width="62" height="4" fill="${sh(c,-25)}"/>`, null, '#2d3436');
+def('bottom','joggers','מכנסי ג׳וגר', c => legsF(c, 332, 31) + hips(c) + waist(c) +
+  `<rect x="66" y="322" width="31" height="10" rx="3" fill="${sh(c,-35)}"/><rect x="103" y="322" width="31" height="10" rx="3" fill="${sh(c,-35)}"/>`, null, '#b2bec3');
+
+// --- שמלות ---
+const longSlSoft = c => longSl(c, 19);
+def('dress','mini','שמלה קצרה', c => `<path d="M76,120 L88,120 Q100,138 112,120 L124,120 L128,160 L127,190 L152,272 L48,272 L73,190 L72,160 Z" ${F(c)}/>`, null, '#ff5d9e');
+def('dress','strapless','שמלה בלי כתפיות', c => `<path d="M70,142 Q100,152 130,142 L130,170 L127,192 L148,268 L52,268 L73,192 L70,170 Z" ${F(c)}/>`, null, '#e63946');
+def('dress','summer','שמלת קיץ', c => `<path d="M76,120 L88,120 Q100,138 112,120 L124,120 L128,160 L127,190 L156,312 L44,312 L73,190 L72,160 Z" ${F(c)}/><rect x="72" y="186" width="56" height="7" fill="${sh(c,-30)}"/><circle cx="86" cy="250" r="3" fill="#fff" opacity=".8"/><circle cx="116" cy="270" r="3" fill="#fff" opacity=".8"/><circle cx="100" cy="228" r="3" fill="#fff" opacity=".8"/><circle cx="130" cy="236" r="3" fill="#fff" opacity=".8"/><circle cx="72" cy="284" r="3" fill="#fff" opacity=".8"/>`, null, '#feca57');
+def('dress','sweaterd','שמלת סוודר', c => longSl(c) + `<path d="M62,127 L88,119 Q100,133 112,119 L138,127 L137,160 L146,262 L54,262 L63,160 Z" ${F(c)}/>`, null, '#8d6e63');
+def('dress','gown','שמלת ערב', c => `<path d="M70,142 Q100,152 130,142 L131,168 L128,192 L162,340 L38,340 L72,192 L69,168 Z" ${F(c)}/><polygon points="${star(88,250,4,1.6)}" fill="#fff" opacity=".9"/><polygon points="${star(116,290,4,1.6)}" fill="#fff" opacity=".9"/><polygon points="${star(100,222,4,1.6)}" fill="#fff" opacity=".9"/><polygon points="${star(72,310,4,1.6)}" fill="#fff" opacity=".9"/>`, null, '#6c5ce7');
+def('dress','ball','שמלת נסיכה', c => `<path d="M70,142 Q100,152 130,142 L130,172 L126,194 L190,350 L10,350 L74,194 L70,172 Z" ${F(c)}/><path d="M74,194 Q100,206 126,194" stroke="${sh(c,-35)}" fill="none" stroke-width="2"/><path d="M40,330 Q100,314 160,330" stroke="${sh(c,40)}" fill="none" stroke-width="2.5"/><path d="M58,296 Q100,282 142,296" stroke="${sh(c,40)}" fill="none" stroke-width="2.5"/><rect x="72" y="190" width="56" height="8" rx="3" fill="${sh(c,-30)}"/>`, null, '#ff8fb8');
+
+// --- נעליים (נעל שמאל, והימנית משתקפת) ---
+def('shoes','sneakers','סניקרס', c => pair(`<path d="M60,346 Q60,334 76,334 L88,337 Q98,342 96,351 L60,351 Z" ${F(c)}/><path d="M59,351 L97,351 L97,357 Q78,361 59,357 Z" fill="#fff" stroke="#c7c7c7"/><path d="M74,337 L82,341 M72,341 L80,345" stroke="#fff" stroke-width="1.6" fill="none"/>`), null, '#ff5d9e');
+def('shoes','hightop','סניקרס גבוהות', c => pair(`<path d="M64,314 L92,314 L94,336 L62,336 Z" ${F(c)}/><circle cx="78" cy="326" r="4" fill="#fff"/><path d="M60,346 Q60,334 76,334 L88,337 Q98,342 96,351 L60,351 Z" ${F(c)}/><path d="M59,351 L97,351 L97,357 Q78,361 59,357 Z" fill="#fff" stroke="#c7c7c7"/>`), null, '#2e86de');
+def('shoes','boots','מגפיים', c => pair(`<path d="M64,294 L92,294 L93,336 Q99,340 97,357 L59,357 Q58,344 64,338 Z" ${F(c)}/><rect x="64" y="294" width="28" height="7" fill="${sh(c,-25)}"/><rect x="58" y="355" width="40" height="4" rx="2" fill="${sh(c,-55)}"/>`), null, '#8d6e63');
+def('shoes','heels','עקבים', c => pair(`<path d="M62,344 Q64,337 78,338 L94,344 L92,354 L62,354 Z" ${F(c)}/><path d="M86,353 L91,353 L88,372 L84,372 Z" fill="${sh(c,-45)}"/><path d="M66,347 Q78,340 90,347" stroke="${sh(c,-30)}" fill="none"/>`), null, '#e63946');
+def('shoes','sandals','סנדלים', c => pair(`<path d="M61,352 L96,352 L96,357 L61,357 Z" fill="${sh(c,-30)}"/><path d="M64,353 Q78,338 94,353" fill="none" stroke="${c}" stroke-width="4"/><line x1="70" y1="346" x2="90" y2="346" stroke="${c}" stroke-width="4"/>`), null, '#feca57');
+def('shoes','flats','נעלי בובה', c => pair(`<path d="M62,349 Q62,341 78,341 L92,345 Q98,350 96,356 L62,356 Z" ${F(c)}/><circle cx="78" cy="347" r="3" fill="${sh(c,40)}"/>`), null, '#b388eb');
+
+// --- תיקים ---
+def('bag','handbag','תיק יד', c => `<path d="M36,226 Q44,196 54,226" fill="none" stroke="${sh(c,-30)}" stroke-width="4"/><rect x="26" y="224" width="44" height="32" rx="7" ${F(c)}/><circle cx="48" cy="236" r="3" fill="#f6c744"/>`, null, '#e63946');
+def('bag','tote','תיק קניות', c => `<path d="M32,228 Q36,200 46,224 M50,224 Q58,200 64,228" fill="none" stroke="${sh(c,-30)}" stroke-width="3.5"/><rect x="24" y="226" width="48" height="46" rx="4" ${F(c)}/><rect x="24" y="238" width="48" height="6" fill="#fff" opacity=".6"/>`, null, '#feca57');
+def('bag','clutch','קלאץ׳', c => `<rect x="30" y="218" width="36" height="19" rx="5" ${F(c)}/><path d="M30,224 Q48,232 66,224" fill="none" stroke="${sh(c,-35)}"/><circle cx="48" cy="228" r="2.5" fill="#f6c744"/>`, null, '#6c5ce7');
+def('bag','shoulder','תיק כתף', c => `<path d="M70,122 Q50,152 58,194" fill="none" stroke="${sh(c,-20)}" stroke-width="5"/><rect x="34" y="190" width="46" height="34" rx="8" ${F(c)}/><path d="M34,202 Q57,216 80,202" fill="none" stroke="${sh(c,-35)}"/><circle cx="57" cy="212" r="2.6" fill="#f6c744"/>`, null, '#ff9f43');
+def('bag','cross','תיק צד', c => `<line x1="134" y1="122" x2="70" y2="206" stroke="${sh(c,-20)}" stroke-width="5"/><rect x="48" y="196" width="38" height="28" rx="7" ${F(c)}/><path d="M48,206 Q67,217 86,206" fill="none" stroke="${sh(c,-35)}"/><circle cx="67" cy="214" r="2.4" fill="#f6c744"/>`, null, '#1dd1a1');
+def('bag','backpack','תרמיל', c => pair(`<path d="M76,122 Q70,150 74,184" fill="none" stroke="${sh(c,-25)}" stroke-width="7" stroke-linecap="round"/>`),
+  c => `<rect x="56" y="124" width="88" height="98" rx="24" ${F(c)}/><rect x="74" y="176" width="52" height="30" rx="8" fill="${sh(c,-12)}" stroke="${sh(c,-38)}"/>`, '#48dbfb');
+
+// --- כובעים ---
+def('hat','cap','כובע מצחייה', c => `<path d="M64,50 Q64,12 100,12 Q136,12 136,50 Z" ${F(c)}/><ellipse cx="100" cy="50" rx="40" ry="7" fill="${sh(c,-20)}" stroke="${sh(c,-45)}"/><circle cx="100" cy="12" r="3" fill="${sh(c,-30)}"/>`, null, '#e63946');
+def('hat','beanie','כובע צמר', c => `<path d="M62,52 Q62,6 100,6 Q138,6 138,52 Z" ${F(c)}/><rect x="60" y="42" width="80" height="14" rx="7" fill="${sh(c,-20)}" stroke="${sh(c,-45)}"/><circle cx="100" cy="5" r="9" fill="${sh(c,45)}" stroke="${sh(c,-20)}"/>`, null, '#6c5ce7');
+def('hat','sunhat','כובע שמש', c => `<ellipse cx="100" cy="46" rx="74" ry="16" ${F(c)}/><path d="M66,46 Q66,8 100,8 Q134,8 134,46 Z" ${F(c)}/><rect x="66" y="36" width="68" height="8" fill="${sh(c,-30)}"/>`, null, '#f5deb3');
+def('hat','bow','סרט עם פפיון', c => `<path d="M63,56 Q100,6 137,56" stroke="${c}" stroke-width="6" fill="none"/><path d="M80,26 L64,14 L64,38 Z" ${F(c)}/><path d="M80,26 L96,14 L96,38 Z" ${F(c)}/><circle cx="80" cy="26" r="5" fill="${sh(c,-25)}"/>`, null, '#ff5d9e');
+def('hat','crown','כתר', c => `<polygon points="70,42 74,16 86,30 100,10 114,30 126,16 130,42" ${F(c)}/><circle cx="74" cy="16" r="3" fill="#e63946"/><circle cx="100" cy="10" r="3.4" fill="#2e86de"/><circle cx="126" cy="16" r="3" fill="#e63946"/>`, null, '#f6c744');
+def('hat','ears','אוזני חתול', c => `<path d="M66,42 L68,8 L92,26 Z" ${F(c)}/><path d="M134,42 L132,8 L108,26 Z" ${F(c)}/><path d="M71,34 L72,17 L84,27 Z" fill="#ffb3c6"/><path d="M129,34 L128,17 L116,27 Z" fill="#ffb3c6"/><path d="M63,56 Q100,10 137,56" stroke="${c}" stroke-width="5" fill="none"/>`, null, '#2d3436');
+def('hat','beret','ברט', c => `<ellipse cx="108" cy="30" rx="36" ry="16" transform="rotate(-8 108 30)" ${F(c)}/><circle cx="104" cy="14" r="3.4" fill="${sh(c,-35)}"/>`, null, '#e63946');
+
+// --- משקפיים ---
+def('glasses','round','משקפיים עגולות', c => pair(`<circle cx="88" cy="68" r="11" fill="#cdeeff" fill-opacity=".3" stroke="${c}" stroke-width="3"/><line x1="77" y1="68" x2="66" y2="66" stroke="${c}" stroke-width="2.4"/>`) + `<line x1="99" y1="67" x2="101" y2="67" stroke="${c}" stroke-width="2.6"/>`, null, '#2d3436');
+def('glasses','square','משקפיים מרובעות', c => pair(`<rect x="76" y="59" width="22" height="17" rx="3" fill="#cdeeff" fill-opacity=".3" stroke="${c}" stroke-width="3"/><line x1="76" y1="66" x2="66" y2="65" stroke="${c}" stroke-width="2.4"/>`) + `<line x1="98" y1="66" x2="102" y2="66" stroke="${c}" stroke-width="2.6"/>`, null, '#8d6e63');
+def('glasses','sun','משקפי שמש', c => pair(`<rect x="75" y="60" width="24" height="16" rx="6" fill="#1c1c1c" fill-opacity=".88" stroke="${c}" stroke-width="3"/><line x1="75" y1="66" x2="66" y2="65" stroke="${c}" stroke-width="2.4"/>`) + `<line x1="99" y1="65" x2="101" y2="65" stroke="${c}" stroke-width="2.6"/>`, null, '#ff5d9e');
+def('glasses','cat','משקפי חתול', c => pair(`<path d="M75,66 L72,57 L86,61 Q99,62 99,70 Q96,78 86,77 Q76,76 75,66 Z" fill="#cdeeff" fill-opacity=".3" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`) + `<line x1="99" y1="67" x2="101" y2="67" stroke="${c}" stroke-width="2.6"/>`, null, '#b388eb');
+def('glasses','heart','משקפי לב', c => `<path d="${heart(88,68,11)}" fill="${c}" fill-opacity=".72" stroke="${sh(c,-35)}" stroke-width="1.6"/><path d="${heart(112,68,11)}" fill="${c}" fill-opacity=".72" stroke="${sh(c,-35)}" stroke-width="1.6"/>`, null, '#ff5d9e');
+
+// --- תכשיטים ---
+def('neck','chain','שרשרת', c => `<path d="M88,110 Q100,142 112,110" stroke="${c}" stroke-width="2.4" fill="none"/><circle cx="100" cy="129" r="3.2" fill="${c}"/>`, null, '#f6c744');
+def('neck','pearls','פנינים', c => { let s = ''; for (let i = 0; i <= 10; i++) { const t = i / 10, x = (1-t)*(1-t)*88 + 2*t*(1-t)*100 + t*t*112, y = (1-t)*(1-t)*111 + 2*t*(1-t)*146 + t*t*111; s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="${c}" stroke="${sh(c,-30)}"/>`; } return s; }, null, '#ffffff');
+def('neck','choker','צווארון', c => `<rect x="90" y="107" width="20" height="5.5" rx="2.7" fill="${c}"/><circle cx="100" cy="115" r="3" fill="${sh(c,-20)}"/>`, null, '#2d3436');
+def('neck','pendant','תליון לב', c => `<path d="M88,110 Q100,142 112,110" stroke="${sh(c,-10)}" stroke-width="2" fill="none"/><path d="${heart(100,134,7)}" ${F(c)}/>`, null, '#ff5d9e');
+def('neck','scarf','צעיף', c => `<path d="M82,106 Q100,124 118,106 L121,120 Q100,138 79,120 Z" ${F(c)}/><path d="M102,124 L118,160 L106,163 L96,130 Z" ${F(c)}/>`, null, '#e63946');
+def('ears','studs','עגילים קטנים', c => pair(`<circle cx="65" cy="80" r="3.4" fill="${c}" stroke="${sh(c,-35)}"/>`), null, '#f6c744');
+def('ears','hoops','חישוקים', c => pair(`<circle cx="65" cy="89" r="7.5" fill="none" stroke="${c}" stroke-width="2.6"/>`), null, '#f6c744');
+def('ears','drops','עגילים תלויים', c => pair(`<circle cx="65" cy="80" r="2.4" fill="${c}"/><line x1="65" y1="80" x2="65" y2="92" stroke="${c}" stroke-width="1.6"/><circle cx="65" cy="96" r="4.4" ${F(c)}/>`), null, '#48dbfb');
+def('ears','stars','עגילי כוכב', c => pair(`<polygon points="${star(65,88,7,3)}" ${F(c)}/>`), null, '#f6c744');
+def('ears','pearl','עגילי פנינה', c => pair(`<circle cx="65" cy="80" r="2.6" fill="#f6c744"/><circle cx="65" cy="91" r="4.6" fill="${c}" stroke="${sh(c,-35)}"/>`), null, '#ffffff');
+def('wrist','bangle','צמיד', c => `<ellipse cx="47" cy="204" rx="8.8" ry="3.6" transform="rotate(10 47 204)" fill="none" stroke="${c}" stroke-width="3.6"/>`, null, '#f6c744');
+def('wrist','beads','צמיד חרוזים', c => { let s = ''; for (let i = 0; i < 6; i++) s += `<circle cx="${(39+i*3.4).toFixed(1)}" cy="${(202.4+i*.62).toFixed(1)}" r="2.7" fill="${i%2?sh(c,35):c}" stroke="${sh(c,-35)}" stroke-width=".8"/>`; return s; }, null, '#ff5d9e');
+def('wrist','watch','שעון', c => `<ellipse cx="47" cy="204" rx="8.4" ry="3.4" transform="rotate(10 47 204)" fill="none" stroke="#37474f" stroke-width="4"/><circle cx="47" cy="204" r="6.6" fill="#fff" stroke="${c}" stroke-width="2.6"/><path d="M47,204 L47,200 M47,204 L50,205" stroke="#333" stroke-width="1.3"/>`, null, '#f6c744');
+def('wrist','cuff','צמיד רחב', c => `<rect x="38.5" y="199.5" width="17" height="9" rx="2.5" transform="rotate(10 47 204)" ${F(c)}/>`, null, '#e0e0e0');
+
+// --- שיער ---
+const capF = c => `<path d="M63,74 Q58,20 100,20 Q142,20 137,74 Q131,44 100,44 Q69,44 63,74 Z" ${F(c,-30)}/>`;
+const strand = (c, y) => pair(`<path d="M64,62 L${62 - (y>120?2:0)},${y} Q70,${y+10} 77,${y} L75,68 Z" ${F(c,-30)}/>`);
+const longBack = c => `<path d="M58,66 Q54,14 100,14 Q146,14 142,66 L152,216 Q100,232 48,216 Z" ${F(c,-30)}/>`;
+def('hair','long','ארוך', c => capF(c) + strand(c, 152), longBack, '#6d4c41');
+def('hair','bangs','ארוך עם פוני', c => capF(c) + `<path d="M66,66 Q64,26 100,24 Q136,26 134,66 L131,46 Q100,52 69,46 Z" ${F(c,-30)}/>` + strand(c, 152), longBack, '#6d4c41');
+def('hair','bob','קארה', c => capF(c) + strand(c, 118), c => `<path d="M58,66 Q54,14 100,14 Q146,14 142,66 L146,122 Q100,134 54,122 Z" ${F(c,-30)}/>`, '#6d4c41');
+def('hair','pixie','קצר', c => capF(c) + pair(`<path d="M65,66 L63,90 L72,86 L72,70 Z" ${F(c,-30)}/>`), null, '#6d4c41');
+def('hair','pony','קוקו', c => capF(c) + `<circle cx="134" cy="46" r="5" fill="#ff5d9e"/>`, c => `<path d="M128,38 Q184,40 172,142 Q158,100 130,70 Z" ${F(c,-30)}/>`, '#6d4c41');
+def('hair','bun','פקעת', c => `<circle cx="100" cy="20" r="16" ${F(c,-30)}/>` + capF(c), null, '#6d4c41');
+def('hair','buns','שתי פקעות', c => `<circle cx="68" cy="22" r="14" ${F(c,-30)}/><circle cx="132" cy="22" r="14" ${F(c,-30)}/>` + capF(c), null, '#6d4c41');
+def('hair','curly','תלתלים', c => capF(c) + `<circle cx="74" cy="40" r="12" ${F(c,-30)}/><circle cx="126" cy="40" r="12" ${F(c,-30)}/><circle cx="100" cy="34" r="13" ${F(c,-30)}/>`,
+  c => [[60,50,20],[140,50,20],[56,86,20],[144,86,20],[58,122,20],[142,122,20],[100,22,24],[76,26,20],[124,26,20]].map(a => `<circle cx="${a[0]}" cy="${a[1]}" r="${a[2]}" ${F(c,-30)}/>`).join(''), '#6d4c41');
+def('hair','braids','צמות', c => capF(c) + pair((() => { let s = ''; for (let i = 0; i < 7; i++) s += `<ellipse cx="${(68-i*1.2).toFixed(1)}" cy="${112+i*17}" rx="${(8-i*.4).toFixed(1)}" ry="10" ${F(c,-30)}/>`; return s; })()),
+  c => `<path d="M60,66 Q56,16 100,16 Q144,16 140,66 L138,100 L62,100 Z" ${F(c,-30)}/>`, '#6d4c41');
+
+// --- איפור ---
+def('lips','lipstick','שפתון', c => `<path d="M89,88 Q94,83 100,86 Q106,83 111,88 Q100,99 89,88 Z" fill="${c}"/>`, null, '#d63a4a');
+def('lips','gloss','גלוס', c => `<path d="M89,88 Q94,83 100,86 Q106,83 111,88 Q100,99 89,88 Z" fill="${c}" opacity=".9"/><ellipse cx="96" cy="90" rx="3.6" ry="1.2" fill="#fff" opacity=".75"/>`, null, '#ff6f91');
+def('eyes','shadow','צללית', c => pair(`<ellipse cx="88" cy="62" rx="9.5" ry="5.8" fill="${c}" opacity=".55"/>`), null, '#a66cff');
+def('eyes','glitter','צללית נוצצת', c => pair(`<ellipse cx="88" cy="62" rx="9.5" ry="5.8" fill="${c}" opacity=".55"/><circle cx="83" cy="61" r="1.2" fill="#fff"/><circle cx="90" cy="59.5" r="1.2" fill="#fff"/><circle cx="94" cy="62.5" r="1" fill="#fff"/>`), null, '#4aa3ff');
+def('eyes','liner','אייליינר', c => pair(`<path d="M78,66 Q88,59 98,66" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/><path d="M78,66 L73,61" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`), null, '#2d3436');
+def('cheeks','blush','סומק', c => pair(`<circle cx="77" cy="82" r="8" fill="${c}" opacity=".42"/>`), null, '#ff8fb8');
+def('cheeks','freckles','נמשים', c => pair([[74,80],[79,83],[76,86],[82,80],[81,86]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="1.15" fill="${c}"/>`).join('')), null, '#c98a62');
+def('cheeks','hearts','לבבות', c => pair(`<path d="${heart(77,84,4.2)}" fill="${c}" opacity=".75"/>`), null, '#ff6f91');
+def('skin','tone','גוון', () => '', null, DEFAULT_SKIN);
+
+// --- אוכל ושתייה (מצוירים סביב נקודת היד, 0,0) ---
+const HAND = (id, name, fn, dc) => def('hand', id, name, fn, null, dc);
+HAND('coffee','קפה', c => `<path d="M-9,-25 L9,-25 L7.5,2 L-7.5,2 Z" fill="#fff" stroke="#b9b9b9"/><path d="M-8.6,-17 L8.6,-17 L7.9,-7 L-7.9,-7 Z" fill="${c}"/><rect x="-11" y="-30" width="22" height="6" rx="2.5" fill="#455a64"/><path d="M-3,-34 Q-7,-40 -2,-45 M4,-34 Q0,-40 5,-45" stroke="#cfd8dc" stroke-width="1.6" fill="none"/>`, '#ff5d9e');
+HAND('icedcoffee','קפה קר', c => `<path d="M-10,-28 L10,-28 L8,2 L-8,2 Z" fill="${c}" fill-opacity=".8" stroke="#8a8a8a"/><rect x="-6" y="-20" width="6" height="6" rx="1" fill="#fff" fill-opacity=".6"/><rect x="1" y="-10" width="6" height="6" rx="1" fill="#fff" fill-opacity=".6"/><path d="M-11,-30 L11,-30" stroke="#8a8a8a" stroke-width="2.5"/><line x1="3" y1="-30" x2="8" y2="-44" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>`, '#8d6e63');
+HAND('boba','בועות (בובה)', c => `<path d="M-11,-26 L11,-26 L9,2 L-9,2 Z" fill="${c}" fill-opacity=".85" stroke="#8a8a8a"/>` + [-6,-2,2,6].map(x => `<circle cx="${x}" cy="-1" r="2.4" fill="#3e2723"/>`).join('') + [-4,0,4].map(x => `<circle cx="${x}" cy="-5.5" r="2.4" fill="#3e2723"/>`).join('') + `<rect x="-12" y="-29" width="24" height="4" rx="2" fill="#fff" fill-opacity=".8" stroke="#aaa"/><line x1="2" y1="-29" x2="6" y2="-45" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/>`, '#e6b8ff');
+HAND('milkshake','מילקשייק', c => `<path d="M-10,-26 L10,-26 L7,2 L-7,2 Z" fill="${c}" stroke="#aaa"/><ellipse cx="0" cy="-28" rx="11" ry="5" fill="#fff" stroke="#e0e0e0"/><ellipse cx="0" cy="-34" rx="7" ry="4.5" fill="#fff" stroke="#e0e0e0"/><circle cx="0" cy="-40" r="3.5" fill="#e53935"/><line x1="5" y1="-30" x2="9" y2="-44" stroke="#e74c3c" stroke-width="2.6" stroke-linecap="round"/>`, '#ffb3c6');
+HAND('cake','פרוסת עוגה', c => `<path d="M-14,-4 L14,-10 L14,2 L-14,2 Z" fill="#f6e0b5" stroke="#d9b97c"/><path d="M-14,-4 L14,-10 L14,-14 L-14,-8 Z" fill="${c}" stroke="${sh(c,-30)}"/><circle cx="8" cy="-17" r="3.2" fill="#e53935"/>`, '#ff8fb8');
+HAND('cupcake','קאפקייק', c => `<path d="M-9,-10 L9,-10 L7,2 L-7,2 Z" fill="#f4c9a0" stroke="#d9a574"/><ellipse cx="0" cy="-13" rx="11" ry="5.5" fill="${c}" stroke="${sh(c,-30)}"/><ellipse cx="0" cy="-19" rx="8" ry="4.6" fill="${c}" stroke="${sh(c,-30)}"/><ellipse cx="0" cy="-24" rx="5" ry="3.6" fill="${c}" stroke="${sh(c,-30)}"/><circle cx="0" cy="-29" r="2.8" fill="#e53935"/>`, '#ff8fb8');
+HAND('cookie','עוגייה', () => `<circle cx="0" cy="-13" r="13" fill="#d9a867" stroke="#a6773b"/><circle cx="-5" cy="-17" r="2.2" fill="#5d4037"/><circle cx="4" cy="-9" r="2.2" fill="#5d4037"/><circle cx="5" cy="-18" r="1.8" fill="#5d4037"/><circle cx="-4" cy="-8" r="1.8" fill="#5d4037"/>`, '#d9a867');
+HAND('croissant','קרואסון', () => `<path d="M-17,-5 Q-15,-23 0,-23 Q15,-23 17,-5 Q11,-12 6,-10 Q0,-17 -6,-10 Q-11,-12 -17,-5 Z" fill="#dc9a3e" stroke="#a96a1f"/><path d="M-8,-14 L-6,-21 M0,-15 L0,-22 M8,-14 L6,-21" stroke="#a96a1f" stroke-width="1.4"/>`, '#dc9a3e');
+HAND('donut','דונאט', c => `<ellipse cx="0" cy="-12" rx="16" ry="13" fill="#d9a066" stroke="#a9742f"/><ellipse cx="0" cy="-14" rx="15" ry="11" fill="${c}" stroke="${sh(c,-30)}"/><ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#fbe9d7" stroke="#a9742f"/><rect x="-10" y="-18" width="4" height="1.8" fill="#fff" transform="rotate(30 -10 -18)"/><rect x="6" y="-20" width="4" height="1.8" fill="#4aa3ff"/><rect x="-5" y="-8" width="4" height="1.8" fill="#feca57" transform="rotate(-40 -5 -8)"/><rect x="8" y="-11" width="4" height="1.8" fill="#fff" transform="rotate(60 8 -11)"/>`, '#ff8fb8');
+HAND('baguette','באגט', () => `<g transform="rotate(14)"><ellipse cx="0" cy="-20" rx="7.5" ry="26" fill="#dfa55a" stroke="#a9742f"/><path d="M-4,-36 L3,-30 M-4,-26 L3,-20 M-4,-16 L3,-10" stroke="#a9742f" stroke-width="1.8"/></g>`, '#dfa55a');
+HAND('pizza','פיצה', () => `<path d="M-14,-30 L14,-30 L0,2 Z" fill="#f4c542" stroke="#c9942b"/><path d="M-15,-34 Q0,-38 15,-34 L14,-29 L-14,-29 Z" fill="#c98a3e" stroke="#a9742f"/><circle cx="-5" cy="-23" r="3.2" fill="#c0392b"/><circle cx="5" cy="-21" r="3.2" fill="#c0392b"/><circle cx="0" cy="-11" r="3" fill="#c0392b"/>`, '#f4c542');
+HAND('burger','המבורגר', () => `<path d="M-14,-18 Q-14,-34 0,-34 Q14,-34 14,-18 Z" fill="#d9953a" stroke="#a9742f"/><circle cx="-5" cy="-27" r="1" fill="#fff"/><circle cx="3" cy="-29" r="1" fill="#fff"/><circle cx="7" cy="-24" r="1" fill="#fff"/><path d="M-15,-18 Q-10,-14 -5,-18 Q0,-14 5,-18 Q10,-14 15,-18 L15,-14 L-15,-14 Z" fill="#7cb342"/><rect x="-14" y="-14" width="28" height="6" rx="3" fill="#5d4037"/><rect x="-14" y="-8" width="28" height="8" rx="4" fill="#d9953a" stroke="#a9742f"/>`, '#d9953a');
+HAND('fries','צ׳יפס', () => `<path d="M-10,-14 L10,-14 L8,2 L-8,2 Z" fill="#e53935"/>` + [-8,-4,0,4,8].map((x,i) => `<rect x="${x-1.6}" y="${-29+(i%2)*3}" width="3.2" height="${16-(i%2)*3}" fill="#ffd54f" stroke="#e0a800" stroke-width=".6"/>`).join(''), '#e53935');
+HAND('hotdog','נקניקייה', () => `<rect x="-18" y="-12" width="36" height="10" rx="5" fill="#e6b86a" stroke="#b9873a"/><rect x="-20" y="-14" width="40" height="5" rx="2.5" fill="#c0504d"/><path d="M-16,-12 L-12,-15 L-8,-12 L-4,-15 L0,-12 L4,-15 L8,-12 L12,-15 L16,-12" stroke="#f1c40f" stroke-width="1.6" fill="none"/>`, '#c0504d');
+HAND('popcorn','פופקורן', () => `<path d="M-11,-18 L11,-18 L8,2 L-8,2 Z" fill="#fff" stroke="#c9c9c9"/><path d="M-6,-18 L-5,2 M0,-18 L0,2 M6,-18 L5,2" stroke="#e53935" stroke-width="3"/>` + [[-8,-22],[-2,-26],[5,-23],[9,-19],[0,-20]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4.6" fill="#fff6d6" stroke="#e8d08a"/>`).join(''), '#fff');
+HAND('apple','תפוח', c => `<circle cx="-3" cy="-13" r="9.5" fill="${c}" stroke="${sh(c,-35)}"/><circle cx="4" cy="-13" r="9.5" fill="${c}" stroke="${sh(c,-35)}"/><line x1="0" y1="-23" x2="1" y2="-29" stroke="#6d4c41" stroke-width="2"/><path d="M1,-26 Q7,-31 11,-26 Q6,-23 1,-26 Z" fill="#43a047"/>`, '#e53935');
+HAND('banana','בננה', () => `<path d="M-12,-26 Q-16,-4 7,0 Q-4,-7 -5,-26 Z" fill="#fdd835" stroke="#b8860b"/>`, '#fdd835');
+HAND('strawberry','תות', () => `<path d="M-10,-24 Q0,-28 10,-24 Q8,-8 0,0 Q-8,-8 -10,-24 Z" fill="#e53935" stroke="#a52a2a"/><circle cx="-4" cy="-18" r="1" fill="#ffe082"/><circle cx="3" cy="-15" r="1" fill="#ffe082"/><circle cx="0" cy="-8" r="1" fill="#ffe082"/><circle cx="5" cy="-21" r="1" fill="#ffe082"/><path d="M-8,-25 L0,-31 L8,-25 L0,-22 Z" fill="#43a047"/>`, '#e53935');
+HAND('watermelon','אבטיח', () => `<path d="M-17,-22 A17,17 0 0 0 17,-22 Z" fill="#e53935" stroke="#2e7d32" stroke-width="3"/><circle cx="-6" cy="-16" r="1.5" fill="#222"/><circle cx="3" cy="-12" r="1.5" fill="#222"/><circle cx="8" cy="-18" r="1.5" fill="#222"/>`, '#e53935');
+HAND('grapes','ענבים', c => [[-6,-26],[0,-26],[6,-26],[-9,-20],[-3,-20],[3,-20],[9,-20],[-6,-14],[0,-14],[6,-14],[-3,-8],[3,-8],[0,-3]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="${c}" stroke="${sh(c,-35)}" stroke-width=".8"/>`).join('') + `<path d="M0,-30 Q4,-36 9,-34" stroke="#6d4c41" stroke-width="2" fill="none"/>`, '#7e57c2');
+HAND('orange','תפוז', () => `<circle cx="0" cy="-13" r="12" fill="#fb8c00" stroke="#c46a00"/><path d="M0,-25 Q6,-30 10,-26 Q5,-22 0,-25 Z" fill="#43a047"/>`, '#fb8c00');
+HAND('chips','שקית חטיף', c => `<path d="M-11,-31 L11,-31 L11,2 L-11,2 Z" fill="${c}" stroke="${sh(c,-35)}"/><path d="M-11,-31 l3,-4 l3,4 l3,-4 l3,4 l3,-4 l3,4 l3,-4 l2,4" fill="${sh(c,-20)}"/><circle cx="0" cy="-15" r="6" fill="#fff" opacity=".9"/>`, '#e63946');
+HAND('water','בקבוק מים', c => `<rect x="-6" y="-30" width="12" height="32" rx="4" fill="#d9f1ff" stroke="#7dbbe0"/><rect x="-3.5" y="-35" width="7" height="6" rx="1.5" fill="${c}"/><rect x="-6" y="-18" width="12" height="9" fill="#4aa3ff" fill-opacity=".7"/>`, '#2e86de');
+HAND('soda','פחית שתייה', c => `<rect x="-7" y="-27" width="14" height="29" rx="3" fill="${c}" stroke="${sh(c,-35)}"/><ellipse cx="0" cy="-27" rx="7" ry="2.2" fill="#cfd8dc"/><path d="M-7,-14 Q0,-8 7,-14" stroke="#fff" stroke-width="2.4" fill="none"/>`, '#e63946');
+HAND('icecream','גלידה', c => `<path d="M-8,-18 L8,-18 L0,4 Z" fill="#d9a066" stroke="#a9742f"/><path d="M-4,-16 L2,-4 M4,-16 L-2,-4" stroke="#a9742f" stroke-width="1"/><circle cx="0" cy="-23" r="10" fill="${c}" stroke="${sh(c,-30)}"/><circle cx="0" cy="-34" r="8.5" fill="${sh(c,15)}" stroke="${sh(c,-30)}"/>`, '#ffd1e6');
+HAND('popsicle','ארטיק', c => `<rect x="-2" y="-8" width="4" height="14" rx="1.5" fill="#e0b97d"/><rect x="-9" y="-38" width="18" height="31" rx="8" fill="${c}" stroke="${sh(c,-30)}"/><line x1="-4" y1="-32" x2="-4" y2="-16" stroke="#fff" stroke-width="2" opacity=".6"/>`, '#ff8fb8');
+HAND('lollipop','סוכרייה על מקל', c => `<line x1="0" y1="2" x2="0" y2="-20" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="0" cy="-30" r="11" fill="${c}" stroke="${sh(c,-30)}"/><path d="M0,-30 m-1,0 a2,2 0 1 1 4,0 a5,5 0 1 1 -8,0 a8,8 0 1 1 13,0" stroke="#fff" stroke-width="1.8" fill="none" opacity=".85"/>`, '#ff5d9e');
+HAND('cotton','סוכר בשמיים', c => `<line x1="0" y1="2" x2="0" y2="-18" stroke="#e0b97d" stroke-width="3" stroke-linecap="round"/>` + [[0,-34,10],[-9,-28,8],[9,-28,8],[-5,-22,7],[5,-22,7]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="${p[2]}" fill="${c}" stroke="${sh(c,-20)}"/>`).join(''), '#ffb3d9');
+
+// כל פריט מקבל מזהה סוג כדי שיהיה קל לחפש אותו
+for (const s in ITEMS) for (const t in ITEMS[s]) ITEMS[s][t].slot = s;
+
+// ---------- הצגת הדמות ----------
+const DEFAULT_TOP = () => ITEMS.top.tank.front('#dfe6e9');
+const DEFAULT_BOTTOM = () => ITEMS.bottom.shorts.front('#b2bec3');
+
+function bodySVG(skin) {
+  const sk2 = sh(skin, -22);
+  const ear = `<ellipse cx="65" cy="72" rx="5.5" ry="8.5" fill="${skin}" stroke="${sk2}" stroke-width="1.2"/>`;
+  const arm = `<line x1="60" y1="132" x2="46" y2="208" stroke="${skin}" stroke-width="15" stroke-linecap="round"/><circle cx="45" cy="214" r="8" fill="${skin}"/>`;
+  const leg = `<line x1="84" y1="214" x2="82" y2="342" stroke="${skin}" stroke-width="26"/><ellipse cx="78" cy="350" rx="18" ry="8" fill="${skin}"/>`;
+  const eye = `<ellipse cx="88" cy="68" rx="4" ry="5" fill="#2d2323"/><circle cx="89.5" cy="66.2" r="1.5" fill="#fff"/><path d="M80,58 Q88,53 96,57" stroke="#5a4036" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+  return pair(ear) + `<rect x="91" y="98" width="18" height="30" rx="6" fill="${skin}"/>` + pair(arm) + pair(leg) +
+    `<path d="M62,126 Q100,112 138,126 L134,160 L126,190 L132,222 L68,222 L74,190 L66,160 Z" fill="${skin}"/>` +
+    `<ellipse cx="100" cy="68" rx="34" ry="38" fill="${skin}" stroke="${sk2}" stroke-width="1.2"/>` +
+    pair(eye) + `<path d="M100,72 Q96,80 100,81" stroke="${sk2}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M92,89 Q100,95 108,89" stroke="#b5524f" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+}
+
+function avatarSVG(o, opt = {}) {
+  const part = (slot, which) => {
+    const it = o[slot]; if (!it) return '';
+    const d = ITEMS[slot][it.type]; if (!d) return '';
+    const f = d[which]; return f ? f(it.color || d.dc || '#888888') : '';
+  };
+  let s = '';
+  if (!opt.noBody) {
+    s += part('hair', 'back') + part('bag', 'back') + bodySVG(o.skin || DEFAULT_SKIN);
+    if (!opt.icon) {
+      if (!o.dress && !o.bottom) s += DEFAULT_BOTTOM();
+      if (!o.dress && !o.top) s += DEFAULT_TOP();
+    }
+    s += part('bottom', 'front') + part('shoes', 'front') + part('top', 'front') + part('dress', 'front') + part('neck', 'front');
+    s += part('cheeks', 'front') + part('eyes', 'front') + part('lips', 'front');
+    s += part('hair', 'front') + part('glasses', 'front') + part('ears', 'front') + part('wrist', 'front') + part('hat', 'front') + part('bag', 'front');
+  }
+  if (o.hand) s += `<g transform="translate(155 214)">${part('hand', 'front')}</g>`;
+  const crop = opt.crop || '0 0 200 376';
+  const wh = opt.px ? (() => { const a = crop.split(' ').map(Number); return ` width="${a[2] * opt.px}" height="${a[3] * opt.px}"`; })() : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${crop}"${wh}>${s}</svg>`;
+}
+
+const CROP = {top:'30 100 140 130', bottom:'30 180 140 200', dress:'20 100 160 260', shoes:'40 290 120 86', bag:'10 110 180 160', hat:'40 0 120 80', glasses:'60 40 80 56', neck:'60 85 80 90', ears:'46 40 108 70', wrist:'20 170 70 60', hair:'20 0 160 240', lips:'70 60 60 50', eyes:'66 40 68 50', cheeks:'62 50 76 52', hand:'126 160 58 60', skin:'40 0 120 140'};
+const NEEDS_HAIR = ['hat','glasses','ears','lips','eyes','cheeks'];
+function iconSVG(slot, type, color, skin, px) {
+  const o = {skin: skin || DEFAULT_SKIN};
+  o[slot] = {type, color};
+  if (NEEDS_HAIR.includes(slot)) o.hair = {type: 'bob', color: '#6d4c41'};
+  return avatarSVG(o, {icon: true, crop: CROP[slot], px, noBody: slot === 'hand'});
+}
+const svgUrl = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+
+// ---------- החנויות ----------
+// theme: wall=קיר, roof=גג וצבע הכותרת, awn=פסי המרקיזה
+const SHOPS = [
+  {id:'tops', name:'חולצות', theme:{wall:'#ffe3ef', roof:'#d6336c', awn:['#ff5d9e','#ffffff']}, sections:[{id:'top', slot:'top', title:'חולצות וסוודרים', palette:CL}]},
+  {id:'bottoms', name:'מכנסיים וחצאיות', theme:{wall:'#e0efff', roof:'#2f6fb5', awn:['#4a90e2','#ffffff']}, sections:[{id:'bottom', slot:'bottom', title:'מכנסיים וחצאיות', palette:CL}]},
+  {id:'dresses', name:'שמלות', theme:{wall:'#f1e4ff', roof:'#7b3fb0', awn:['#a66cff','#ffffff']}, sections:[{id:'dress', slot:'dress', title:'שמלות', palette:CL}]},
+  {id:'shoes', name:'נעליים', theme:{wall:'#fff0d6', roof:'#c9731c', awn:['#ff9f43','#ffffff']}, sections:[{id:'shoes', slot:'shoes', title:'נעליים', palette:CL}]},
+  {id:'bags', name:'תיקים', theme:{wall:'#e3f6ec', roof:'#2a8f63', awn:['#2ecc71','#ffffff']}, sections:[{id:'bag', slot:'bag', title:'תיקים', palette:CL}]},
+  {id:'hats', name:'כובעים ומשקפיים', theme:{wall:'#fff5d6', roof:'#a87b0b', awn:['#f1c40f','#ffffff']}, sections:[
+    {id:'hat', slot:'hat', title:'כובעים וקישוטי ראש', palette:CL},
+    {id:'glasses', slot:'glasses', title:'משקפיים', palette:CL}]},
+  {id:'jewelry', name:'תכשיטים', theme:{wall:'#e9fbff', roof:'#1b8aa3', awn:['#36c5e0','#ffffff']}, sections:[
+    {id:'neck', slot:'neck', title:'שרשראות וצעיפים', palette:METAL},
+    {id:'ears', slot:'ears', title:'עגילים', palette:METAL},
+    {id:'wrist', slot:'wrist', title:'צמידים ושעונים', palette:METAL}]},
+  {id:'makeup', name:'איפור', theme:{wall:'#ffe0e6', roof:'#b0306a', awn:['#ff6f91','#ffffff']}, sections:[
+    {id:'lips', slot:'lips', title:'שפתיים', palette:LIPC},
+    {id:'eyes', slot:'eyes', title:'עיניים', palette:EYEC},
+    {id:'cheeks', slot:'cheeks', title:'לחיים', palette:CHEEKC},
+    {id:'skin', slot:'skin', title:'גוון עור', palette:SKINC, paletteOnly:true}]},
+  {id:'salon', name:'מספרה', theme:{wall:'#efe6ff', roof:'#5b3fa0', awn:['#8e6fe0','#ffffff']}, sections:[{id:'hair', slot:'hair', title:'תסרוקות', palette:HAIRC, noRemove:true}]},
+  {id:'studio', name:'סטודיו צילום', studio:true, theme:{wall:'#f4f4f4', roof:'#444444', awn:['#333333','#ffffff']}, sections:[], icon:null},
+  {id:'market', name:'סופרמרקט', theme:{wall:'#e6f7e0', roof:'#3a8d3a', awn:['#4cbb4c','#ffffff']}, sections:[
+    {id:'fruit', slot:'hand', title:'פירות', types:['apple','banana','strawberry','watermelon','grapes','orange']},
+    {id:'snack', slot:'hand', title:'חטיפים ושתייה', types:['chips','water','soda','baguette'], palette:SODAC}]},
+  {id:'cafe', name:'בית קפה', theme:{wall:'#f3e5d8', roof:'#7a4a2b', awn:['#a0673d','#ffffff']}, sections:[
+    {id:'drinks', slot:'hand', title:'משקאות', types:['coffee','icedcoffee','boba','milkshake'], palette:CL},
+    {id:'sweets', slot:'hand', title:'מאפים וקינוחים', types:['cake','cupcake','cookie','croissant'], palette:FROSTC}]},
+  {id:'gelato', name:'גלידריה', theme:{wall:'#e5f9ff', roof:'#1f93b5', awn:['#ff8fb8','#ffffff']}, sections:[
+    {id:'ice', slot:'hand', title:'גלידות', types:['icecream','popsicle'], palette:ICEC},
+    {id:'candy', slot:'hand', title:'ממתקים', types:['lollipop','cotton'], palette:CL}]},
+  {id:'pizza', name:'פיצה ובורגר', theme:{wall:'#ffe9dc', roof:'#b03022', awn:['#e74c3c','#ffffff']}, sections:[
+    {id:'fast', slot:'hand', title:'אוכל מהיר', types:['pizza','burger','fries','hotdog','popcorn']}]},
+  {id:'bakery', name:'מאפייה', theme:{wall:'#fff0dc', roof:'#a8671f', awn:['#f5a742','#ffffff']}, sections:[
+    {id:'bake', slot:'hand', title:'מאפים טריים', types:['donut','croissant','baguette','cookie','cupcake','cake'], palette:FROSTC}]},
+];
+for (const sh_ of SHOPS) for (const sec of sh_.sections) { if (!sec.types) sec.types = Object.keys(ITEMS[sec.slot]); }
+
+// סדר הבניינים בעיר, שורה אחרי שורה (6 בכל שורה). מילים שאינן חנות הן קישוט.
+const LAYOUT = [
+  'tops','bottoms','dresses','house1','shoes','bags',
+  'hats','jewelry','makeup','park','salon','studio',
+  'market','cafe','gelato','pizza','bakery','house2'
+];
+
+// ---------- מצב המשחק ----------
+const SAVE_KEY = 'dressup_city_outfit_v1';
+function defaultOutfit() { return {skin: DEFAULT_SKIN, hair: {type: 'long', color: '#6d4c41'}}; }
+function loadOutfit() {
+  try {
+    const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (!o) return defaultOutfit();
+    const clean = {skin: SKINC.includes(o.skin) ? o.skin : DEFAULT_SKIN};
+    for (const k in o) if (ITEMS[k] && k !== 'skin' && o[k] && ITEMS[k][o[k].type]) clean[k] = o[k];
+    if (!clean.hair) clean.hair = defaultOutfit().hair;
+    return clean;
+  } catch (e) { return defaultOutfit(); }
+}
+let outfit = loadOutfit();
+const state = {mode: 'city', shop: null};
+let secColor = {}, studioBg = 0;
+
+function saveOutfit() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(outfit)); } catch (e) {} }
+function equip(slot, type, color) {
+  if (slot === 'dress') { delete outfit.top; delete outfit.bottom; }
+  if (slot === 'top' || slot === 'bottom') delete outfit.dress;
+  outfit[slot] = {type, color};
+  changed();
+}
+function unequip(slot) { delete outfit[slot]; changed(); }
+function changed() { saveOutfit(); rebuildSprite(); updatePreview(); }
+function updatePreview() {
+  if (state.mode === 'shop') $('#prev').innerHTML = avatarSVG(outfit);
+  if (!$('#look').hidden) renderLook();
+}
+
+// ---------- ממשק החנות ----------
+const BGS = [['#ffd6e7','#fff3f8'],['#d6ecff','#f4faff'],['#e8d9ff','#f8f3ff'],['#ffe9c7','#fff8ea'],['#d9f7e4','#f3fff8'],['#3b3350','#6b5f8a']];
+const SLOTNAME = {top:'חולצה', bottom:'מכנסיים או חצאית', dress:'שמלה', shoes:'נעליים', bag:'תיק', hat:'כובע', glasses:'משקפיים', neck:'צוואר', ears:'עגילים', wrist:'צמיד', hair:'שיער', lips:'שפתיים', eyes:'עיניים', cheeks:'לחיים', hand:'ביד'};
+
+function openShop(shop) {
+  state.mode = 'shop'; state.shop = shop; keys.clear(); P.path = [];
+  $('#stitle').textContent = shop.name;
+  $('#sheet').style.setProperty('--theme', shop.theme.roof);
+  secColor = {};
+  for (const sec of shop.sections) {
+    const eq = outfit[sec.slot];
+    secColor[sec.id] = (eq && sec.types.includes(eq.type) && eq.color) || (sec.palette && sec.palette[0]) || null;
+  }
+  $('#shop').hidden = false; $('#prompt').hidden = true;
+  $('#prev').style.background = shop.studio ? `linear-gradient(${BGS[studioBg][0]},${BGS[studioBg][1]})` : '';
+  $('#prev').innerHTML = avatarSVG(outfit);
+  shop.studio ? renderStudio() : renderList();
+  $('#list').scrollTop = 0;
+}
+function closeShop() {
+  const b = buildings.find(b => b.shop === state.shop);
+  state.mode = 'city'; state.shop = null; $('#shop').hidden = true;
+  if (b) { P.x = b.x + BW / 2; P.y = b.y + BH + 56; }
+}
+function renderList() {
+  const shop = state.shop, list = $('#list'), st = list.scrollTop;
+  list.innerHTML = shop.sections.map(sec => {
+    const col = secColor[sec.id], cur = outfit[sec.slot];
+    let h = `<section class="sec"><h3>${sec.title}</h3>`;
+    if (sec.palette) {
+      h += `<div class="sw-row">` + sec.palette.map(c => {
+        const on = sec.paletteOnly ? outfit.skin === c : col === c;
+        return `<button class="sw${on ? ' on' : ''}" style="background:${c}" data-act="color" data-sec="${sec.id}" data-color="${c}" aria-label="צבע"></button>`;
+      }).join('') + `</div>`;
+    }
+    if (!sec.paletteOnly) {
+      h += `<div class="grid">`;
+      if (!sec.noRemove) h += `<button class="card rm" data-act="remove" data-sec="${sec.id}"><span class="x"></span><b>הסרה</b></button>`;
+      for (const t of sec.types) {
+        const d = ITEMS[sec.slot][t];
+        h += `<button class="card${cur && cur.type === t ? ' on' : ''}" data-act="equip" data-sec="${sec.id}" data-type="${t}">${iconSVG(sec.slot, t, col || d.dc, outfit.skin)}<b>${d.name}</b></button>`;
+      }
+      h += `</div>`;
+    }
+    return h + `</section>`;
+  }).join('');
+  list.scrollTop = st;
+}
+function renderStudio() {
+  $('#list').innerHTML = `<section class="sec"><h3>רקע</h3><div class="sw-row">` +
+    BGS.map((g, i) => `<button class="sw${i === studioBg ? ' on' : ''}" style="background:linear-gradient(${g[0]},${g[1]})" data-act="bg" data-i="${i}" aria-label="רקע"></button>`).join('') +
+    `</div></section><section class="sec"><h3>צילום</h3><p>בחרי רקע ולחצי על הכפתור. התמונה של הלוק שלך תישמר כקובץ במחשב.</p><div class="row"><button class="btn big" data-act="photo">שמירת תמונה</button></div></section>`;
+}
+$('#list').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || !state.shop) return;
+  const act = b.dataset.act;
+  if (state.shop.studio) {
+    if (act === 'bg') { studioBg = +b.dataset.i; $('#prev').style.background = `linear-gradient(${BGS[studioBg][0]},${BGS[studioBg][1]})`; renderStudio(); }
+    if (act === 'photo') savePhoto();
+    return;
+  }
+  const sec = state.shop.sections.find(s => s.id === b.dataset.sec); if (!sec) return;
+  if (act === 'equip') equip(sec.slot, b.dataset.type, secColor[sec.id] || ITEMS[sec.slot][b.dataset.type].dc);
+  else if (act === 'remove') unequip(sec.slot);
+  else if (act === 'color') {
+    const c = b.dataset.color;
+    if (sec.paletteOnly) { outfit.skin = c; changed(); }
+    else { secColor[sec.id] = c; const cur = outfit[sec.slot]; if (cur && sec.types.includes(cur.type)) equip(sec.slot, cur.type, c); }
+  }
+  renderList();
+});
+$('#btnLeave').onclick = closeShop;
+
+function savePhoto() {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas'); c.width = 900; c.height = 1300;
+    const g = c.getContext('2d'), bg = g.createLinearGradient(0, 0, 0, 1300);
+    bg.addColorStop(0, BGS[studioBg][0]); bg.addColorStop(1, BGS[studioBg][1]);
+    g.fillStyle = bg; g.fillRect(0, 0, 900, 1300);
+    g.drawImage(img, 150, 90, 600, 1128);
+    c.toBlob(blob => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'הלוק-שלי.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  };
+  img.src = svgUrl(avatarSVG(outfit, {px: 4}));
+}
+
+// ---------- "הלוק שלי" ----------
+function renderLook() {
+  $('#lookPrev').innerHTML = avatarSVG(outfit);
+  const rows = [];
+  for (const slot in SLOTNAME) {
+    const it = outfit[slot]; if (!it) continue;
+    rows.push(`<div class="chip"><span>${SLOTNAME[slot]}: ${ITEMS[slot][it.type].name}</span>${slot === 'hair' ? '' : `<button class="btn" data-slot="${slot}">הסרה</button>`}</div>`);
+  }
+  $('#lookList').innerHTML = `<div class="chips">${rows.join('') || '<div class="chip">עוד לא לבשת כלום</div>'}</div><div class="row"><button class="btn" id="btnReset">איפוס הלוק</button></div>`;
+}
+$('#btnLook').onclick = () => { if (state.mode !== 'city') return; $('#look').hidden = false; renderLook(); };
+$('#btnLookClose').onclick = () => { $('#look').hidden = true; };
+$('#lookList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.slot) unequip(b.dataset.slot);
+  else if (b.id === 'btnReset' && confirm('לאפס את כל הלוק?')) { outfit = defaultOutfit(); changed(); }
+});
+
+// ---------- העיר ----------
+const BW = 320, BH = 220, GAP = 80, PITCH = 520, COLS = 6, ROWS = 3;
+const WW = GAP + COLS * (BW + GAP), WH = 60 + (ROWS - 1) * PITCH + BH + 300;
+const buildings = LAYOUT.map((k, i) => {
+  const r = Math.floor(i / COLS), c = i % COLS, shop = SHOPS.find(s => s.id === k) || null;
+  return {x: GAP + c * (BW + GAP), y: 60 + r * PITCH, shop, kind: shop ? 'shop' : k};
+});
+const solids = [];
+for (const b of buildings) {
+  if (b.kind === 'park') solids.push({x: b.x + BW / 2 - 40, y: b.y + 96, w: 80, h: 44});
+  else solids.push({x: b.x, y: b.y, w: BW, h: BH - 8});
+}
+const decor = [];
+for (const b of buildings) {
+  if (b.kind === 'park') {
+    [[b.x + 40, b.y + 70], [b.x + BW - 40, b.y + 70], [b.x + 50, b.y + 190], [b.x + BW - 50, b.y + 190]].forEach(p => decor.push({t: 'tree', x: p[0], y: p[1]}));
+  } else {
+    decor.push({t: 'tree', x: b.x + 34, y: b.y + BH + 66}, {t: 'tree', x: b.x + BW - 34, y: b.y + BH + 66});
+  }
+}
+const CARC = ['#ff5d9e','#48dbfb','#feca57','#a66cff','#7bd389','#ff9f43','#e63946','#ffffff'];
+const cars = [];
+for (let r = 0; r < ROWS; r++) {
+  const y0 = 60 + r * PITCH;
+  for (let k = 0; k < 3; k++) {
+    cars.push({x: Math.random() * WW, y: y0 + 338, dir: 1, sp: 70 + Math.random() * 60, col: CARC[(r * 3 + k) % 8]});
+    cars.push({x: Math.random() * WW, y: y0 + 412, dir: -1, sp: 70 + Math.random() * 60, col: CARC[(r * 3 + k + 4) % 8]});
+  }
+}
+
+const P = {x: WW / 2, y: 60 + BH + 70, speed: 230, path: [], autoEnter: false};
+const keys = new Set();
+let near = null, moving = false;
+
+function blocked(x, y) {
+  if (x < 24 || x > WW - 24 || y < 30 || y > WH - 20) return true;
+  const l = x - 9, r = x + 9, t = y - 5, bt = y + 3;
+  for (const s of solids) if (r > s.x && l < s.x + s.w && bt > s.y && t < s.y + s.h) return true;
+  return false;
+}
+function segClear(a, b) {
+  const n = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 8);
+  for (let i = 1; i <= n; i++) if (blocked(a.x + (b.x - a.x) * i / n, a.y + (b.y - a.y) * i / n)) return false;
+  return true;
+}
+function routeTo(to) {
+  if (segClear(P, to)) return [to];
+  const avenues = [];
+  for (let c = 0; c <= COLS; c++) avenues.push(c * (BW + GAP) + GAP / 2);
+  avenues.sort((a, b) => (Math.abs(P.x - a) + Math.abs(to.x - a)) - (Math.abs(P.x - b) + Math.abs(to.x - b)));
+  for (const ax of avenues) {
+    const p1 = {x: ax, y: P.y}, p2 = {x: ax, y: to.y};
+    if (segClear(P, p1) && segClear(p1, p2) && segClear(p2, to)) return [p1, p2, to];
+  }
+  return [to];
+}
+function walkTo(x, y, enter) {
+  P.autoEnter = !!enter;
+  P.path = routeTo({x, y});
+}
+
+function update(dt) {
+  if (state.mode !== 'city') { moving = false; return; }
+  let dx = (keys.has('ArrowRight') || keys.has('KeyD') ? 1 : 0) - (keys.has('ArrowLeft') || keys.has('KeyA') ? 1 : 0);
+  let dy = (keys.has('ArrowDown') || keys.has('KeyS') ? 1 : 0) - (keys.has('ArrowUp') || keys.has('KeyW') ? 1 : 0);
+  if (dx || dy) { P.path = []; P.autoEnter = false; }
+  else if (P.path.length) {
+    const t = P.path[0], tx = t.x - P.x, ty = t.y - P.y, d = Math.hypot(tx, ty);
+    if (d < 5) { P.path.shift(); if (!P.path.length && P.autoEnter && near) { P.autoEnter = false; openShop(near); return; } }
+    else { dx = tx / d; dy = ty / d; }
+  }
+  moving = false;
+  if (dx || dy) {
+    const l = Math.hypot(dx, dy); dx /= l; dy /= l;
+    const sp = P.speed * dt, ox = P.x, oy = P.y;
+    if (!blocked(P.x + dx * sp, P.y)) P.x += dx * sp;
+    if (!blocked(P.x, P.y + dy * sp)) P.y += dy * sp;
+    moving = Math.hypot(P.x - ox, P.y - oy) > 0.01;
+    if (!moving && P.path.length) { P.path = []; P.autoEnter = false; }
+  }
+  near = null;
+  for (const b of buildings) {
+    if (b.shop && Math.abs(P.x - (b.x + BW / 2)) < 46 && P.y >= b.y + BH - 4 && P.y <= b.y + BH + 44) near = b.shop;
+  }
+  const pr = $('#prompt');
+  if (near) { pr.hidden = false; pr.textContent = 'כניסה: ' + near.name; } else pr.hidden = true;
+  for (const c of cars) { c.x += c.dir * c.sp * dt; if (c.x > WW + 120) c.x = -120; if (c.x < -120) c.x = WW + 120; }
+}
+$('#prompt').onclick = () => { if (near && state.mode === 'city') openShop(near); };
+
+const KEYMAP = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'];
+addEventListener('keydown', e => {
+  if (!$('#look').hidden) { if (e.key === 'Escape') $('#look').hidden = true; return; }
+  if (state.mode === 'shop') { if (e.key === 'Escape') closeShop(); return; }
+  if (state.mode !== 'city') return;
+  if (KEYMAP.includes(e.code)) { keys.add(e.code); e.preventDefault(); }
+  if ((e.key === 'Enter' || e.key === ' ') && near) { openShop(near); e.preventDefault(); }
+});
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+
+// ---------- ציור ----------
+const cv = $('#world'), ctx = cv.getContext('2d');
+let VW = 0, VH = 0, S = 1, dpr = 1, camX = 0, camY = 0;
+function resize() {
+  dpr = window.devicePixelRatio || 1; VW = innerWidth; VH = innerHeight;
+  cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr);
+  S = clamp(Math.min(VH / 700, VW / 560), .45, 1.3);
+}
+addEventListener('resize', resize); resize();
+
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+function fillR(x, y, w, h, r, col, stroke) { rrect(x, y, w, h, r); ctx.fillStyle = col; ctx.fill(); if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke(); } }
+
+// הדמות בתוך העיר
+let sprite = null, spriteNext = null;
+function rebuildSprite() {
+  const img = new Image();
+  img.onload = () => { sprite = img; };
+  img.src = svgUrl(avatarSVG(outfit, {px: 2}));
+  spriteNext = img;
+}
+rebuildSprite();
+
+// סמלים בחלונות הראווה
+for (const shop of SHOPS) {
+  shop.icons = [];
+  if (shop.studio) continue;
+  const sec = shop.sections.find(s => !s.paletteOnly);
+  [0, 1].forEach(i => {
+    const t = sec.types[Math.min(i * 2, sec.types.length - 1)], d = ITEMS[sec.slot][t];
+    const crop = CROP[sec.slot].split(' ').map(Number);
+    const img = new Image(); img.src = svgUrl(iconSVG(sec.slot, t, (sec.palette && sec.palette[i * 4 + 1]) || d.dc, DEFAULT_SKIN, 3));
+    shop.icons.push({img, ar: crop[2] / crop[3]});
+  });
+}
+
+function drawGround() {
+  ctx.fillStyle = '#bfe3a8'; ctx.fillRect(-50, -50, WW + 100, WH + 100);
+  ctx.fillStyle = '#ece3d6'; ctx.fillRect(0, 0, WW, WH);
+  for (let r = 0; r < ROWS; r++) {
+    const y0 = 60 + r * PITCH;
+    ctx.fillStyle = '#dccfbd'; ctx.fillRect(0, y0 + BH - 10, WW, 90);                 // מדרכה מול החנויות
+    ctx.fillStyle = '#cfc6b8'; ctx.fillRect(0, y0 + 296, WW, 5);
+    ctx.fillStyle = '#5d6470'; ctx.fillRect(0, y0 + 301, WW, 148);                      // כביש
+    ctx.fillStyle = '#cfc6b8'; ctx.fillRect(0, y0 + 449, WW, 5);
+    ctx.save(); ctx.setLineDash([32, 24]); ctx.strokeStyle = '#f7d94c'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(0, y0 + 375); ctx.lineTo(WW, y0 + 375); ctx.stroke(); ctx.restore();
+    for (let c = 0; c <= COLS; c++) {                                                 // מעברי חצייה
+      const gx = c * (BW + GAP) + GAP / 2;
+      ctx.fillStyle = 'rgba(255,255,255,.85)';
+      for (let yy = y0 + 308; yy < y0 + 442; yy += 15) ctx.fillRect(gx - 30, yy, 60, 7);
+    }
+  }
+}
+function drawParks() {
+  for (const b of buildings) {
+    if (b.kind !== 'park') continue;
+    fillR(b.x, b.y + 10, BW, BH + 56, 20, '#9ed17f', '#7cb862');
+    ctx.fillStyle = '#eadcc0'; ctx.fillRect(b.x + BW / 2 - 18, b.y + 10, 36, BH + 56); ctx.fillRect(b.x, b.y + 128, BW, 30);
+    const cx = b.x + BW / 2, cy = b.y + 118;
+    ctx.fillStyle = '#b8c4cc'; ctx.beginPath(); ctx.ellipse(cx, cy, 44, 26, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#7fd3f2'; ctx.beginPath(); ctx.ellipse(cx, cy, 36, 20, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#d6eaf3'; ctx.beginPath(); ctx.ellipse(cx, cy - 10, 9, 14, 0, 0, 7); ctx.fill();
+    for (let i = 0; i < 12; i++) { ctx.fillStyle = ['#ff8fb8','#feca57','#ffffff','#b388eb'][i % 4]; ctx.beginPath(); ctx.arc(b.x + 20 + (i * 53) % 280, b.y + 30 + (i * 37) % 200, 4, 0, 7); ctx.fill(); }
+  }
+}
+function drawShopBuilding(b) {
+  const {x, y, shop} = b, th = shop.theme, cx = x + BW / 2;
+  ctx.fillStyle = 'rgba(0,0,0,.14)'; ctx.fillRect(x + 8, y + BH - 4, BW, 12);
+  fillR(x, y + 26, BW, BH - 26, 10, th.wall, 'rgba(0,0,0,.12)');
+  fillR(x - 6, y, BW + 12, 34, 10, th.roof);
+  // שלט
+  ctx.font = 'bold 26px "Segoe UI",Arial'; let fs = 26; const maxW = 232;
+  while (ctx.measureText(shop.name).width > maxW && fs > 14) { fs--; ctx.font = `bold ${fs}px "Segoe UI",Arial`; }
+  fillR(cx - 124, y + 40, 248, 38, 12, '#fff', th.roof);
+  ctx.fillStyle = th.roof; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(shop.name, cx, y + 60);
+  // חלונות
+  [x + 20, x + BW - 110].forEach((wx, i) => {
+    fillR(wx, y + 112, 90, 62, 8, '#dff3ff', 'rgba(0,0,0,.18)');
+    ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(wx + 8, y + 118, 14, 50);
+    const ic = shop.icons && shop.icons[i];
+    if (ic && ic.img.complete && ic.img.naturalWidth) {
+      const h = 52, w = Math.min(80, h * ic.ar), hh = w / ic.ar;
+      ctx.drawImage(ic.img, wx + 45 - w / 2, y + 143 - hh / 2, w, hh);
+    } else if (shop.studio) {
+      ctx.fillStyle = '#444'; ctx.fillRect(wx + 30, y + 128, 30, 24); ctx.fillStyle = '#9ad'; ctx.beginPath(); ctx.arc(wx + 45, y + 140, 8, 0, 7); ctx.fill();
+    }
+  });
+  // מרקיזה
+  for (let i = 0; i < BW / 20; i++) {
+    ctx.fillStyle = th.awn[i % 2]; ctx.fillRect(x + i * 20, y + 84, 20, 20);
+    ctx.beginPath(); ctx.arc(x + i * 20 + 10, y + 104, 10, 0, Math.PI); ctx.fill();
+  }
+  // דלת
+  fillR(cx - 26, y + BH - 78, 52, 78, 6, sh(th.roof, -10), 'rgba(0,0,0,.25)');
+  fillR(cx - 18, y + BH - 68, 36, 40, 4, '#cfeaf7');
+  ctx.fillStyle = '#f6c744'; ctx.beginPath(); ctx.arc(cx + 15, y + BH - 30, 3.5, 0, 7); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.fillRect(cx - 26, y + BH - 4, 52, 4);
+}
+function drawHouse(b) {
+  const {x, y} = b, cx = x + BW / 2, wall = b.kind === 'house1' ? '#ffe9c9' : '#d9ecff', roof = b.kind === 'house1' ? '#c0583b' : '#7b6ab8';
+  ctx.fillStyle = 'rgba(0,0,0,.14)'; ctx.fillRect(x + 8, y + BH - 4, BW, 12);
+  fillR(x + 10, y + 60, BW - 20, BH - 60, 8, wall, 'rgba(0,0,0,.12)');
+  ctx.fillStyle = roof; ctx.beginPath(); ctx.moveTo(x - 4, y + 72); ctx.lineTo(cx, y - 8); ctx.lineTo(x + BW + 4, y + 72); ctx.closePath(); ctx.fill();
+  [x + 40, x + BW - 100].forEach(wx => { fillR(wx, y + 100, 60, 52, 6, '#dff3ff', '#fff'); ctx.fillStyle = '#fff'; ctx.fillRect(wx + 28, y + 100, 4, 52); ctx.fillRect(wx, y + 124, 60, 4); });
+  fillR(cx - 22, y + BH - 72, 44, 72, 6, '#8d5a3b'); ctx.fillStyle = '#f6c744'; ctx.beginPath(); ctx.arc(cx + 12, y + BH - 34, 3.5, 0, 7); ctx.fill();
+}
+function drawTree(t) {
+  ctx.fillStyle = 'rgba(0,0,0,.14)'; ctx.beginPath(); ctx.ellipse(t.x, t.y, 22, 8, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#8d6e63'; ctx.fillRect(t.x - 4, t.y - 26, 8, 26);
+  ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.arc(t.x, t.y - 46, 22, 0, 7); ctx.fill();
+  ctx.fillStyle = '#66bb6a'; ctx.beginPath(); ctx.arc(t.x - 7, t.y - 53, 11, 0, 7); ctx.fill();
+}
+function drawCar(c) {
+  ctx.save(); ctx.translate(c.x, c.y); if (c.dir < 0) ctx.scale(-1, 1);
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(0, 14, 46, 8, 0, 0, 7); ctx.fill();
+  fillR(-44, -16, 88, 30, 10, c.col, 'rgba(0,0,0,.25)');
+  fillR(-22, -30, 44, 18, 8, sh(c.col, 20), 'rgba(0,0,0,.2)');
+  ctx.fillStyle = '#bfe6ff'; ctx.fillRect(-17, -27, 15, 11); ctx.fillRect(2, -27, 15, 11);
+  ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(-26, 13, 7, 0, 7); ctx.arc(26, 13, 7, 0, 7); ctx.fill();
+  ctx.fillStyle = '#fff3a0'; ctx.fillRect(38, -8, 6, 6);
+  ctx.restore();
+}
+function drawPlayer(t) {
+  const h = 66, w = h * 200 / 376;
+  ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(P.x, P.y, 15, 6, 0, 0, 7); ctx.fill();
+  if (!sprite) return;
+  const bob = moving ? Math.abs(Math.sin(t * .014)) * 3 : 0, tilt = moving ? Math.sin(t * .014) * .05 : 0;
+  ctx.save(); ctx.translate(P.x, P.y - bob); ctx.rotate(tilt);
+  ctx.drawImage(sprite, -w / 2, -h * 357 / 376, w, h); ctx.restore();
+}
+
+function draw(t) {
+  const vw = VW / S, vh = VH / S;
+  camX = vw >= WW ? (WW - vw) / 2 : clamp(P.x - vw / 2, 0, WW - vw);
+  camY = vh >= WH ? (WH - vh) / 2 : clamp(P.y - vh * .55, 0, WH - vh);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#bfe3a8'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.setTransform(dpr * S, 0, 0, dpr * S, -camX * dpr * S, -camY * dpr * S);
+  drawGround(); drawParks();
+  for (const c of cars) drawCar(c);
+  const items = [];
+  for (const b of buildings) if (b.kind !== 'park') items.push({y: b.y + BH, f: () => b.shop ? drawShopBuilding(b) : drawHouse(b)});
+  for (const d of decor) items.push({y: d.y, f: () => drawTree(d)});
+  items.push({y: P.y, f: () => drawPlayer(t)});
+  items.sort((a, b) => a.y - b.y);
+  for (const it of items) it.f();
+}
+
+// ---------- שליטה בלחיצה ובמגע ----------
+let down = false;
+function worldPoint(e) { return {x: e.clientX / S + camX, y: e.clientY / S + camY}; }
+function clickTarget(e, enter) {
+  if (state.mode !== 'city') return;
+  const p = worldPoint(e);
+  for (const b of buildings) {
+    if (p.x > b.x && p.x < b.x + BW && p.y > b.y && p.y < b.y + BH) {
+      if (b.shop && enter) { walkTo(b.x + BW / 2, b.y + BH + 18, true); return; }
+      walkTo(b.x + BW / 2, b.y + BH + 18, false); return;
+    }
+  }
+  walkTo(p.x, p.y, false);
+}
+cv.addEventListener('pointerdown', e => { down = true; clickTarget(e, true); $('#hint').style.opacity = 0; });
+cv.addEventListener('pointermove', e => { if (down && e.pointerType !== 'mouse' || (down && e.buttons)) clickTarget(e, false); });
+addEventListener('pointerup', () => { down = false; });
+setTimeout(() => { $('#hint').style.opacity = 0; }, 14000);
+
+// ---------- תחרות האופנה ----------
+const ROUND_SECONDS = 360;
+// want = כמה כל סגנון חשוב לנושא. הסגנונות: casual sport elegant summer cozy cute party
+const THEMES = [
+  {id:'summer', name:'מסיבת קיץ', want:{summer:3, party:2, cute:1}, dressy:true, tip:'נסי בגדים קלילים וקיציים, כמו שמלת קיץ, סנדלים וכובע שמש.'},
+  {id:'gala', name:'ערב חגיגי', want:{elegant:3, party:2}, dressy:true, tip:'נסי שמלה מכובדת, עקבים, תכשיטים ואיפור.'},
+  {id:'park', name:'יום בפארק', want:{casual:3, sport:2, summer:1}, dressy:false, tip:'נסי לוק נוח: חולצה, מכנסיים, סניקרס ותיק קטן.'},
+  {id:'winter', name:'יום חורפי וחמים', want:{cozy:3, casual:2}, dressy:false, tip:'נסי בגדים חמים כמו קפוצ׳ון, מגפיים, כובע צמר וצעיף.'},
+  {id:'princess', name:'נשף נסיכות', want:{elegant:3, cute:2, party:1}, dressy:true, tip:'נסי שמלת נסיכה או שמלת ערב, כתר ותכשיטים עדינים.'},
+  {id:'sporty', name:'יום ספורט', want:{sport:3, casual:2}, dressy:false, tip:'נסי טייץ או מכנסי ג׳וגר, סניקרס, תרמיל וכובע מצחייה.'},
+];
+const TAGS = {
+'top.tee':'casual summer','top.tank':'summer sport','top.crop':'summer cute','top.long':'casual cozy','top.hoodie':'cozy sport casual','top.shirt':'elegant casual','top.stripes':'casual cute','top.hearttee':'cute casual','top.startee':'cute party',
+'bottom.jeans':'casual cozy','bottom.shorts':'summer sport casual','bottom.miniskirt':'summer cute party','bottom.longskirt':'elegant cozy','bottom.pleated':'cute elegant','bottom.leggings':'sport cozy','bottom.joggers':'sport cozy casual',
+'dress.mini':'party summer','dress.strapless':'summer party','dress.summer':'summer cute','dress.sweaterd':'cozy casual','dress.gown':'elegant party','dress.ball':'elegant cute',
+'shoes.sneakers':'casual sport','shoes.hightop':'sport cute','shoes.boots':'cozy casual','shoes.heels':'elegant party','shoes.sandals':'summer casual','shoes.flats':'cute elegant',
+'bag.handbag':'elegant casual','bag.tote':'casual summer','bag.clutch':'elegant party','bag.shoulder':'casual cute','bag.cross':'casual sport','bag.backpack':'sport casual',
+'hat.cap':'sport casual summer','hat.beanie':'cozy casual','hat.sunhat':'summer','hat.bow':'cute','hat.crown':'elegant party cute','hat.ears':'cute party','hat.beret':'elegant cozy',
+'glasses.round':'casual cute','glasses.square':'casual','glasses.sun':'summer party','glasses.cat':'elegant party','glasses.heart':'cute summer party',
+'neck.chain':'casual party','neck.pearls':'elegant','neck.choker':'party','neck.pendant':'cute elegant','neck.scarf':'cozy',
+'ears.studs':'casual elegant','ears.hoops':'party summer','ears.drops':'elegant party','ears.stars':'cute party','ears.pearl':'elegant',
+'wrist.bangle':'casual party','wrist.beads':'summer cute','wrist.watch':'sport casual','wrist.cuff':'party elegant',
+'hair.long':'elegant casual','hair.bangs':'cute casual','hair.bob':'casual elegant','hair.pixie':'sport casual','hair.pony':'sport casual summer','hair.bun':'elegant sport','hair.buns':'cute party','hair.curly':'party summer','hair.braids':'cute summer sport',
+'lips.lipstick':'elegant party','lips.gloss':'cute summer casual','eyes.shadow':'party elegant','eyes.glitter':'party cute','eyes.liner':'elegant party','cheeks.blush':'cute summer','cheeks.freckles':'casual summer','cheeks.hearts':'cute party',
+'hand.coffee':'cozy casual','hand.icedcoffee':'summer','hand.boba':'cute summer','hand.milkshake':'summer cute','hand.cake':'party cute','hand.cupcake':'party cute','hand.cookie':'cozy','hand.croissant':'cozy casual','hand.donut':'cute casual','hand.baguette':'casual','hand.pizza':'casual party','hand.burger':'casual','hand.fries':'casual','hand.hotdog':'casual','hand.popcorn':'casual party','hand.apple':'sport casual','hand.banana':'sport','hand.strawberry':'summer cute','hand.watermelon':'summer','hand.grapes':'elegant summer','hand.orange':'summer sport','hand.chips':'casual','hand.water':'sport','hand.soda':'casual summer','hand.icecream':'summer cute','hand.popsicle':'summer','hand.lollipop':'cute','hand.cotton':'cute party'};
+const JUDGES = [
+  {name:'ליאת', role:'סטייליסטית', w:[.55, .2, .25]},
+  {name:'מיכל', role:'מעצבת אקססוריז', w:[.3, .4, .3]},
+  {name:'נועה', role:'מומחית צבע', w:[.3, .2, .5]},
+];
+const NAMES = ['דנה','יעל','שירה','מאיה','רוני','תמר','לילך','ענת','הדר','גל','אורי','טל'];
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function tagsOf(slot, id) { return (TAGS[slot + '.' + id] || '').split(' ').filter(Boolean); }
+function fitItem(slot, id, theme) { let s = 0; for (const t of tagsOf(slot, id)) s += theme.want[t] || 0; return Math.min(1, s / 4); }
+function hslOf(hex) {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let s = 0, h = 0;
+  if (mx !== mn) {
+    const d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60;
+  }
+  return [h, s, l];
+}
+const isNeutral = hex => { const [, s, l] = hslOf(hex); return s < .22 || l < .14 || l > .9; };
+const hueDist = (a, b) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d; };
+function colorScore(o) {
+  const cols = [];
+  for (const s of ['top', 'bottom', 'dress', 'shoes', 'bag', 'hat']) { const it = o[s]; if (it) cols.push(it.color || ITEMS[s][it.type].dc || '#888888'); }
+  if (!cols.length) return 3;
+  const hues = [];
+  for (const c of cols) { if (isNeutral(c)) continue; const h = hslOf(c)[0]; if (!hues.some(x => hueDist(x, h) < 35)) hues.push(h); }
+  const n = hues.length;
+  if (n === 0) return 7.5;
+  if (n === 1) return 9.3;
+  if (n === 2) { const d = hueDist(hues[0], hues[1]); return (d < 75 || d > 150) ? 8.8 : 7.2; }
+  if (n === 3) return 6.2;
+  if (n === 4) return 4.2;
+  return 2.4;
+}
+function judgeParts(o, theme) {
+  const fit = s => o[s] ? fitItem(s, o[s].type, theme) : 0;
+  const core = o.dress ? [['dress', 2]] : [['top', 1.5], ['bottom', 1.5]]; core.push(['shoes', 1.5]);
+  let sum = 0, w = 0;
+  for (const [s, wt] of core) { sum += fit(s) * wt; w += wt; }
+  for (const [s, wt] of [['bag',1],['hat',1],['glasses',1],['neck',1],['ears',1],['wrist',1],['hand',1],['lips',.5],['eyes',.5],['cheeks',.5],['hair',.5]]) if (o[s]) { sum += fit(s) * wt; w += wt; }
+  let c = 0;
+  if (o.dress || (o.top && o.bottom)) c += 4; else if (o.top || o.bottom) c += 1.5;
+  if (o.shoes) c += 2; if (o.bag) c += .8; if (o.hat || o.glasses) c += .8;
+  c += ['neck', 'ears', 'wrist'].filter(s => o[s]).length * .4;
+  c += ['lips', 'eyes', 'cheeks'].filter(s => o[s]).length * .4;
+  return {theme: clamp(10 * sum / w * 1.25, 0, 10), comp: clamp(c, 0, 10), color: colorScore(o)};
+}
+function scoreLook(look, theme) {
+  const p = judgeParts(look.outfit, theme); look.parts = p;
+  look.judges = JUDGES.map(j => clamp(j.w[0] * p.theme + j.w[1] * p.comp + j.w[2] * p.color + (Math.random() - .5) * 1.2, 0, 10));
+  look.total = look.judges.reduce((a, b) => a + b, 0) / 3;
+}
+function feedback(look, theme) {
+  const p = look.parts, o = look.outfit, L = [];
+  if (p.theme >= 7.5) L.push(`הלוק התאים מאוד לנושא "${theme.name}".`);
+  else if (p.theme < 5.5) L.push(`הלוק לא ממש התאים לנושא "${theme.name}". ${theme.tip}`);
+  if (!(o.dress || (o.top && o.bottom))) L.push('חסר לוק בסיסי: חולצה ומכנסיים, או שמלה.');
+  if (!o.shoes) L.push('שכחת נעליים.');
+  else if (p.comp < 6.5) L.push('אפשר להוסיף עוד אקססוריז, תכשיטים ואיפור.');
+  if (p.color >= 8.5) L.push('שילוב הצבעים יפה ומאוזן.');
+  else if (p.color < 5.5) L.push('יש יותר מדי צבעים שונים. נסי להישאר עם שניים או שלושה.');
+  if (!L.length) L.push('לוק טוב. כמה שינויים קטנים ויהיה מושלם.');
+  return L.slice(0, 4);
+}
+function makeRival(theme, skill) {
+  const chroma = CL.filter(c => !isNeutral(c)), neutrals = CL.filter(isNeutral);
+  const c1 = rnd(chroma), c2 = Math.random() < .5 ? rnd(neutrals) : rnd(chroma);
+  const col = () => Math.random() < skill ? rnd([c1, c1, c2, rnd(neutrals)]) : rnd(CL);
+  const choose = slot => {
+    const ids = Object.keys(ITEMS[slot]), w = ids.map(id => 1 + skill * 8 * fitItem(slot, id, theme));
+    let r = Math.random() * w.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < ids.length; i++) { r -= w[i]; if (r <= 0) return ids[i]; }
+    return ids[0];
+  };
+  const o = {skin: rnd(SKINC)};
+  const put = (slot, p, palette) => {
+    if (Math.random() >= p) return;
+    const t = choose(slot), d = ITEMS[slot][t];
+    o[slot] = {type: t, color: slot === 'hand' ? d.dc : (palette ? rnd(palette) : col())};
+  };
+  put('hair', 1, HAIRC);
+  if (Math.random() < (theme.dressy ? .6 : .25)) put('dress', 1); else { put('top', .97); put('bottom', .97); }
+  put('shoes', .55 + skill * .45);
+  put('bag', .3 + .5 * skill); put('hat', .1 + .4 * skill); put('glasses', .15 + .3 * skill);
+  put('neck', .2 + .4 * skill, METAL); put('ears', .3 + .5 * skill, METAL); put('wrist', .15 + .3 * skill, METAL);
+  put('lips', .3 + .5 * skill, LIPC); put('eyes', .2 + .5 * skill, EYEC); put('cheeks', .2 + .4 * skill, CHEEKC);
+  put('hand', .2 + .2 * skill);
+  return o;
+}
+
+// --- שעון וסיבובים ---
+const round = {theme: null, left: ROUND_SECONDS, running: false, last: -1};
+let toastT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3500); }
+function updateHud(force) {
+  const s = Math.max(0, Math.ceil(round.left));
+  if (!force && s === round.last) return; round.last = s;
+  $('#hudTheme').textContent = round.theme ? round.theme.name : '';
+  $('#hudTime').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  $('#hudMid').classList.toggle('warn', round.running && s <= 60);
+}
+function tickRound(dt) {
+  if (!round.running) return;
+  round.left -= dt; updateHud();
+  if (round.left <= 0) finishRound('time');
+}
+// כשהזמן נגמר או כשלוחצים "לתחרות": כולן מסיימות להתלבש והתחרות מתחילה מיד
+async function finishRound(reason) {
+  if (!round.running || state.mode === 'finishing' || state.mode === 'stage') return;
+  round.running = false;
+  if (state.mode === 'shop') closeShop();
+  state.mode = 'finishing'; keys.clear(); P.path = []; near = null;
+  ['#shop', '#look', '#prompt'].forEach(s => { $(s).hidden = true; });
+  $('#bannerText').textContent = reason === 'time' ? 'נגמר הזמן! כולן סיימו להתלבש' : 'כולן סיימו להתלבש! התחרות מתחילה';
+  $('#banner').hidden = false;
+  await sleep(2200);
+  $('#banner').hidden = true;
+  runCompetition();
+}
+function newRound() {
+  let t; do { t = rnd(THEMES); } while (t === round.theme);
+  round.theme = t; round.left = ROUND_SECONDS; round.running = false;
+  state.mode = 'intro'; keys.clear(); P.path = []; near = null; $('#prompt').hidden = true;
+  $('#introTheme').textContent = t.name; $('#introTip').textContent = t.tip; $('#intro').hidden = false;
+  updateHud(true);
+}
+$('#btnStart').onclick = () => {
+  $('#intro').hidden = true; outfit = defaultOutfit(); changed();
+  P.x = WW / 2; P.y = 60 + BH + 70; P.path = [];
+  round.running = true; state.mode = 'city'; updateHud(true);
+  const h = $('#hint'); h.style.opacity = 1; setTimeout(() => { h.style.opacity = 0; }, 12000);
+};
+$('#btnFinish').onclick = () => { if (state.mode === 'city') finishRound('button'); };
+
+// --- הבמה ---
+let curLook = null, curDone = [], nextResolve = null;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const waitNext = () => new Promise(r => { nextResolve = r; });
+function starSVG(frac) {
+  const id = 'sg' + (++uid), p = (frac * 100).toFixed(0) + '%';
+  return `<svg viewBox="0 0 24 24" width="38" height="38"><defs><linearGradient id="${id}" x1="1" x2="0" y1="0" y2="0"><stop offset="${p}" stop-color="#ffd166"/><stop offset="${p}" stop-color="#ffffff" stop-opacity=".22"/></linearGradient></defs><polygon points="${star(12, 12.6, 11, 4.8)}" fill="url(#${id})" stroke="#ffd166" stroke-width="1" stroke-linejoin="round"/></svg>`;
+}
+const starsRow = v => [0, 1, 2, 3, 4].map(i => starSVG(clamp(v - i, 0, 1))).join('');
+const fin = l => l.me ? (l.total / 2).toFixed(1) : String(l.stars);
+
+function showLook(look, n, total, done) {
+  let side;
+  if (look.me) {
+    side = `<h2>הלוק שלך</h2><p>את לא מדרגת את עצמך. שלוש השופטות מדרגות את הלוק שלך.</p>
+      <div class="jrow">${JUDGES.map((j, i) => `<div class="judge"><div class="jn">${j.name}</div><div class="jr">${j.role}</div><div class="js${i < n ? ' show' : ''}">${i < n ? look.judges[i].toFixed(1) : '?'}</div></div>`).join('')}</div>
+      <div class="tot">${total ? `הציון מהשופטות: <b>${(look.total / 2).toFixed(1)}</b> כוכבים<div class="strow">${starsRow(look.total / 2)}</div>` : 'השופטות מתלבטות...'}</div>
+      ${total ? '<button class="btn big" data-next="1">הבאה</button>' : ''}`;
+  } else {
+    const cur = look.stars;
+    side = `<h2>המתחרה: ${look.name}</h2><p>כמה כוכבים את נותנת ללוק הזה?</p>
+      <div class="strow">${[1, 2, 3, 4, 5].map(i => `<button class="stbtn" data-star="${i}" aria-label="${i} כוכבים">${starSVG(cur != null && i <= cur ? 1 : 0)}</button>`).join('')}</div>
+      <div><button class="btn" data-star="0">בלי כוכבים</button></div>
+      <div class="tot">${cur != null ? `נתת <b>${cur}</b> כוכבים` : ''}</div>
+      ${cur != null ? '<button class="btn big" data-next="1">הבאה</button>' : ''}`;
+  }
+  $('#stageBody').innerHTML = `<div class="stg-main"><div class="stg-av">${avatarSVG(look.outfit)}</div><div class="stg-side">${side}
+    <div class="mini">${done.map(l => `<span>${l.me ? 'את' : l.name}: ${fin(l)}</span>`).join('')}</div></div></div>`;
+}
+async function runCompetition() {
+  if (state.mode === 'stage') return;
+  const theme = round.theme; state.mode = 'stage'; keys.clear(); P.path = [];
+  ['#shop', '#look', '#prompt'].forEach(s => { $(s).hidden = true; });
+  $('#stage').hidden = false; $('#btnSkip').hidden = true; $('#stgTitle').textContent = 'תחרות האופנה: ' + theme.name;
+  const skills = [.85, .72, .55, .4, .28].map(s => clamp(s + (Math.random() - .5) * .12, .15, .97));
+  const names = shuffle(NAMES).slice(0, 5);
+  const looks = [{name: 'את', me: true, outfit: JSON.parse(JSON.stringify(outfit))}, ...skills.map((s, i) => ({name: names[i], outfit: makeRival(theme, s)}))];
+  looks.forEach(l => scoreLook(l, theme));
+  curDone = [];
+  for (const look of shuffle(looks)) {
+    curLook = look;
+    if (look.me) {
+      showLook(look, 0, false, curDone); await sleep(1200);
+      for (let i = 1; i <= 3; i++) { showLook(look, i, false, curDone); await sleep(900); }
+      showLook(look, 3, true, curDone);
+    } else showLook(look, 0, false, curDone);
+    await waitNext();
+    curDone.push(look);
+  }
+  curLook = null;
+  showPodium(looks, theme);
+}
+function confetti() {
+  for (let i = 0; i < 70; i++) {
+    const e = document.createElement('i'); e.className = 'confetti';
+    e.style.left = Math.random() * 100 + 'vw'; e.style.background = rnd(['#ff5d9e', '#feca57', '#48dbfb', '#a66cff', '#7bd389', '#ff9f43']);
+    e.style.animationDuration = (2 + Math.random() * 2.5) + 's'; e.style.animationDelay = Math.random() * 1.2 + 's';
+    document.body.appendChild(e); setTimeout(() => e.remove(), 6500);
+  }
+}
+function showPodium(looks, theme) {
+  $('#btnSkip').hidden = true;
+  looks.forEach(l => { l.final = l.me ? l.total / 2 : l.stars; });
+  // בשוויון בכוכבים מכריע הציון הנסתר של השופטות
+  const sorted = looks.slice().sort((a, b) => (b.final - a.final) || (b.total - a.total)), rank = sorted.findIndex(l => l.me) + 1, me = sorted[rank - 1];
+  const col = (l, r) => `<div class="pcol p${r}"><div class="pav">${avatarSVG(l.outfit)}</div><div class="pname">${l.me ? 'את' : l.name}</div><div class="psc">${fin(l)} כוכבים</div><div class="pblock">${r}</div></div>`;
+  const win = rank <= 2;
+  const msg = rank === 1 ? 'מקום ראשון! את מנצחת בתחרות!' : rank === 2 ? 'מקום שני! כל הכבוד, עלית לפודיום!' : rank === 3 ? 'מקום שלישי. כמעט הגעת למקום שני!' : `מקום ${rank} מתוך 6. לא הפעם.`;
+  $('#stageBody').innerHTML = `<div class="pod">${col(sorted[1], 2)}${col(sorted[0], 1)}${col(sorted[2], 3)}</div>
+    <div class="result${win ? ' win' : ''}"><h2>${msg}</h2>
+    <div class="others">${sorted.slice(3).map((l, i) => `${i + 4}. ${l.me ? 'את' : l.name} (${fin(l)})`).join(' · ')}</div>
+    <div><b>מה אמרו השופטות על הלוק שלך:</b></div><ul>${feedback(me, theme).map(t => `<li>${t}</li>`).join('')}</ul>
+    <button class="btn big" id="btnNewRound">סיבוב חדש</button></div>`;
+  if (win) confetti();
+}
+$('#stageBody').addEventListener('click', e => {
+  if (e.target.id === 'btnNewRound') { $('#stage').hidden = true; newRound(); return; }
+  const st = e.target.closest('[data-star]');
+  if (st && curLook && !curLook.me) { curLook.stars = +st.dataset.star; showLook(curLook, 0, false, curDone); return; }
+  if (e.target.closest('[data-next]') && nextResolve) { const r = nextResolve; nextResolve = null; r(); }
+});
+
+// ---------- לולאה ----------
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  tickRound(dt); update(dt); draw(now);
+  requestAnimationFrame(frame);
+}
+newRound();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
