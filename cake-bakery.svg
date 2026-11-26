@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <rect width="400" height="260" fill="#ffe3ee"/>
+  <g fill="#ffc9dc"><circle cx="30" cy="30" r="5"/><circle cx="90" cy="70" r="5"/><circle cx="370" cy="40" r="5"/><circle cx="320" cy="90" r="5"/><circle cx="60" cy="130" r="5"/><circle cx="350" cy="150" r="5"/></g>
+  <!-- דלפק -->
+  <rect y="196" width="400" height="64" fill="#c98a4b"/>
+  <rect y="190" width="400" height="14" fill="#e0a96d" stroke="#8d5524" stroke-width="3"/>
+  <!-- צלחת -->
+  <ellipse cx="200" cy="190" rx="118" ry="22" fill="#fff" stroke="#e3d3cc" stroke-width="4"/>
+  <!-- עוגה: שכבת בצק -->
+  <path d="M110 110 V178 A90 22 0 0 0 290 178 V110 Z" fill="#8a5434" stroke="#4a2a1f" stroke-width="4"/>
+  <path d="M110 140 A90 22 0 0 0 290 140" fill="none" stroke="#fff3e6" stroke-width="8"/>
+  <!-- ציפוי עם טפטופים -->
+  <path d="M110 110 V128 q8 14 16 0 V122 q10 22 20 0 V130 q9 12 18 0 V124 q10 20 20 0 V132 q9 10 18 0 V124 q10 20 20 0 V128 q9 12 18 0 V122 q9 18 18 0 V110 Z" fill="#ff9ec7" stroke="#d6336c" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="200" cy="110" rx="90" ry="24" fill="#ffb3d1" stroke="#d6336c" stroke-width="4"/>
+  <!-- סוכריות -->
+  <g stroke-width="5" stroke-linecap="round"><path d="M150 104 l8 3" stroke="#4dabf7"/><path d="M240 112 l7 -4" stroke="#ffd43b"/><path d="M175 120 l6 4" stroke="#69db7c"/><path d="M262 104 l-6 4" stroke="#fff"/><path d="M135 114 l6 -3" stroke="#ffd43b"/></g>
+  <!-- נרות -->
+  <g stroke="#fff" stroke-width="2">
+    <rect x="166" y="66" width="10" height="40" rx="3" fill="#74c0fc"/>
+    <rect x="195" y="58" width="10" height="46" rx="3" fill="#ffd43b"/>
+    <rect x="224" y="66" width="10" height="40" rx="3" fill="#8ce99a"/>
+  </g>
+  <g fill="#ffb703"><ellipse cx="171" cy="56" rx="6" ry="10"/><ellipse cx="200" cy="48" rx="6" ry="10"/><ellipse cx="229" cy="56" rx="6" ry="10"/></g>
+  <!-- דובדבנים -->
+  <g><path d="M140 100 q4 -16 14 -18" stroke="#3a7d2c" stroke-width="3" fill="none"/><circle cx="140" cy="104" r="10" fill="#d90429" stroke="#8d0220" stroke-width="3"/></g>
+  <g><path d="M262 100 q4 -16 14 -18" stroke="#3a7d2c" stroke-width="3" fill="none"/><circle cx="262" cy="104" r="10" fill="#d90429" stroke="#8d0220" stroke-width="3"/></g>
+  <!-- כף ומטרפה -->
+  <g transform="translate(330 120) rotate(20)"><rect x="-5" y="-50" width="10" height="70" rx="5" fill="#c98a4b" stroke="#8d5524" stroke-width="3"/><ellipse cx="0" cy="34" rx="14" ry="20" fill="#c98a4b" stroke="#8d5524" stroke-width="3"/></g>
+  <g transform="translate(58 150)"><path d="M-22 0 L-16 34 H16 L22 0 Z" fill="#74c0fc" stroke="#1c7ed6" stroke-width="3"/><path d="M-26 2 q-4 -22 14 -22 q4 -16 12 -16 q8 0 12 16 q18 0 14 22 Z" fill="#fffaf3" stroke="#e3d3cc" stroke-width="3"/><circle cx="0" cy="-38" r="7" fill="#d90429"/></g>
+  <rect x="120" y="12" width="160" height="30" rx="15" fill="#d6336c"/>
+  <text x="200" y="33" text-anchor="middle" font-family="Arial" font-size="19" font-weight="700" fill="#fff">מאפיית העוגות</text>
+</svg>
