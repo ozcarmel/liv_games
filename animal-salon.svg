@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe0f0"/><stop offset="1" stop-color="#fff5fa"/></linearGradient>
+  </defs>
+  <rect width="400" height="260" fill="url(#s)"/>
+  <rect y="200" width="400" height="60" fill="#f3d4e6"/>
+  <!-- מראה -->
+  <rect x="22" y="30" width="70" height="110" rx="35" fill="#dff3ff" stroke="#7b3fb0" stroke-width="5"/>
+  <path d="M40 60 L70 40 M38 90 L74 66" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <!-- כיסא -->
+  <rect x="140" y="170" width="120" height="34" rx="12" fill="#e63946"/>
+  <rect x="190" y="200" width="20" height="26" fill="#777"/>
+  <ellipse cx="200" cy="228" rx="40" ry="8" fill="#555"/>
+  <!-- כלב מוכן -->
+  <g>
+    <circle cx="130" cy="120" r="9" fill="#a8703a"/>
+    <circle cx="200" cy="160" r="46" fill="#fff"/>
+    <g fill="#fff"><circle cx="162" cy="110" r="14"/><circle cx="238" cy="110" r="14"/><circle cx="170" cy="82" r="16"/><circle cx="230" cy="82" r="16"/><circle cx="200" cy="72" r="18"/></g>
+    <circle cx="200" cy="110" r="42" fill="#f6e3ee"/>
+    <ellipse cx="156" cy="112" rx="12" ry="24" fill="#f6e3ee" stroke="#d9b6c8" stroke-width="3" transform="rotate(18 156 112)"/>
+    <ellipse cx="244" cy="112" rx="12" ry="24" fill="#f6e3ee" stroke="#d9b6c8" stroke-width="3" transform="rotate(-18 244 112)"/>
+    <ellipse cx="200" cy="124" rx="17" ry="12" fill="#fff"/>
+    <circle cx="184" cy="105" r="5" fill="#222"/><circle cx="216" cy="105" r="5" fill="#222"/>
+    <ellipse cx="200" cy="118" rx="6" ry="4" fill="#222"/>
+    <path d="M192 128 Q200 135 208 128" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- סרט -->
+    <path d="M226 72 L248 60 L248 84Z M226 72 L204 60 L204 84Z" fill="#ff4f9a" stroke="#c2185b" stroke-width="3" transform="translate(6 -6) scale(.9)"/>
+  </g>
+  <!-- מספריים -->
+  <g transform="translate(300 90) rotate(25)" stroke="#555" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M0 0 L40 70 M40 0 L0 70"/><circle cx="-6" cy="82" r="12" stroke="#e63946"/><circle cx="46" cy="82" r="12" stroke="#e63946"/>
+  </g>
+  <!-- בועות וכוכבים -->
+  <g fill="#fff" stroke="#9fd3ff" stroke-width="3"><circle cx="318" cy="48" r="12"/><circle cx="346" cy="74" r="8"/><circle cx="296" cy="30" r="6"/></g>
+  <g fill="#ffd24d"><path d="M80 190 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4Z"/><path d="M340 180 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3Z"/></g>
+  <rect x="120" y="14" width="160" height="30" rx="15" fill="#7b3fb0"/>
+  <text x="200" y="35" text-anchor="middle" font-family="Arial" font-size="19" font-weight="700" fill="#fff">מספרת החיות</text>
+</svg>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>מספרת החיות</title>
+<style>
+:root{--pink:#ff8fc7;--pink2:#ffd6e7;--purple:#7b3fb0;--ink:#3b2a4d;--gold:#f6c744}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);min-height:100vh;padding-bottom:215px;user-select:none;-webkit-user-select:none;
+ background:repeating-linear-gradient(90deg,#ffe3f1 0 46px,#ffd3ea 46px 92px)}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 14px;background:var(--purple);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+header h1{margin:0;font-size:22px;flex:1;min-width:150px}
+header a{color:#fff;text-decoration:none;font-size:14px;background:rgba(255,255,255,.18);padding:5px 10px;border-radius:14px}
+.stat{background:#fff;color:var(--ink);border-radius:16px;padding:4px 12px;font-weight:700;font-size:17px;white-space:nowrap}
+.stat.bump{animation:bump .4s}
+@keyframes bump{50%{transform:scale(1.25);background:#fff3b0}}
+#sStreak{background:#ffedd0;display:none}
+#mute{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:14px;font-size:18px;padding:3px 10px;cursor:pointer}
+#salon{display:flex;gap:14px;padding:14px;align-items:flex-start;flex-wrap:wrap}
+#door{width:200px;flex:0 0 200px;background:linear-gradient(#b87a3c,#8a5a2c);border-radius:18px;padding:10px;color:#fff;text-align:center;box-shadow:0 5px 14px rgba(0,0,0,.25);min-height:380px}
+#door h3{margin:0 0 4px;font-size:16px}
+#door .doorin{background:#ffeccf;border-radius:12px;padding:6px;color:var(--ink);min-height:320px}
+#door svg{width:100%;height:190px;display:block;pointer-events:none}
+#door .wait{font-size:13px;margin-top:4px;color:#7a5230}
+.pat{height:10px;background:#e8d5bd;border-radius:6px;overflow:hidden;margin:4px 6px}
+.pat i{display:block;height:100%;width:100%;background:#3bb273;transition:width .4s linear,background .4s}
+#stations{flex:1;min-width:260px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.station{background:#fff;border:3px solid var(--pink);border-radius:20px;padding:8px;position:relative;min-height:450px;display:flex;flex-direction:column;align-items:center;box-shadow:0 5px 14px rgba(123,63,176,.18);background-image:radial-gradient(circle at 50% 100%,#ffe3f0 0,#fff 62%)}
+.station .nm{font-weight:700;font-size:15px;margin:2px 0;text-align:center}
+.vip{color:#b8860b}
+.vip::before{content:"👑 VIP · "}
+.chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;min-height:26px;margin-bottom:4px}
+.chip{font-size:12.5px;background:#f3e8ff;border:2px solid #d3b6f5;border-radius:12px;padding:1px 7px;white-space:nowrap}
+.chip.ok{background:#d9f7de;border-color:#5cc46e}
+.chip.ok::after{content:" ✓";color:#2a9d3f;font-weight:700}
+.chip.half{background:#fff3c4;border-color:#f0c040}
+.chip.new{animation:pulse .5s 4;border-color:#ff4f9a}
+@keyframes pulse{50%{transform:scale(1.25);background:#ffd6ea}}
+.animalBox{position:relative;width:100%;height:300px;touch-action:none;cursor:pointer;border-radius:14px}
+.animalBox svg{width:100%;height:100%;display:block;pointer-events:none;overflow:visible}
+.animalBox.enter svg{animation:enter .7s ease-out}
+.animalBox.leave svg{animation:leave .9s ease-in forwards}
+.animalBox.wiggle svg{animation:wig .3s}
+@keyframes enter{from{transform:translateX(160px);opacity:0}to{transform:none;opacity:1}}
+@keyframes leave{to{transform:translateX(-240px) rotate(-8deg);opacity:0}}
+@keyframes wig{25%{transform:rotate(-2.5deg) scale(1.02)}75%{transform:rotate(2.5deg) scale(1.02)}}
+.bobg{animation:bob 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes bob{50%{transform:translateY(-3px) scale(1.012,.99)}}
+.eyes{animation:blink 4s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.08)}}
+.wet{filter:brightness(.84) saturate(1.1)}
+.twinkle{animation:tw 1.2s infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes tw{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.15)}}
+.status{min-height:22px;font-size:12px;color:#7a5230;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.status span{background:#f1e4d3;border-radius:10px;padding:0 7px}
+button.done{margin-top:auto;background:#3bb273;color:#fff;border:0;border-radius:20px;font-size:17px;font-weight:700;padding:8px 22px;cursor:pointer;box-shadow:0 3px 0 #278a55}
+button.done:active{transform:translateY(2px);box-shadow:0 1px 0 #278a55}
+button.done:disabled{background:#bbb;box-shadow:none;cursor:default}
+.empty{margin:auto;text-align:center;color:#b88ac9;font-size:15px;position:absolute;top:40%;left:0;right:0}
+.empty .big{font-size:60px}
+.react{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#fff;border:3px solid var(--pink);border-radius:18px;padding:6px 12px;font-size:15px;font-weight:700;text-align:center;z-index:5;animation:pop .35s;width:92%}
+.react.mind{border-color:#ff4f9a;background:#fff0f7}
+@keyframes pop{from{transform:translateX(-50%) scale(.3);opacity:0}}
+.react .gain{color:#b8860b;font-size:20px}
+.locked-slot{border:3px dashed #c9a6e6;background:#faf3ff;cursor:pointer;justify-content:center;text-align:center;color:#7b3fb0;font-size:17px;font-weight:700}
+.locked-slot .big{font-size:56px}
+#bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:4px solid var(--purple);z-index:30;padding:6px 8px 8px;box-shadow:0 -4px 14px rgba(0,0,0,.15)}
+#hint{font-size:13px;text-align:center;color:#7a5a90;margin-bottom:4px}
+#tabs{display:flex;gap:6px;margin-bottom:6px;overflow-x:auto}
+#tabs button{border:2px solid #d3b6f5;background:#f6ecff;border-radius:14px;padding:4px 12px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--ink)}
+#tabs button.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+#tools{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.tool{flex:0 0 auto;width:84px;border:3px solid #e6d3f7;background:#fff;border-radius:14px;padding:4px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;font-family:inherit;color:var(--ink)}
+.tool .ic{font-size:30px;height:38px;display:flex;align-items:center}
+.tool .sw{display:block;width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #888}
+.tool .tn{font-size:12px;font-weight:700;text-align:center;line-height:1.1}
+.tool .pr{font-size:11px;color:#b8860b;font-weight:700}
+.tool.sel{border-color:var(--purple);background:#efe0ff;transform:translateY(-3px)}
+.tool.locked{opacity:.6;background:#f3f3f3}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#3b2a4d;color:#fff;padding:8px 18px;border-radius:20px;z-index:60;font-size:16px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+#toast.show{opacity:1}
+.fx{position:fixed;z-index:50;pointer-events:none;font-size:24px;animation:fx .9s ease-out forwards}
+@keyframes fx{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot,0deg));opacity:0}}
+.bit{position:fixed;z-index:50;pointer-events:none;width:11px;height:11px;border-radius:50%;animation:fx .9s ease-in forwards}
+.conf{border-radius:2px;width:9px;height:14px;animation-duration:1.5s}
+#intro{position:fixed;inset:0;background:rgba(59,42,77,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+#intro .box{background:#fff;border-radius:22px;padding:22px;max-width:440px;text-align:center;border:5px solid var(--pink)}
+#intro h2{margin:0 0 8px;color:var(--purple);font-size:28px}
+#intro p{margin:6px 0;font-size:17px;line-height:1.4}
+#intro button{margin-top:10px;background:var(--pink);color:#fff;border:0;border-radius:22px;font-size:22px;font-weight:700;padding:10px 30px;cursor:pointer;box-shadow:0 4px 0 #d95a9c}
+@media(max-width:560px){#door{width:100%;flex-basis:100%;min-height:0}#door .doorin{min-height:0}#door svg{height:150px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="rb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b6b"/><stop offset=".25" stop-color="#ffd24d"/><stop offset=".5" stop-color="#7ee08a"/><stop offset=".75" stop-color="#6ec1ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient>
+</defs></svg>
+
+<header>
+  <h1>✂️ מספרת החיות</h1>
+  <span class="stat" id="sStreak">🔥 0</span>
+  <span class="stat" id="sCoins">🪙 0</span>
+  <span class="stat" id="sStars">⭐ 0</span>
+  <span class="stat" id="sServed">🐾 0</span>
+  <button id="mute" title="צלילים">🔊</button>
+  <a href="index.html">← למשחקים</a>
+</header>
+
+<div id="salon">
+  <div id="door"><h3>🚪 הדלת</h3><div class="doorin" id="doorIn"></div></div>
+  <div id="stations"></div>
+</div>
+
+<div id="bar">
+  <div id="hint">בחרי כלי, ואז לחצי והחזיקי על החיה. כשהיא מוכנה לחצי "סיימתי".</div>
+  <div id="tabs"></div>
+  <div id="tools"></div>
+</div>
+<div id="toast"></div>
+
+<div id="intro"><div class="box">
+  <h2>🐶 מספרת החיות 🐱</h2>
+  <p>חיות מגיעות לדלת, וכל אחת מבקשת משהו אחר.</p>
+  <p>עשי לה בדיוק מה שביקשה. אם היא תאהב היא תשלם הרבה, ואם לא תקבלי רק קצת.</p>
+  <p>אל תתני לחיות לחכות יותר מדי, ושימי לב: לפעמים הן משנות את דעתן באמצע! 😜</p>
+  <p>עם הכסף קונים עוד <b>מקומות</b>, עוד <b>כלים</b>, ומגלים <b>חיות חדשות</b>!</p>
+  <button id="startBtn">מתחילים!</button>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+/* ---------- שמירה ---------- */
+let S={coins:30,owned:{},stations:1,served:0,stars:0,seen:{}};
+try{const r=JSON.parse(localStorage.getItem('animalSalon2')||'null');if(r&&typeof r==='object')S=Object.assign(S,r)}catch(e){}
+function save(){try{localStorage.setItem('animalSalon2',JSON.stringify(S))}catch(e){}}
+let streak=0;
+
+/* ---------- צלילים ---------- */
+let AC=null,muted=false;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,f2){const c=ac();if(!c||muted)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.1,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}
+function noise(d,v,hp){const c=ac();if(!c||muted)return;const n=Math.floor(c.sampleRate*d),b=c.createBuffer(1,n,c.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp||1000;const g=c.createGain(),t=c.currentTime;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}
+const later=(f,ms)=>setTimeout(f,ms);
+const SND={
+ snip(){noise(.07,.18,3500);tone(1500,.05,'square',.03)},
+ buzz(){tone(120+Math.random()*15,.15,'sawtooth',.05);noise(.1,.04,2500)},
+ splash(){noise(.18,.12,700)},
+ dry(){noise(.25,.08,400)},
+ pop(){tone(500+Math.random()*300,.1,'sine',.1,900)},
+ spark(){tone(1200,.1,'triangle',.07,1800)},
+ coin(){tone(988,.08,'square',.05);later(()=>tone(1318,.18,'square',.05),80)},
+ bell(){tone(880,.5,'sine',.1);later(()=>tone(660,.6,'sine',.1),220)},
+ cheer(){[523,659,784,1046,1318].forEach((f,i)=>later(()=>tone(f,.2,'triangle',.1),i*90))},
+ meh(){tone(400,.3,'triangle',.08,300)},
+ sad(){tone(300,.5,'triangle',.1,150)},
+ buy(){tone(660,.1,'square',.05);later(()=>tone(880,.1,'square',.05),90);later(()=>tone(1320,.2,'square',.05),180)},
+ no(){tone(180,.2,'sawtooth',.06)},
+ oops(){tone(900,.12,'square',.06,500);later(()=>tone(700,.15,'square',.06,400),130)}
+};
+function snd(n){try{(SND[n]||SND.pop)()}catch(e){}}
+const VOICE={
+ dog(){tone(380,.09,'square',.07,200);later(()=>tone(380,.1,'square',.07,200),140)},
+ cat(){tone(500,.35,'triangle',.1,900);later(()=>tone(900,.3,'triangle',.08,500),150)},
+ rabbit(){tone(1500,.07,'sine',.08,1900);later(()=>tone(1700,.07,'sine',.08),90)},
+ sheep(){tone(320,.45,'sawtooth',.05,250)},
+ panda(){tone(250,.25,'triangle',.1,180)},
+ hamster(){[2000,2200,2400].forEach((f,i)=>later(()=>tone(f,.05,'sine',.07),i*70))},
+ pig(){tone(160,.12,'sawtooth',.07,120);later(()=>tone(170,.14,'sawtooth',.07,110),160)},
+ fox(){tone(700,.14,'square',.05,1400)},
+ poodle(){tone(600,.08,'square',.05,400);later(()=>tone(600,.08,'square',.05,400),110)},
+ lion(){noise(.4,.08,150);tone(110,.5,'sawtooth',.08,70)}
+};
+function voice(a,force){const n=Date.now();if(!force&&(a.lv||0)>n)return;a.lv=n+(force?0:1500);try{VOICE[a.sp]()}catch(e){}}
+
+/* ---------- נתונים ---------- */
+const LEN_NAMES=["גזוז לגמרי","קצר מאוד","קצר","בינוני","ארוך"];
+const NAMES=["מוקי","בובי","לולו","פלפל","שוקו","נוני","טופי","גמבו","מיצי","פיצי","ג'וני","רוקי","לולה","מימי","סוכר","בלה","צ'יפס","דובי","קוקו","ניני"];
+const DYE_LIST=[
+ {id:'pink',name:'ורוד',c:'#ff8fc7',price:0},{id:'blue',name:'כחול',c:'#6ec1ff',price:0},
+ {id:'purple',name:'סגול',c:'#b58cff',price:15},{id:'green',name:'ירוק',c:'#7ee08a',price:15},
+ {id:'yellow',name:'צהוב',c:'#ffe066',price:20},{id:'orange',name:'כתום',c:'#ffab5e',price:20},
+ {id:'red',name:'אדום',c:'#ff6b6b',price:20},{id:'rainbow',name:'קשת',c:'url(#rb)',price:60,sw:'linear-gradient(135deg,#ff6b6b,#ffd24d,#7ee08a,#6ec1ff,#b58cff)'}
+];
+const DYES={};DYE_LIST.forEach(d=>DYES[d.id]=d);
+
+/* belly: צבע בטן, sclera: עיניים עם לבן */
+const SPECIES={
+ dog:{name:'כלב',fur:'#d9a066',belly:'#f6e1c6',ear:'floppy',earC:'#a8703a',muzzle:'#f6e1c6',nose:'#2b2b2b',patch:'#a8703a',tongue:1},
+ cat:{name:'חתול',fur:'#f0a04b',belly:'#fff0dc',ear:'point',earC:'#f0a04b',inner:'#ffc7d6',muzzle:'#fff0dc',nose:'#ff7aa2',whisk:1,stripes:1},
+ rabbit:{name:'ארנב',fur:'#f3f1f6',belly:'#fff',ear:'long',earC:'#f3f1f6',inner:'#ffc7d6',muzzle:'#ffffff',nose:'#ff7aa2',teeth:1},
+ sheep:{name:'כבשה',fur:'#fbfbfb',belly:'#fff',ear:'small',earC:'#4a4a4a',earFixed:1,sheep:1,nose:'#ff9db8',foot:'#4a4a4a',sclera:1},
+ panda:{name:'פנדה',fur:'#fafafa',belly:'#fff',ear:'round',earC:'#222',earFixed:1,patches:1,muzzle:'#ffffff',nose:'#222',foot:'#222',sclera:1},
+ hamster:{name:'אוגר',fur:'#e9c28e',belly:'#fff4e3',ear:'round',earC:'#e9c28e',inner:'#ffc7d6',muzzle:'#fff4e3',nose:'#ff7aa2',cheeks:1,teeth:1},
+ pig:{name:'חזרזיר',fur:'#ffb3c6',belly:'#ffd0dc',ear:'pigear',earC:'#ff93ad',nose:'#c2456f',snout:1},
+ fox:{name:'שועל',fur:'#ee7f2d',belly:'#fff3e3',ear:'foxear',earC:'#ee7f2d',nose:'#222',foxface:1},
+ poodle:{name:'פודל',fur:'#f6e3ee',belly:'#fff',ear:'curly',earC:'#f6e3ee',muzzle:'#ffffff',nose:'#2b2b2b',curly:1,topknot:1},
+ lion:{name:'אריה',fur:'#e8b34d',belly:'#f8dca0',ear:'round',earC:'#e8b34d',muzzle:'#f8dca0',nose:'#8a4b1d',mane:1,maneC:'#b8741f'}
+};
+const SP_ORDER=[['dog',0],['cat',0],['rabbit',0],['sheep',3],['panda',6],['hamster',9],['pig',12],['fox',16],['poodle',20],['lion',25]];
+const unlockedSpecies=()=>SP_ORDER.filter(([k,n])=>S.served>=n).map(x=>x[0]);
+
+/* אביזרים. hy = גובה קודקוד הראש */
+const ACC={
+ bow:{slot:'head',name:'סרט',icon:'🎀',price:0,draw:hy=>`<g transform="translate(166 ${hy+18})"><path d="M0 0 L-24 -14 L-24 14Z M0 0 L24 -14 L24 14Z" fill="#ff4f9a" stroke="#c2185b" stroke-width="2.5" stroke-linejoin="round"/><circle r="6" fill="#ff86bd" stroke="#c2185b" stroke-width="2.5"/></g>`},
+ partyhat:{slot:'head',name:'כובע מסיבה',icon:'🎉',price:20,draw:hy=>`<path d="M94 ${hy+14} L120 ${hy-44} L146 ${hy+14}Z" fill="#6ec1ff" stroke="#2f7fb8" stroke-width="3" stroke-linejoin="round"/><path d="M104 ${hy-8} L136 ${hy-8} M98 ${hy+4} L142 ${hy+4}" stroke="#fff" stroke-width="5"/><circle cx="120" cy="${hy-46}" r="8" fill="#ffd24d" stroke="#c9a000" stroke-width="2.5"/>`},
+ crown:{slot:'head',name:'כתר',icon:'👑',price:60,draw:hy=>`<path d="M90 ${hy+16} L94 ${hy-14} L107 ${hy+2} L120 ${hy-22} L133 ${hy+2} L146 ${hy-14} L150 ${hy+16}Z" fill="#ffd24d" stroke="#b8860b" stroke-width="3" stroke-linejoin="round"/><circle cx="120" cy="${hy+5}" r="4.5" fill="#e63946"/><circle cx="102" cy="${hy+8}" r="3.5" fill="#6ec1ff"/><circle cx="138" cy="${hy+8}" r="3.5" fill="#7ee08a"/>`},
+ flower:{slot:'head',name:'פרח',icon:'🌸',price:0,draw:hy=>`<g transform="translate(80 ${hy+22})">${[0,72,144,216,288].map(a=>`<circle cx="${(Math.cos(a*Math.PI/180)*10).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*10).toFixed(1)}" r="8" fill="#ff9ccf" stroke="#d94d97" stroke-width="2"/>`).join('')}<circle r="6" fill="#ffd24d" stroke="#c9a000" stroke-width="1.5"/></g>`},
+ tophat:{slot:'head',name:'כובע צילינדר',icon:'🎩',price:45,draw:hy=>`<rect x="96" y="${hy-30}" width="48" height="38" rx="4" fill="#2b2b2b"/><rect x="96" y="${hy-6}" width="48" height="8" fill="#e63946"/><ellipse cx="120" cy="${hy+9}" rx="42" ry="8" fill="#2b2b2b"/>`},
+ glasses:{slot:'eyes',name:'משקפיים',icon:'👓',price:25,draw:()=>`<g fill="rgba(180,230,255,.35)" stroke="#2b2b2b" stroke-width="4"><circle cx="95" cy="112" r="18"/><circle cx="145" cy="112" r="18"/></g><path d="M113 110 H127" stroke="#2b2b2b" stroke-width="4"/>`},
+ sunglasses:{slot:'eyes',name:'משקפי שמש',icon:'🕶️',price:35,draw:()=>`<rect x="74" y="98" width="38" height="25" rx="10" fill="#222"/><rect x="128" y="98" width="38" height="25" rx="10" fill="#222"/><path d="M112 104 H128" stroke="#222" stroke-width="4"/><path d="M82 104 l10 0" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`},
+ bowtie:{slot:'neck',name:'פפיון',icon:'👔',price:20,draw:()=>`<g transform="translate(120 170)"><path d="M0 0 L-22 -13 L-22 13Z M0 0 L22 -13 L22 13Z" fill="#e63946" stroke="#9b1c27" stroke-width="2.5" stroke-linejoin="round"/><circle r="6" fill="#ff7a85" stroke="#9b1c27" stroke-width="2.5"/></g>`},
+ necklace:{slot:'neck',name:'שרשרת',icon:'📿',price:40,draw:()=>`<path d="M86 164 Q120 202 154 164" fill="none" stroke="#ffd24d" stroke-width="3"/>${[0,.2,.4,.6,.8,1].map(t=>{const x=86+68*t,y=164+2*(1-t)*t*38;return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" fill="#fff" stroke="#c9b" stroke-width="2"/>`}).join('')}`},
+ scarf:{slot:'neck',name:'צעיף',icon:'🧣',price:30,draw:()=>`<path d="M84 166 Q120 192 156 166" stroke="#e63946" stroke-width="17" fill="none" stroke-linecap="round"/><path d="M98 174 Q120 186 142 174" stroke="#fff" stroke-width="3.5" fill="none" stroke-dasharray="7 7"/><rect x="140" y="172" width="17" height="38" rx="5" fill="#e63946" stroke="#b81c28" stroke-width="2" transform="rotate(-8 148 172)"/>`}
+};
+const STYLES={curly:'מסולסל',mohawk:'מוהוק',pompom:'פונפון',puff:'נפוח'};
+
+/* ---------- כלים ---------- */
+let toastT=0;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800)}
+const TABS=[['care','✂️ טיפוח'],['color','🎨 צבעים'],['style','💇 עיצוב'],['acc','🎀 אביזרים'],['magic','✨ קסם']];
+const TOOLS=[
+ {id:'pet',cat:'care',icon:'👋',name:'ללטף',hold:1,ms:500,snd:'spark',fx:'heart',apply:a=>true},
+ {id:'scissors',cat:'care',icon:'✂️',name:'מספריים',hold:1,ms:650,snd:'snip',fx:'cut',apply:a=>a.len>0&&(a.len--,true)},
+ {id:'clipper',cat:'care',icon:'💈',name:'מכונת גילוח',hold:1,ms:380,snd:'buzz',fx:'cut',apply:a=>a.len>0&&(a.len--,a.neat=false,true)},
+ {id:'comb',cat:'care',icon:'🧹',name:'מסרק',hold:1,ms:300,snd:'snip',fx:'spark',apply:a=>!a.neat&&(a.neat=true)},
+ {id:'tonic',cat:'care',icon:'🌱',name:'שיקוי צמיחה',hold:1,ms:700,snd:'pop',fx:'spark',apply:a=>a.len<4&&(a.len++,true)},
+ {id:'shampoo',cat:'care',icon:'🧴',name:'שמפו',hold:1,ms:400,snd:'splash',fx:'bubble',apply:a=>{if(a.foam&&!a.dirt)return false;a.dirt=false;a.foam=true;a.wet=true;return true}},
+ {id:'shower',cat:'care',icon:'🚿',name:'מקלחת',hold:1,ms:400,snd:'splash',fx:'drop',apply:a=>{if(a.foam||a.perfume||a.glitter||!a.wet){a.foam=false;a.perfume=false;a.glitter=false;a.wet=true;return true}return false}},
+ {id:'dryer',cat:'care',icon:'💨',name:'מייבש',hold:1,ms:500,snd:'dry',fx:'wind',apply:a=>{if(a.foam){toast('קודם צריך לשטוף את הקצף במקלחת 🚿');return false}if(!a.wet)return false;a.wet=false;return true}},
+ {id:'rinsecolor',cat:'color',icon:'🧼',name:'צבע טבעי',snd:'splash',fx:'bubble',apply:a=>a.dye&&(a.dye=null,true)},
+ ...DYE_LIST.map(d=>({id:'dye_'+d.id,cat:'color',swatch:d.sw||d.c,name:d.name,price:d.price,snd:'pop',fx:'spark',apply:a=>a.dye!==d.id&&(a.dye=d.id,true)})),
+ {id:'straight',cat:'style',icon:'📏',name:'החלקה',price:15,snd:'dry',fx:'wind',apply:a=>a.style&&(a.style=null,true)},
+ {id:'curler',cat:'style',icon:'🌀',name:'מסלסל',price:30,snd:'spark',fx:'spark',style:'curly',apply:a=>a.style!=='curly'&&(a.style='curly',true)},
+ {id:'mohawk',cat:'style',icon:'🦔',name:'מוהוק',price:40,snd:'spark',fx:'spark',style:'mohawk',apply:a=>a.style!=='mohawk'&&(a.style='mohawk',true)},
+ {id:'pompom',cat:'style',icon:'⚽',name:'פונפון',price:30,snd:'spark',fx:'spark',style:'pompom',apply:a=>a.style!=='pompom'&&(a.style='pompom',true)},
+ {id:'puff',cat:'style',icon:'🎈',name:'נפוח',price:35,snd:'spark',fx:'spark',style:'puff',apply:a=>a.style!=='puff'&&(a.style='puff',true)},
+ {id:'noacc',cat:'acc',icon:'🚫',name:'להסיר אביזרים',snd:'pop',fx:'spark',apply:a=>Object.keys(a.acc).length>0&&(a.acc={},true)},
+ ...Object.keys(ACC).map(k=>({id:'acc_'+k,cat:'acc',icon:ACC[k].icon,name:ACC[k].name,price:ACC[k].price,snd:'pop',fx:'spark',acc:k,apply:a=>a.acc[ACC[k].slot]!==k&&(a.acc[ACC[k].slot]=k,true)})),
+ {id:'perfume',cat:'magic',icon:'🌷',name:'בושם',price:20,snd:'spark',fx:'heart',apply:a=>!a.perfume&&(a.perfume=true)},
+ {id:'glitter',cat:'magic',icon:'✨',name:'נצנצים',price:35,snd:'spark',fx:'spark',apply:a=>!a.glitter&&(a.glitter=true)}
+];
+const TB={};TOOLS.forEach(t=>TB[t.id]=t);
+const owned=id=>!TB[id].price||!!S.owned[id];
+let selected='scissors',tab='care';
+
+function renderTools(){
+ $('#tabs').innerHTML=TABS.map(([k,n])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${n}</button>`).join('');
+ $('#tools').innerHTML=TOOLS.filter(t=>t.cat===tab).map(t=>{
+  const lk=!owned(t.id);
+  return `<button class="tool ${selected===t.id?'sel':''} ${lk?'locked':''}" data-id="${t.id}"><span class="ic">${t.swatch?`<i class="sw" style="background:${t.swatch}"></i>`:t.icon}</span><span class="tn">${t.name}</span>${lk?`<span class="pr">🔒 ${t.price}🪙</span>`:''}</button>`}).join('');
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;ac();tab=b.dataset.tab;renderTools()});
+$('#tools').addEventListener('click',e=>{
+ const b=e.target.closest('.tool');if(!b)return;ac();const t=TB[b.dataset.id];
+ if(!owned(t.id)){
+  if(S.coins>=t.price){S.coins-=t.price;S.owned[t.id]=1;save();snd('buy');toast('קנית: '+t.name+' 🎉');selected=t.id;updateStats()}
+  else{snd('no');toast('חסר לך עוד '+(t.price-S.coins)+' מטבעות 🪙')}
+ }else{selected=t.id;snd('pop')}
+ renderTools();
+});
+
+/* ---------- ציור חיה (סגנון חמוד) ---------- */
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shade(hex,amt){if(!/^#[0-9a-f]{6}$/i.test(hex))return '#8a6a8a';const n=parseInt(hex.slice(1),16),f=v=>Math.max(0,Math.min(255,Math.round(amt>0?v+(255-v)*amt:v*(1+amt))));return '#'+[f(n>>16),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+const gdef=(id,hex)=>`<radialGradient id="${id}" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="${shade(hex,.3)}"/><stop offset=".6" stop-color="${hex}"/><stop offset="1" stop-color="${shade(hex,-.13)}"/></radialGradient>`;
+const FN=(L,cx,cy,rx,ry)=>Math.max(10,Math.round(2*Math.PI*Math.sqrt((rx*rx+ry*ry)/2)/(12+L*3)));
+function furPath(cx,cy,rx,ry,L,sc,seed,messy){
+ if(L<=0)return `M${cx-rx} ${cy}A${rx} ${ry} 0 1 0 ${cx+rx} ${cy}A${rx} ${ry} 0 1 0 ${cx-rx} ${cy}Z`;
+ const rng=mulberry(seed),out=L*4.6*sc,amp=4+L*2.4*sc,n=FN(L,cx,cy,rx,ry),pts=[];
+ for(let i=0;i<n;i++){const t=i/n*6.2832,o=out*(1+(rng()-.5)*(messy?1:.12));pts.push([cx+Math.cos(t)*(rx+o),cy+Math.sin(t)*(ry+o)])}
+ let d=`M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+ for(let i=0;i<n;i++){const p=pts[(i+1)%n],t=(i+.5)/n*6.2832,k=messy?1.8*rng()+.4:1,mx=cx+Math.cos(t)*(rx+out+amp*k),my=cy+Math.sin(t)*(ry+out+amp*k);
+  d+=messy?`L${mx.toFixed(1)} ${my.toFixed(1)}L${p[0].toFixed(1)} ${p[1].toFixed(1)}`:`Q${mx.toFixed(1)} ${my.toFixed(1)} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`}
+ return d+'Z';
+}
+function curlRings(cx,cy,rx,ry,L,sc,stroke){
+ if(L<=0)return '';const out=L*4.6*sc,amp=4+L*2.4*sc,n=FN(L,cx,cy,rx,ry);let s='';
+ for(let i=0;i<n;i++){const t=(i+.5)/n*6.2832;s+=`<circle cx="${(cx+Math.cos(t)*(rx+out+amp*.3)).toFixed(1)}" cy="${(cy+Math.sin(t)*(ry+out+amp*.3)).toFixed(1)}" r="${(amp*.7).toFixed(1)}" fill="none" stroke="${stroke}" stroke-width="2.2" opacity=".55"/>`}
+ return s}
+function spots(cx,cy,rx,ry,seed,n,fn){let s='';const rng=mulberry(seed);for(let i=0;i<n;i++){const t=rng()*6.2832,f=.2+rng()*.7;s+=fn(cx+Math.cos(t)*rx*f,cy+Math.sin(t)*ry*f,rng)}return s}
+
+function curMood(a){return a.mood||((a.tickle||0)>Date.now()?'tickle':null)}
+
+function animalSVG(a){
+ const sp=SPECIES[a.sp],L=a.len,seed=a.seed,id=a.id,mood=curMood(a);
+ const dc=a.dye?DYES[a.dye].c:null,rainbow=a.dye==='rainbow';
+ const baseHex=(dc&&dc[0]==='#')?dc:sp.fur;
+ const furF=rainbow?'url(#rb)':`url(#fg${id})`;
+ const maneHex=dc&&dc[0]==='#'?dc:(sp.maneC||baseHex);
+ const maneF=rainbow?'url(#rb)':(sp.mane?`url(#fm${id})`:furF);
+ const headF=sp.mane?(rainbow?'url(#rb)':`url(#fh${id})`):furF;
+ const furD=shade(baseHex,-.3),maneD=shade(maneHex,-.3);
+ const hs=(sp.mane?1.45:1)*(a.style==='puff'?1.35:1)*(sp.sheep?1.15:1);
+ const curl=a.style==='curly'||sp.curly,messy=!a.neat;
+ const hy=Math.max(12,54-L*3.2*hs),eo=L*3*hs;
+ const ec=sp.earFixed?sp.earC:(dc||sp.earC);
+ const footF=sp.foot||furF;
+ const bellyC=rainbow?'#ffffff':shade(baseHex,.45);
+ const sclera=sp.sclera;
+ let s=`<defs>${gdef('fg'+id,baseHex)}${sp.mane?gdef('fm'+id,maneHex)+gdef('fh'+id,dc&&dc[0]==='#'?dc:sp.fur):''}</defs>`;
+ s+=`<ellipse cx="120" cy="262" rx="90" ry="15" fill="#ff9ccf" opacity=".45"/><ellipse cx="120" cy="262" rx="90" ry="15" fill="none" stroke="#e45aa8" stroke-width="3" opacity=".45"/>`;
+ s+=`<g class="bobg" style="animation-delay:-${Date.now()%2400}ms"><g class="${a.wet?'wet':''}">`;
+ // זנב
+ if(a.sp==='cat')s+=`<path d="M156 236 Q216 222 204 160" stroke="${furD}" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M156 236 Q216 222 204 160" stroke="${rainbow?'#ffd24d':baseHex}" stroke-width="14" fill="none" stroke-linecap="round"/>`;
+ else if(a.sp==='lion')s+=`<path d="M156 238 Q206 238 204 190" stroke="${furD}" stroke-width="12" fill="none" stroke-linecap="round"/><circle cx="204" cy="184" r="15" fill="${maneF}" stroke="${maneD}" stroke-width="3"/>`;
+ else if(a.sp==='fox')s+=`<g transform="rotate(-25 160 235)"><ellipse cx="190" cy="232" rx="34" ry="19" fill="${furF}" stroke="${furD}" stroke-width="3"/><ellipse cx="216" cy="232" rx="14" ry="15" fill="#fff" stroke="${furD}" stroke-width="2"/></g>`;
+ else if(a.sp==='pig')s+=`<path d="M158 236 q26 -8 16 -24 q-12 -10 -4 8" stroke="${furD}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+ else s+=`<circle cx="170" cy="236" r="${a.sp==='rabbit'||a.sp==='sheep'?17:13}" fill="${furF}" stroke="${furD}" stroke-width="3"/>`;
+ // רגליים
+ s+=`<ellipse cx="94" cy="244" rx="21" ry="13" fill="${footF}" stroke="${furD}" stroke-width="3"/><ellipse cx="146" cy="244" rx="21" ry="13" fill="${footF}" stroke="${furD}" stroke-width="3"/>`;
+ // גוף
+ s+=`<path d="${furPath(120,208,40,34,L,1,seed+1,messy)}" fill="${furF}" stroke="${furD}" stroke-width="3" stroke-linejoin="round"/>`;
+ if(curl)s+=curlRings(120,208,40,34,L,1,furD);
+ s+=`<ellipse cx="120" cy="216" rx="24" ry="19" fill="${bellyC}" opacity=".75"/>`;
+ // ידיים
+ s+=`<ellipse cx="82" cy="212" rx="12" ry="21" fill="${sp.patches?'#222':furF}" stroke="${furD}" stroke-width="3" transform="rotate(14 82 212)"/><ellipse cx="158" cy="212" rx="12" ry="21" fill="${sp.patches?'#222':furF}" stroke="${furD}" stroke-width="3" transform="rotate(-14 158 212)"/>`;
+ if(a.dirt)s+=spots(120,208,40,34,seed+3,6,(x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5+r()*6).toFixed(1)}" fill="#6b4524" opacity=".55"/>`);
+ if(a.foam)s+=spots(120,208,48,40,seed+4,9,(x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(8+r()*6).toFixed(1)}" fill="#fff" stroke="#bfe0ff" stroke-width="2"/>`);
+ // ראש
+ const haloF=sp.mane?maneF:furF,haloD=sp.mane?maneD:furD;
+ s+=`<path d="${furPath(120,108,60,54,L,hs,seed+5,messy)}" fill="${haloF}" stroke="${haloD}" stroke-width="3" stroke-linejoin="round"/>`;
+ if(curl)s+=curlRings(120,108,60,54,L,hs,haloD);
+ s+=`<ellipse cx="120" cy="108" rx="60" ry="54" fill="${headF}" ${L===0?`stroke="${furD}" stroke-width="3"`:''}/>`;
+ // אוזניים (מעל ההילה, מורמות לפי אורך הפרווה)
+ const inner=sp.inner||'#ffc7d6',es=`stroke="${shade(sp.earFixed?sp.earC:baseHex,-.3)}" stroke-width="3" stroke-linejoin="round"`;
+ let ears='';
+ if(sp.ear==='floppy')ears=`<ellipse cx="62" cy="108" rx="20" ry="38" fill="${ec}" ${es} transform="rotate(14 62 108)"/><ellipse cx="178" cy="108" rx="20" ry="38" fill="${ec}" ${es} transform="rotate(-14 178 108)"/>`;
+ else if(sp.ear==='curly')ears=`<path d="${furPath(58,112,16,32,2,1,seed+20,false)}" fill="${furF}" ${es}/><path d="${furPath(182,112,16,32,2,1,seed+21,false)}" fill="${furF}" ${es}/>`;
+ else if(sp.ear==='point')ears=`<path d="M62 84 L58 24 L108 58Z" fill="${ec}" ${es}/><path d="M178 84 L182 24 L132 58Z" fill="${ec}" ${es}/><path d="M69 68 L68 40 L92 58Z M171 68 L172 40 L148 58Z" fill="${inner}"/>`;
+ else if(sp.ear==='foxear')ears=`<path d="M60 86 L54 18 L110 58Z" fill="${ec}" ${es}/><path d="M180 86 L186 18 L130 58Z" fill="${ec}" ${es}/><path d="M68 70 L66 38 L92 58Z M172 70 L174 38 L148 58Z" fill="#3b2a2a"/>`;
+ else if(sp.ear==='pigear')ears=`<path d="M72 72 L50 38 L98 56Z" fill="${ec}" ${es}/><path d="M168 72 L190 38 L142 56Z" fill="${ec}" ${es}/>`;
+ else if(sp.ear==='long')ears=`<ellipse cx="88" cy="26" rx="17" ry="46" fill="${ec}" ${es} transform="rotate(-8 88 26)"/><ellipse cx="152" cy="26" rx="17" ry="46" fill="${ec}" ${es} transform="rotate(8 152 26)"/><ellipse cx="88" cy="30" rx="8" ry="32" fill="${inner}" transform="rotate(-8 88 30)"/><ellipse cx="152" cy="30" rx="8" ry="32" fill="${inner}" transform="rotate(8 152 30)"/>`;
+ else if(sp.ear==='round')ears=`<circle cx="72" cy="60" r="19" fill="${ec}" ${es}/><circle cx="168" cy="60" r="19" fill="${ec}" ${es}/>${sp.inner?`<circle cx="72" cy="60" r="10" fill="${inner}"/><circle cx="168" cy="60" r="10" fill="${inner}"/>`:''}`;
+ else if(sp.ear==='small')ears=`<ellipse cx="60" cy="96" rx="21" ry="10" fill="${ec}" ${es} transform="rotate(-25 60 96)"/><ellipse cx="180" cy="96" rx="21" ry="10" fill="${ec}" ${es} transform="rotate(25 180 96)"/>`;
+ s+=`<g transform="translate(0 ${-(sp.ear==='floppy'||sp.ear==='curly'||sp.ear==='small'?0:eo).toFixed(1)})">${ears}</g>`;
+ // פנים
+ const faceDark=sp.sheep;
+ const mouthC=faceDark?'#ffd0e0':'#4a2a3a';
+ if(sp.sheep)s+=`<ellipse cx="120" cy="116" rx="38" ry="44" fill="#4a4a4a"/>`;
+ if(sp.muzzle&&!sp.sheep)s+=`<ellipse cx="120" cy="136" rx="26" ry="18" fill="${sp.muzzle}"/>`;
+ if(sp.foxface)s+=`<ellipse cx="92" cy="138" rx="30" ry="21" fill="#fff3e3"/><ellipse cx="148" cy="138" rx="30" ry="21" fill="#fff3e3"/>`;
+ if(sp.snout)s+=`<ellipse cx="120" cy="134" rx="25" ry="17" fill="#ff93ad" stroke="#e0708f" stroke-width="2.5"/><ellipse cx="111" cy="134" rx="4" ry="6" fill="#c2456f"/><ellipse cx="129" cy="134" rx="4" ry="6" fill="#c2456f"/>`;
+ if(sp.patch)s+=`<ellipse cx="94" cy="108" rx="22" ry="24" fill="${sp.patch}" opacity=".9"/>`;
+ if(sp.patches)s+=`<ellipse cx="92" cy="110" rx="16" ry="21" fill="#222" transform="rotate(22 92 110)"/><ellipse cx="148" cy="110" rx="16" ry="21" fill="#222" transform="rotate(-22 148 110)"/>`;
+ if(sp.stripes)s+=`<path d="M120 56 V74 M104 60 L108 74 M136 60 L132 74" stroke="#d17a1f" stroke-width="4" stroke-linecap="round"/>`;
+ if(sp.cheeks)s+=`<circle cx="76" cy="132" r="13" fill="#ffb3c6" opacity=".7"/><circle cx="164" cy="132" r="13" fill="#ffb3c6" opacity=".7"/>`;
+ s+=`<ellipse cx="78" cy="132" rx="10" ry="6.5" fill="#ff7aa2" opacity="${mood==='tickle'||mood==='love'?.6:.35}"/><ellipse cx="162" cy="132" rx="10" ry="6.5" fill="#ff7aa2" opacity="${mood==='tickle'||mood==='love'?.6:.35}"/>`;
+ // עיניים
+ const ink=faceDark?'#fff':'#2a1a3a';
+ if(mood==='tickle')s+=`<path d="M84 102 L106 112 L84 122 M156 102 L134 112 L156 122" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+ else if(mood==='love')s+=`<path d="M84 116 Q95 98 106 116 M134 116 Q145 98 156 116" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+ else{
+  const eye=(x)=>sclera
+   ?`<ellipse cx="${x}" cy="112" rx="13" ry="15" fill="#fff"/><ellipse cx="${x}" cy="114" rx="8" ry="10.5" fill="#2a1a3a"/><circle cx="${x-3}" cy="109" r="3.6" fill="#fff"/><circle cx="${x+3}" cy="118" r="1.8" fill="#fff"/>`
+   :`<ellipse cx="${x}" cy="112" rx="10.5" ry="14" fill="#2a1a3a"/><ellipse cx="${x}" cy="116" rx="6" ry="6" fill="#5a3a6a" opacity=".6"/><circle cx="${x-3.5}" cy="106.5" r="4.4" fill="#fff"/><circle cx="${x+3.5}" cy="118.5" r="2" fill="#fff"/>`;
+  s+=`<g class="eyes" style="animation-delay:-${(seed%3000)}ms">${eye(95)}${eye(145)}</g>`;
+  if(mood==='bad')s+=`<path d="M80 92 L108 100 M160 92 L132 100" stroke="${faceDark?'#fff':'#4a2a3a'}" stroke-width="4" stroke-linecap="round"/><path d="M84 128 q-5 12 0 15 q5 -3 0 -15Z" fill="#6ec1ff"/>`;
+ }
+ // אף ופה
+ if(!sp.snout)s+=`<path d="M112 125 Q120 121 128 125 Q127 133 120 134 Q113 133 112 125Z" fill="${sp.nose}"/><ellipse cx="117" cy="125.5" rx="3" ry="1.6" fill="#fff" opacity=".6"/>`;
+ const my=sp.snout?152:140;
+ if(mood==='love'||mood==='tickle')s+=`<path d="M103 ${my-2} Q120 ${my+28} 137 ${my-2}Z" fill="#b0124f" stroke="#7a0f3a" stroke-width="3" stroke-linejoin="round"/><ellipse cx="120" cy="${my+14}" rx="9" ry="5.5" fill="#ff7a9c"/>`;
+ else if(mood==='bad')s+=`<path d="M107 ${my+6} Q120 ${my-8} 133 ${my+6}" stroke="${mouthC}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+ else if(mood==='ok')s+=`<path d="M108 ${my-2} Q120 ${my+10} 132 ${my-2}" stroke="${mouthC}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+ else{
+  if(sp.tongue)s+=`<path d="M114 ${my+2} q6 18 12 0Z" fill="#ff7a9c" stroke="#d94d77" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s+=`<path d="M107 ${my-1} Q113.5 ${my+8} 120 ${my-1} Q126.5 ${my+8} 133 ${my-1}" stroke="${mouthC}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+ }
+ if(sp.teeth&&mood!=='love'&&mood!=='tickle')s+=`<rect x="113" y="${my+3}" width="14" height="11" rx="3" fill="#fff" stroke="#bbb" stroke-width="2"/><path d="M120 ${my+3} V${my+14}" stroke="#bbb" stroke-width="1.5"/>`;
+ if(sp.whisk)s+=`<path d="M70 132 L36 126 M70 140 L36 144 M170 132 L204 126 M170 140 L204 144" stroke="#7a5a4a" stroke-width="2.5" stroke-linecap="round"/>`;
+ if(a.dirt)s+=spots(120,108,56,50,seed+7,4,(x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5+r()*6).toFixed(1)}" fill="#6b4524" opacity=".5"/>`);
+ if(a.foam)s+=spots(120,88,64,48,seed+8,9,(x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(9+r()*7).toFixed(1)}" fill="#fff" stroke="#bfe0ff" stroke-width="2"/>`);
+ // עיצוב
+ if(a.style==='mohawk')s+=[-2,-1,0,1,2].map(i=>`<polygon points="${120+i*16-11},${hy+16} ${120+i*16+11},${hy+16} ${120+i*16},${hy-30+Math.abs(i)*8}" fill="${rainbow?'url(#rb)':(dc||'#ff5ea8')}" stroke="rgba(0,0,0,.3)" stroke-width="3" stroke-linejoin="round"/>`).join('');
+ if(a.style==='pompom')s+=`<g fill="${furF}" stroke="${furD}" stroke-width="3"><circle cx="120" cy="${hy-4}" r="21"/><circle cx="114" cy="${hy-10}" r="10" stroke="none" opacity=".5" fill="#fff"/></g><circle cx="170" cy="236" r="19" fill="${furF}" stroke="${furD}" stroke-width="3"/>`;
+ if(sp.topknot&&a.style!=='pompom'&&a.style!=='mohawk')s+=`<path d="${furPath(120,hy+2,17,15,2,1,seed+30,false)}" fill="${furF}" stroke="${furD}" stroke-width="3"/>`;
+ // אביזרים
+ ['neck','eyes','head'].forEach(sl=>{const k=a.acc[sl];if(k)s+=ACC[k].draw(hy)});
+ s+='</g>';
+ // אפקטים
+ if(a.glitter){const rng=mulberry(seed+9);for(let i=0;i<16;i++){const x=20+rng()*200,y=0+rng()*250;s+=`<path class="twinkle" style="animation-delay:${(rng()*1.2).toFixed(2)}s" d="M${x.toFixed(0)} ${(y-8).toFixed(0)} L${(x+2.5).toFixed(0)} ${(y-2.5).toFixed(0)} L${(x+8).toFixed(0)} ${y.toFixed(0)} L${(x+2.5).toFixed(0)} ${(y+2.5).toFixed(0)} L${x.toFixed(0)} ${(y+8).toFixed(0)} L${(x-2.5).toFixed(0)} ${(y+2.5).toFixed(0)} L${(x-8).toFixed(0)} ${y.toFixed(0)} L${(x-2.5).toFixed(0)} ${(y-2.5).toFixed(0)}Z" fill="${i%2?'#ffd24d':'#fff'}" stroke="#e0b030" stroke-width="1"/>`}}
+ if(a.perfume||mood==='love'){const rng=mulberry(seed+10);for(let i=0;i<6;i++)s+=`<text class="twinkle" style="animation-delay:${(i*.25).toFixed(2)}s" x="${(30+rng()*180).toFixed(0)}" y="${(10+rng()*100).toFixed(0)}" font-size="24" fill="#ff7aa2">♥</text>`}
+ if(a.wet){const rng=mulberry(seed+11);for(let i=0;i<5;i++)s+=`<path d="M${(40+rng()*160).toFixed(0)} ${(60+rng()*170).toFixed(0)} q-5 9 0 12 q5 -3 0 -12Z" fill="#6ec1ff" opacity=".85"/>`}
+ s+='</g>';
+ return s;
+}
+
+/* ---------- בקשות ולקוחות ---------- */
+let uid=0;
+function buildPool(){
+ const pool=[];
+ DYE_LIST.forEach(d=>{if(owned('dye_'+d.id))pool.push({key:'dye',kind:'dye',val:d.id,icon:'🎨',text:'צבע '+d.name})});
+ TOOLS.forEach(t=>{if(t.style&&owned(t.id))pool.push({key:'style',kind:'style',val:t.style,icon:t.icon,text:STYLES[t.style]})});
+ Object.keys(ACC).forEach(k=>{if(owned('acc_'+k))pool.push({key:'acc'+ACC[k].slot,kind:'acc',slot:ACC[k].slot,val:k,icon:ACC[k].icon,text:ACC[k].name})});
+ if(owned('perfume'))pool.push({key:'perf',kind:'perf',icon:'🌷',text:'בושם'});
+ if(owned('glitter'))pool.push({key:'glit',kind:'glit',icon:'✨',text:'נצנצים'});
+ return pool;
+}
+function makeRequest(vip){
+ const pool=buildPool();
+ let n=S.served<1?1:S.served<5?rint(1,2):rint(1,3);
+ if(vip)n+=1;
+ const extras=[],used={};
+ for(let tries=0;extras.length<n&&tries<40&&pool.length;tries++){const e=pool[Math.floor(Math.random()*pool.length)];if(used[e.key])continue;used[e.key]=1;extras.push(Object.assign({},e))}
+ return{len:pick([1,2,2,3,3]),extras};
+}
+function newCustomer(){
+ const vip=S.served>=4&&Math.random()<.14;
+ return{id:++uid,sp:pick(unlockedSpecies()),name:pick(NAMES),vip,len:4,dirt:Math.random()<.7,foam:false,wet:false,neat:true,dye:null,style:null,acc:{},perfume:false,glitter:false,seed:Math.floor(Math.random()*1e9),mood:null,tickle:0,waited:0,patience:32000,age:0,changed:false,leaving:false,req:makeRequest(vip)};
+}
+function checkExtra(a,e){
+ if(e.kind==='dye')return a.dye===e.val;
+ if(e.kind==='style')return a.style===e.val;
+ if(e.kind==='acc')return a.acc[e.slot]===e.val;
+ if(e.kind==='perf')return a.perfume;
+ return a.glitter;
+}
+function evalReq(a){
+ const r=a.req,items=[];
+ items.push({icon:'✂️',text:'אורך: '+LEN_NAMES[r.len],score:a.len===r.len?1:(Math.abs(a.len-r.len)===1?.5:0),w:2});
+ items.push({icon:'🛁',text:'נקי ויבש',score:(!a.dirt&&!a.foam&&!a.wet)?1:0,w:1});
+ items.push({icon:'🧹',text:'מסודר',score:a.neat?1:0,w:1});
+ r.extras.forEach(e=>items.push({icon:e.icon,text:e.text,score:checkExtra(a,e)?1:0,w:1,fresh:e.fresh}));
+ let got=0,tot=0;items.forEach(i=>{got+=i.score*i.w;tot+=i.w});
+ return{items,sat:got/tot};
+}
+const chipsHTML=a=>evalReq(a).items.map(i=>`<span class="chip ${i.score===1?'ok':i.score>0?'half':''} ${i.fresh?'new':''}">${i.icon} ${i.text}</span>`).join('');
+const nameHTML=a=>`<span class="${a.vip?'vip':''}">${a.name} ה${SPECIES[a.sp].name}</span>`;
+
+/* ---------- מצב המשחק ---------- */
+const MAXST=6,COSTS=[0,60,140,260,420,650];
+let stations=Array(MAXST).fill(null),door=null,doorWait=0,started=false;
+
+function updateStats(){
+ const set=(id,t)=>{const e=$(id);if(e.textContent!==t){e.textContent=t;e.classList.remove('bump');void e.offsetWidth;e.classList.add('bump')}};
+ set('#sCoins','🪙 '+S.coins);set('#sStars','⭐ '+S.stars);set('#sServed','🐾 '+S.served);
+ const st=$('#sStreak');st.style.display=streak>=2?'':'none';set('#sStreak','🔥 רצף '+streak);
+}
+function buildStations(){
+ const el=$('#stations');el.innerHTML='';
+ for(let i=0;i<S.stations;i++){
+  const d=document.createElement('div');d.className='station';d.dataset.i=i;
+  d.innerHTML=`<div class="chips"></div><div class="animalBox"><svg viewBox="0 -26 240 304"></svg></div><div class="status"></div><div class="nm"></div><button class="done">סיימתי ✓</button>`;
+  el.appendChild(d);renderStation(i);
+ }
+ if(S.stations<MAXST){
+  const c=COSTS[S.stations],d=document.createElement('div');d.className='station locked-slot';d.id='buySlot';
+  d.innerHTML=`<div class="big">🔒</div><div>מקום חדש במספרה!</div><div>${c} 🪙</div><div style="font-size:13px;font-weight:400">לחצי כדי לקנות</div>`;
+  el.appendChild(d);
+ }
+}
+function renderStation(i,enter){
+ const st=$(`.station[data-i="${i}"]`);if(!st)return;
+ const a=stations[i],box=st.querySelector('.animalBox'),svg=box.querySelector('svg');
+ if(!a){
+  svg.innerHTML='';box.classList.remove('enter','leave','wiggle');
+  st.querySelector('.chips').innerHTML='';st.querySelector('.status').innerHTML='';st.querySelector('.nm').textContent='';
+  st.querySelector('.done').disabled=true;
+  if(!box.querySelector('.empty'))box.insertAdjacentHTML('beforeend','<div class="empty"><div class="big">💺</div>הכיסא פנוי</div>');
+  box.querySelectorAll('.react').forEach(r=>r.remove());
+  return;
+ }
+ const em=box.querySelector('.empty');if(em)em.remove();
+ svg.innerHTML=animalSVG(a);
+ if(enter){box.classList.remove('enter','leave');void box.offsetWidth;box.classList.add('enter')}
+ st.querySelector('.chips').innerHTML=chipsHTML(a);
+ const stt=[];if(a.dirt)stt.push('<span>🟤 מלוכלך</span>');if(a.foam)stt.push('<span>🫧 קצף</span>');if(a.wet)stt.push('<span>💧 רטוב</span>');if(!a.neat)stt.push('<span>🌪️ פרוע</span>');
+ st.querySelector('.status').innerHTML=stt.join('');
+ st.querySelector('.nm').innerHTML=nameHTML(a);
+ st.querySelector('.done').disabled=a.leaving;
+}
+function renderDoor(){
+ const d=$('#doorIn');
+ if(!door){d.innerHTML='<div style="padding-top:110px;color:#7a5230">אין אף אחד בדלת…<br>🔔</div>';return}
+ const free=stations.slice(0,S.stations).some(x=>!x);
+ d.innerHTML=`<div class="chips">${chipsHTML(door)}</div><svg viewBox="0 -26 240 304">${animalSVG(door)}</svg><div><b>${nameHTML(door)}</b></div><div class="pat"><i id="patBar"></i></div><div class="wait">${free?'נכנס/ת…':'ממתין/ה לכיסא פנוי'}</div>`;
+ updatePat();
+}
+function updatePat(){
+ const b=$('#patBar');if(!b||!door)return;
+ const p=Math.max(0,door.patience/32000);b.style.width=(p*100)+'%';b.style.background=p>.5?'#3bb273':p>.25?'#f0c040':'#e63946';
+}
+function seat(i){
+ const a=door;stations[i]=a;door=null;doorWait=rint(1500,3500);
+ renderDoor();renderStation(i,true);snd('pop');voice(a,true);
+}
+function newSpeciesAnnounce(a){
+ if(!S.seen[a.sp]){S.seen[a.sp]=1;save();if(S.served>0||a.sp!=='dog'){toast('🐾 חיה חדשה הגיעה למספרה: '+SPECIES[a.sp].name+'!')}}
+}
+function giveUp(){
+ const a=door;door=null;doorWait=rint(2000,4000);streak=0;
+ snd('sad');toast('😢 '+a.name+' התעייף/ה מלחכות והלך/ה…');renderDoor();updateStats();
+}
+setInterval(()=>{
+ if(!started)return;
+ if(!door){doorWait-=400;if(doorWait<=0){door=newCustomer();snd('bell');voice(door);newSpeciesAnnounce(door);renderDoor()}}
+ else{
+  door.waited+=400;
+  const i=stations.slice(0,S.stations).findIndex(x=>!x);
+  if(i>=0){if(door.waited>=1200)seat(i)}
+  else{door.patience-=400;updatePat();if(door.patience<=0)giveUp()}
+ }
+ // שינוי דעה באמצע
+ stations.slice(0,S.stations).forEach((a,i)=>{
+  if(!a||a.leaving)return;
+  a.age+=400;
+  if(!a.changed&&a.age>=8000&&S.served>=2){
+   a.changed=true;
+   if(Math.random()<.55){
+    const pool=buildPool().filter(e=>!a.req.extras.some(x=>x.key===e.key));
+    if(pool.length){
+     const e=Object.assign({fresh:true},pick(pool));a.req.extras.push(e);
+     setTimeout(()=>{e.fresh=false;if(stations[i]===a)renderStation(i)},2400);
+     renderStation(i);snd('oops');voice(a,true);
+     const box=$(`.station[data-i="${i}"] .animalBox`);
+     box.insertAdjacentHTML('beforeend',`<div class="react mind">רגע… שיניתי את דעתי! 😜<br>${e.icon} ${e.text}</div>`);
+     setTimeout(()=>{const r=box.querySelector('.mind');if(r)r.remove()},2600);
+    }
+   }
+  }
+ });
+},400);
+
+/* ---------- אפקטים ---------- */
+function spawnFx(x,y,html,dx,dy){const e=document.createElement('div');e.className='fx';e.innerHTML=html;e.style.left=x+'px';e.style.top=y+'px';e.style.setProperty('--dx',dx+'px');e.style.setProperty('--dy',dy+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),950)}
+function fxAt(kind,x,y,a){
+ if(kind==='cut'){const sp=SPECIES[a.sp],c=a.dye?DYES[a.dye].c:sp.fur;for(let i=0;i<9;i++){const e=document.createElement('i');e.className='bit';const s=rint(7,14);e.style.width=e.style.height=s+'px';e.style.left=(x+rint(-18,18))+'px';e.style.top=(y+rint(-8,8))+'px';e.style.background=c[0]==='#'?c:'#ffb3d9';e.style.boxShadow='0 0 0 2px rgba(0,0,0,.15)';e.style.setProperty('--dx',rint(-50,50)+'px');e.style.setProperty('--dy',rint(60,140)+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),950)}return}
+ const em={bubble:'🫧',drop:'💧',wind:'💨',heart:'💗',spark:'✨'}[kind]||'✨';
+ for(let i=0;i<3;i++)spawnFx(x+rint(-22,22),y+rint(-10,10),em==='🫧'?'○':em,rint(-40,40),rint(-80,-30));
+}
+function confetti(x,y){
+ const cols=['#ff6b6b','#ffd24d','#7ee08a','#6ec1ff','#b58cff','#ff8fc7'];
+ for(let i=0;i<34;i++){const e=document.createElement('i');e.className='bit conf';e.style.left=x+'px';e.style.top=y+'px';e.style.background=pick(cols);e.style.setProperty('--dx',rint(-170,170)+'px');e.style.setProperty('--dy',rint(-120,200)+'px');e.style.setProperty('--rot',rint(-540,540)+'deg');document.body.appendChild(e);setTimeout(()=>e.remove(),1600)}
+}
+
+/* ---------- שימוש בכלי ---------- */
+let hold=null;
+function inBox(i,x,y){const b=$(`.station[data-i="${i}"] .animalBox`);if(!b)return false;const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function doTool(i){
+ const a=stations[i];if(!a||a.leaving)return;
+ const t=TB[selected];if(!t||!owned(t.id)){toast('הכלי הזה עוד לא קנית — לחצי עליו בסרגל 🔒');return}
+ if(t.apply(a)){
+  snd(t.snd);fxAt(t.fx,hold?hold.x:0,hold?hold.y:0,a);
+  a.tickle=Date.now()+650;
+  if(Math.random()<.4)voice(a);
+  const b=$(`.station[data-i="${i}"] .animalBox`);b.classList.remove('wiggle');void b.offsetWidth;b.classList.add('wiggle');
+  renderStation(i);
+  const stamp=a.tickle;
+  setTimeout(()=>{if(stations[i]===a&&a.tickle===stamp&&!a.leaving)renderStation(i)},700);
+ }
+}
+$('#stations').addEventListener('pointerdown',e=>{
+ const box=e.target.closest('.animalBox');if(!box)return;
+ e.preventDefault();ac();
+ const i=+box.closest('.station').dataset.i;
+ stopHold();hold={i,x:e.clientX,y:e.clientY};
+ doTool(i);
+ const t=TB[selected];
+ if(t&&t.hold)hold.timer=setInterval(()=>{if(hold&&inBox(hold.i,hold.x,hold.y))doTool(hold.i)},t.ms);
+});
+addEventListener('pointermove',e=>{if(hold){hold.x=e.clientX;hold.y=e.clientY}});
+function stopHold(){if(hold){clearInterval(hold.timer);hold=null}}
+addEventListener('pointerup',stopHold);addEventListener('pointercancel',stopHold);addEventListener('blur',stopHold);
+
+$('#stations').addEventListener('click',e=>{
+ if(e.target.closest('#buySlot')){
+  ac();const c=COSTS[S.stations];
+  if(S.coins>=c){S.coins-=c;S.stations++;save();snd('buy');toast('המספרה גדלה! 🎉 יש לך מקום חדש');updateStats();buildStations()}
+  else{snd('no');toast('חסר לך עוד '+(c-S.coins)+' מטבעות 🪙')}
+  return;
+ }
+ const b=e.target.closest('button.done');if(b&&!b.disabled)finish(+b.closest('.station').dataset.i);
+});
+
+const LOVE=['וואו, אני נראה מושלם! 😍','איזה יופי! תודה! 💖','הכי טוב שהיה לי!','אני מרגיש כמו כוכב! ⭐'];
+const OKS=['זה בסדר, תודה 🙂','לא רע בכלל','טוב, אפשר לחיות עם זה'];
+const BADS=['זה לא מה שביקשתי… 😟','הממ, לא אהבתי 😕','אני לא בטוח שזה אני…'];
+function finish(i){
+ const a=stations[i];if(!a||a.leaving)return;
+ a.leaving=true;stopHold();
+ const r=evalReq(a),extras=a.req.extras.length;
+ let text,mult,stars;
+ if(r.sat>=.85){a.mood='love';stars=3;mult=1.6;text=pick(LOVE);snd('cheer');streak++}
+ else if(r.sat>=.5){a.mood='ok';stars=2;mult=.7;text=pick(OKS);snd('meh');streak=0}
+ else{a.mood='bad';stars=1;mult=.25;text=pick(BADS);snd('sad');streak=0}
+ const base=12+8*extras;
+ const bonus=stars===3?1+Math.min(streak-1,5)*.1:1;
+ let pay=Math.round(base*mult*bonus*(a.vip?2.5:1))+(stars===3?rint(0,5):0);if(pay<2)pay=2;
+ S.coins+=pay;S.stars+=stars;S.served++;
+ const unlock=SP_ORDER.find(([k,n])=>n===S.served&&n>0);
+ save();
+ renderStation(i);
+ const st=$(`.station[data-i="${i}"]`),box=st.querySelector('.animalBox');
+ box.querySelectorAll('.react').forEach(x=>x.remove());
+ box.insertAdjacentHTML('beforeend',`<div class="react">${text}<br>${'⭐'.repeat(stars)}<div class="gain">+${pay} 🪙${a.vip?' (VIP!)':''}</div>${stars===3&&streak>=2?`<div>🔥 רצף ${streak}!</div>`:''}</div>`);
+ voice(a,true);
+ if(stars===3){const rc=box.getBoundingClientRect();confetti(rc.left+rc.width/2,rc.top+60)}
+ later(()=>snd('coin'),350);
+ updateStats();
+ if(unlock)later(()=>{toast('🎉 נפתחה חיה חדשה: '+SPECIES[unlock[0]].name+'!');snd('cheer')},1200);
+ later(()=>{box.classList.add('leave')},1600);
+ later(()=>{stations[i]=null;renderStation(i);if(door)renderDoor()},2500);
+}
+
+/* ---------- התחלה ---------- */
+$('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇':'🔊'};
+$('#startBtn').onclick=()=>{ac();$('#intro').remove();started=true;doorWait=0};
+updateStats();renderTools();buildStations();renderDoor();
+</script>
+</body>
+</html>
