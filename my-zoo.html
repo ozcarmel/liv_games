@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>גן החיות שלי</title>
+<meta name="description" content="משחק גן חיות לילדים: בונים מתחמים, מאכילים ומטפלים בחיות, ומרוויחים כסף מהמבקרים כדי לקנות עוד חיות. חינם, בלי הורדה.">
+<style>
+:root{--green:#2f8f46;--green2:#bfe8b0;--ink:#2d3a24;--gold:#f6c744;--path:#e9d3a6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);min-height:100vh;padding-bottom:150px;user-select:none;-webkit-user-select:none;
+ background:radial-gradient(circle at 20% 10%,#d9f5c8 0,transparent 40%),repeating-linear-gradient(45deg,#c8ecb5 0 30px,#bfe6ab 30px 60px)}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:var(--green);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+header h1{margin:0;font-size:22px;flex:1;min-width:150px}
+header a{color:#fff;text-decoration:none;font-size:14px;background:rgba(255,255,255,.18);padding:5px 10px;border-radius:14px}
+.stat{background:#fff;color:var(--ink);border-radius:16px;padding:4px 12px;font-weight:700;font-size:17px;white-space:nowrap}
+.stat.bump{animation:bump .4s}
+@keyframes bump{50%{transform:scale(1.25);background:#fff3b0}}
+#mute{border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:14px;font-size:18px;padding:3px 10px;cursor:pointer}
+#hint{margin:12px 14px 0;background:#fffbe6;border:3px dashed #f0c040;border-radius:16px;padding:8px 14px;font-size:16px;font-weight:600;text-align:center}
+#zoo{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:14px}
+.plot{position:relative;border-radius:22px;min-height:290px;box-shadow:0 5px 14px rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column}
+.plot.empty{background:repeating-linear-gradient(135deg,#d8c79a 0 18px,#cfbd8e 18px 36px);border:4px dashed #9c8655;align-items:center;justify-content:center;cursor:pointer;text-align:center;color:#5a4a26;font-weight:700;font-size:18px}
+.plot.empty:hover{filter:brightness(1.05)}
+.plot.empty .big{font-size:54px;display:block;margin-bottom:6px}
+.plot .top{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,.75);font-weight:700;font-size:15px;gap:6px}
+.plot .top .cnt{font-size:13px;font-weight:600;opacity:.75}
+.pen{position:relative;flex:1;min-height:170px;margin:8px;border-radius:16px;border:6px solid #8a5a2c;touch-action:manipulation;overflow:hidden}
+.pen::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 38px,rgba(138,90,44,.35) 38px 42px);mask:linear-gradient(#000 0 10px,transparent 10px calc(100% - 10px),#000 calc(100% - 10px));-webkit-mask:linear-gradient(#000 0 10px,transparent 10px calc(100% - 10px),#000 calc(100% - 10px))}
+.h-farm .pen{background:linear-gradient(#b9e48f,#8ccf63)}
+.h-savanna .pen{background:linear-gradient(#f4d98a,#e0b85a)}
+.h-pond .pen{background:radial-gradient(ellipse 45% 35% at 55% 60%,#5fb6e8 0 98%,transparent 100%),linear-gradient(#a8dd88,#86c66a)}
+.h-jungle .pen{background:linear-gradient(#5fae4f,#2f7f3a)}
+.h-polar .pen{background:radial-gradient(ellipse 40% 30% at 40% 65%,#7cc6ef 0 98%,transparent 100%),linear-gradient(#f2fbff,#d4ecf7)}
+.h-farm{background:#e7f6d6}.h-savanna{background:#fbeec6}.h-pond{background:#d9f0fb}.h-jungle{background:#cfe9c3}.h-polar{background:#eef7fc}
+.deco{position:absolute;font-size:30px;pointer-events:none;opacity:.9}
+.animal{position:absolute;font-size:44px;line-height:1;cursor:pointer;transition:left 3s ease-in-out,top 3s ease-in-out;transform:translate(-50%,-50%);z-index:2;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+.animal span{display:inline-block;transition:transform .3s}
+.animal.flip span{transform:scaleX(-1)}
+.animal.sad span{filter:grayscale(.55)}
+.animal.hop span{animation:hop .45s}
+@keyframes hop{40%{transform:translateY(-16px) scale(1.15)}}
+.animal .mood{position:absolute;top:-14px;right:-10px;font-size:20px}
+.poop{position:absolute;font-size:24px;cursor:pointer;z-index:1;transform:translate(-50%,-50%);animation:pop .3s}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(0)}}
+.float{position:absolute;pointer-events:none;font-size:24px;font-weight:800;z-index:40;animation:flt 1s ease-out forwards;transform:translate(-50%,-50%)}
+@keyframes flt{to{margin-top:-50px;opacity:0}}
+.bars{display:flex;gap:6px;padding:0 10px}
+.bar{flex:1;display:flex;align-items:center;gap:3px;font-size:14px}
+.bar b{flex:1;height:10px;background:rgba(0,0,0,.12);border-radius:6px;overflow:hidden}
+.bar b i{display:block;height:100%;background:#3bb273;transition:width .5s,background .5s}
+.btns{display:flex;gap:6px;padding:8px 10px 10px;flex-wrap:wrap}
+.btns button,.btn{flex:1;border:0;border-radius:16px;font-size:15px;font-weight:700;padding:8px 6px;cursor:pointer;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.25);min-width:70px}
+.btns button:active,.btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.b-feed{background:#f28c28}.b-clean{background:#3a9bd9}.b-buy{background:#8e4fc9}
+.btns button:disabled{background:#aaa;box-shadow:none;cursor:default}
+.need{animation:nudge 1s infinite}
+@keyframes nudge{50%{transform:scale(1.07)}}
+
+#path{position:fixed;left:0;right:0;bottom:0;height:120px;z-index:25;background:linear-gradient(#8ccf63 0 16px,var(--path) 16px calc(100% - 12px),#8ccf63 calc(100% - 12px));border-top:4px solid #6aa84f;overflow:hidden}
+#gate{position:absolute;right:6px;top:18px;font-size:13px;font-weight:700;background:#8a5a2c;color:#fff;border-radius:10px;padding:4px 8px;z-index:3;text-align:center;line-height:1.2}
+#gate .em{font-size:24px;display:block}
+.visitor{position:absolute;left:0;top:36px;font-size:40px;line-height:1;z-index:2;will-change:transform}
+.visitor .bub{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-size:18px;background:#fff;border-radius:12px;padding:0 5px;box-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
+.coin{position:absolute;font-size:30px;cursor:pointer;z-index:4;animation:drop .4s ease-out;padding:6px}
+@keyframes drop{from{transform:translateY(-30px);opacity:0}}
+.coin.fly{transition:all .6s ease-in;opacity:0}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:center;justify-content:center;padding:14px}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:24px;padding:16px;max-width:560px;width:100%;max-height:88vh;overflow:auto;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.box h2{margin:4px 0 10px}
+.box p{margin:6px 0;font-size:16px;line-height:1.5}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:10px 0}
+.opt{border:3px solid #cde5c0;border-radius:18px;padding:10px 6px;cursor:pointer;background:#f6fff0;font-size:15px;font-weight:700;position:relative}
+.opt .em{font-size:44px;display:block;line-height:1.15}
+.opt .pr{display:block;font-size:14px;color:#8a5a2c;margin-top:3px}
+.opt small{display:block;font-weight:500;font-size:12.5px;color:#666;margin-top:2px}
+.opt.no{opacity:.45;cursor:default}
+.opt.have{background:#fff7d9;border-color:#f0c040}
+.opt:not(.no):hover{border-color:#3bb273}
+.foods{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.food{font-size:46px;background:#fff6e8;border:3px solid #f2c17a;border-radius:18px;width:80px;height:80px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.food:hover{border-color:#f28c28;transform:scale(1.05)}
+.close{background:#888;color:#fff;border:0;border-radius:16px;padding:8px 22px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px}
+#startBtn,.go{background:var(--green);color:#fff;border:0;border-radius:20px;padding:10px 30px;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #1f6a31;margin-top:8px}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#2d3a24;color:#fff;padding:8px 18px;border-radius:18px;font-weight:700;z-index:60;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:90vw}
+#toast.on{opacity:1}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin:10px 0}
+.album div{background:#f3f8ef;border-radius:14px;padding:6px 2px;font-size:13px;font-weight:600}
+.album div .em{font-size:36px;display:block}
+.album div.lock .em{filter:brightness(0);opacity:.25}
+#reset{background:none;border:0;color:#999;font-size:13px;text-decoration:underline;cursor:pointer;margin-top:10px}
+@media (max-width:520px){header h1{font-size:18px}.stat{font-size:15px;padding:3px 9px}.animal{font-size:38px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🦁 גן החיות שלי</h1>
+  <span class="stat" id="sCoins">🪙 0</span>
+  <span class="stat" id="sVis">🧒 0</span>
+  <span class="stat" id="sAlbum" style="cursor:pointer" title="אלבום החיות">📖 0/15</span>
+  <button id="mute" title="צלילים">🔊</button>
+  <a href="index.html">← למשחקים</a>
+</header>
+
+<div id="hint">לחצו על חלקה ריקה כדי לבנות מתחם ראשון 🏗️</div>
+<div id="zoo"></div>
+
+<div id="path"><div id="gate"><span class="em">🎟️</span>כניסה</div></div>
+<div id="toast"></div>
+
+<div class="modal" id="mBuild"><div class="box">
+  <h2>🏗️ איזה מתחם לבנות?</h2>
+  <p>כל מתחם מתאים לחיות אחרות.</p>
+  <div class="opts" id="buildOpts"></div>
+  <button class="close" data-close>סגירה</button>
+</div></div>
+
+<div class="modal" id="mBuy"><div class="box">
+  <h2 id="buyTitle">🐾 איזו חיה לקנות?</h2>
+  <p>חיות יקרות יותר מביאות יותר מבקרים!</p>
+  <div class="opts" id="buyOpts"></div>
+  <button class="close" data-close>סגירה</button>
+</div></div>
+
+<div class="modal" id="mFeed"><div class="box">
+  <h2 id="feedTitle">🍽️ מה נותנים לאכול?</h2>
+  <p id="feedSub">בחרו את האוכל שהחיות אוהבות. אם תטעו, הן יגידו יאק! 🤢</p>
+  <div class="foods" id="foodOpts"></div>
+  <button class="close" data-close>סגירה</button>
+</div></div>
+
+<div class="modal" id="mAlbum"><div class="box">
+  <h2>📖 אלבום החיות</h2>
+  <p>כל חיה חדשה שקונים נכנסת לאלבום. תצליחו לאסוף את כולן?</p>
+  <div class="album" id="albumGrid"></div>
+  <button class="close" data-close>סגירה</button><br>
+  <button id="reset">להתחיל גן חדש מההתחלה</button>
+</div></div>
+
+<div class="modal" id="mIntro"><div class="box">
+  <h2>🦒 גן החיות שלי 🐧</h2>
+  <p>אתם המנהלים של גן חיות חדש!</p>
+  <p><b>1.</b> בונים <b>מתחם</b> על חלקה ריקה.</p>
+  <p><b>2.</b> קונים <b>חיות</b> שמתאימות למתחם.</p>
+  <p><b>3.</b> מאכילים אותן באוכל הנכון 🍖, מנקים את הקקי 💩 ומלטפים אותן ❤️.</p>
+  <p><b>4.</b> מבקרים מגיעים ומשלמים 🪙. ככל שהחיות <b>שמחות</b> יותר, הם משלמים יותר!</p>
+  <p>עם הכסף קונים עוד חיות ובונים עוד מתחמים. בהצלחה!</p>
+  <button id="startBtn">פותחים את הגן!</button>
+</div></div>
+
+<div class="modal" id="mWin"><div class="box">
+  <h2>🏆 כל הכבוד! 🏆</h2>
+  <p>אספתם את כל 15 החיות! יש לכם את גן החיות הכי גדול בעולם 🎉</p>
+  <button class="go" data-close>להמשיך לשחק</button>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+/* ---------- נתונים ---------- */
+const HAB={
+  farm:   {name:'חווה',     em:'🌾', price:0,   deco:['🌻','🪵'], desc:'ארנבים, עזים וחזירים'},
+  savanna:{name:'סוואנה',   em:'🌍', price:60,  deco:['🌵','🪨'], desc:'זברות, ג׳ירפות ואריות'},
+  pond:   {name:'אגם',      em:'💧', price:110, deco:['🪷','🌱'], desc:'ברווזים, צבים ותנינים'},
+  jungle: {name:'ג׳ונגל',   em:'🌴', price:170, deco:['🌴','🌺'], desc:'קופים, תוכים ונמרים'},
+  polar:  {name:'קוטב',     em:'❄️', price:240, deco:['🧊','⛄'], desc:'פינגווינים, כלבי ים ודובים'}
+};
+// value = כמה המבקרים אוהבים את החיה (משפיע על הכסף)
+const ANIMALS={
+  rabbit:  {name:'ארנב',      em:'🐇', hab:'farm',    price:15,  food:'🥕', value:1},
+  goat:    {name:'עז',        em:'🐐', hab:'farm',    price:30,  food:'🌾', value:2},
+  pig:     {name:'חזיר',      em:'🐖', hab:'farm',    price:45,  food:'🍎', value:2},
+  zebra:   {name:'זברה',      em:'🦓', hab:'savanna', price:60,  food:'🌾', value:3},
+  giraffe: {name:'ג׳ירפה',    em:'🦒', hab:'savanna', price:90,  food:'🌿', value:4},
+  lion:    {name:'אריה',      em:'🦁', hab:'savanna', price:140, food:'🍖', value:6},
+  duck:    {name:'ברווז',     em:'🦆', hab:'pond',    price:50,  food:'🌽', value:2},
+  turtle:  {name:'צב',        em:'🐢', hab:'pond',    price:80,  food:'🥬', value:3},
+  croc:    {name:'תנין',      em:'🐊', hab:'pond',    price:160, food:'🐟', value:6},
+  monkey:  {name:'קוף',       em:'🐒', hab:'jungle',  price:90,  food:'🍌', value:4},
+  parrot:  {name:'תוכי',      em:'🦜', hab:'jungle',  price:110, food:'🌽', value:4},
+  tiger:   {name:'נמר',       em:'🐅', hab:'jungle',  price:200, food:'🍖', value:7},
+  penguin: {name:'פינגווין',  em:'🐧', hab:'polar',   price:120, food:'🐟', value:5},
+  seal:    {name:'כלב ים',    em:'🦭', hab:'polar',   price:170, food:'🐟', value:6},
+  bear:    {name:'דוב קוטב',  em:'🐻‍❄️', hab:'polar',  price:260, food:'🐟', value:8}
+};
+const ALL_FOODS=['🥕','🌾','🍎','🌿','🍖','🌽','🥬','🐟','🍌'];
+const PLOTS=6, PER_PEN=3;
+const VISITORS=['🧒','👧','👦','👩','👨','👵','👴','🧑','👩‍🦰','🧔'];
+
+/* ---------- שמירה ---------- */
+let S={coins:40,visitors:0,plots:[],album:{},started:false,won:false};
+try{const r=JSON.parse(localStorage.getItem('myZoo1')||'null');if(r&&typeof r==='object')S=Object.assign(S,r)}catch(e){}
+while(S.plots.length<PLOTS)S.plots.push(null);
+function save(){try{localStorage.setItem('myZoo1',JSON.stringify(S,(k,v)=>k[0]==='_'?undefined:v))}catch(e){}}
+
+/* ---------- צלילים ---------- */
+let AC=null,muted=false;
+try{muted=localStorage.getItem('myZooMute')==='1'}catch(e){}
+function tone(f,d=.12,type='sine',v=.15,when=0){
+  if(muted)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const t=AC.currentTime+when,o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
+}
+const SND={
+  coin:()=>{tone(988,.08,'square',.08);tone(1319,.15,'square',.08,.07)},
+  buy:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.14,'triangle',.15,i*.08))},
+  yum:()=>{tone(600,.1,'sine',.18);tone(800,.12,'sine',.18,.1)},
+  yuck:()=>{tone(220,.25,'sawtooth',.1)},
+  pet:()=>{tone(880,.1,'sine',.12);tone(1175,.15,'sine',.12,.08)},
+  clean:()=>{tone(1400,.06,'triangle',.1);tone(1700,.08,'triangle',.1,.05)},
+  no:()=>{tone(180,.18,'square',.08)}
+};
+function setMute(){$('#mute').textContent=muted?'🔇':'🔊'}
+$('#mute').onclick=()=>{muted=!muted;try{localStorage.setItem('myZooMute',muted?'1':'0')}catch(e){}setMute()};
+setMute();
+
+/* ---------- עזרים ---------- */
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2200)}
+function floatAt(x,y,txt,color){const f=document.createElement('div');f.className='float';f.textContent=txt;f.style.left=x+'px';f.style.top=y+'px';if(color)f.style.color=color;document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
+function floatOn(el,txt,color){const r=el.getBoundingClientRect();floatAt(r.left+r.width/2+scrollX,r.top+scrollY,txt,color)}
+function bump(id){const el=$(id);el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}
+function stats(){
+  $('#sCoins').textContent='🪙 '+Math.floor(S.coins);
+  $('#sVis').textContent='🧒 '+S.visitors;
+  $('#sAlbum').textContent='📖 '+Object.keys(S.album).length+'/15';
+}
+function openM(id){$(id).classList.add('on')}
+function closeM(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('on'))}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeM);
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='mIntro')closeM()}));
+
+// מצב רוח של חיה: 0 עד 1 (אוכל + כיף, פחות קקי במתחם)
+function mood(a,pen){return Math.max(0,Math.min(1,(a.food*.5+a.fun*.5)/100-pen.poop.length*.08))}
+function penMood(pen){if(!pen.animals.length)return 0;return pen.animals.reduce((s,a)=>s+mood(a,pen),0)/pen.animals.length}
+function moodFace(m){return m>.7?'😊':m>.4?'😐':'😢'}
+function barColor(v){return v>60?'#3bb273':v>30?'#f0b429':'#e5533d'}
+
+/* ---------- ציור הגן ---------- */
+const zoo=$('#zoo');
+function render(){
+  zoo.innerHTML='';
+  S.plots.forEach((pen,i)=>{
+    const el=document.createElement('div');
+    if(!pen){
+      el.className='plot empty';
+      const first=!S.plots.some(p=>p);
+      el.innerHTML='<div><span class="big">🏗️</span>חלקה ריקה<br><small style="font-weight:500">לחצו כדי לבנות מתחם</small></div>';
+      if(first)el.classList.add('need');
+      el.onclick=()=>openBuild(i);
+    }else{
+      const h=HAB[pen.hab];
+      el.className='plot h-'+pen.hab;
+      el.innerHTML=`<div class="top"><span>${h.em} ${h.name}</span><span class="cnt">${pen.animals.length}/${PER_PEN} חיות</span></div>
+        <div class="pen"></div>
+        <div class="bars"><span class="bar" title="אוכל">🍖<b><i class="bf"></i></b></span><span class="bar" title="שמחה">❤️<b><i class="bh"></i></b></span></div>
+        <div class="btns"><button class="b-feed">🍽️ האכלה</button><button class="b-clean">🧹 ניקיון</button><button class="b-buy">➕ חיה</button></div>`;
+      const p=el.querySelector('.pen');
+      h.deco.forEach((d,k)=>{const s=document.createElement('span');s.className='deco';s.textContent=d;s.style.left=(k?78:6)+'%';s.style.top=(k?8:62)+'%';p.appendChild(s)});
+      pen.animals.forEach((a,k)=>p.appendChild(makeAnimal(a,pen,i,k)));
+      pen.poop.forEach(pp=>p.appendChild(makePoop(pp,pen,i)));
+      el.querySelector('.b-feed').onclick=()=>openFeed(i);
+      el.querySelector('.b-clean').onclick=()=>cleanAll(i,el);
+      const bb=el.querySelector('.b-buy');
+      bb.onclick=()=>openBuy(i);
+      if(pen.animals.length>=PER_PEN){bb.disabled=true;bb.textContent='מלא ✓'}
+    }
+    zoo.appendChild(el);
+  });
+  refresh();
+}
+function makeAnimal(a,pen,pi,k){
+  const d=ANIMALS[a.type];
+  const el=document.createElement('div');
+  el.className='animal';
+  el.innerHTML=`<span>${d.em}</span><i class="mood"></i>`;
+  a.x=a.x||rnd(20,80);a.y=a.y||rnd(30,75);
+  el.style.left=a.x+'%';el.style.top=a.y+'%';
+  el.onclick=e=>{e.stopPropagation();pet(pi,k,el)};
+  a._el=el;
+  return el;
+}
+function makePoop(pp,pen,pi){
+  const el=document.createElement('div');
+  el.className='poop';el.textContent='💩';
+  el.style.left=pp.x+'%';el.style.top=pp.y+'%';
+  el.onclick=e=>{e.stopPropagation();
+    const k=pen.poop.indexOf(pp);if(k>=0)pen.poop.splice(k,1);
+    floatOn(el,'✨');el.remove();SND.clean();save();refresh()};
+  return el;
+}
+// עדכון מהיר בלי לצייר מחדש
+function refresh(){
+  stats();
+  [...zoo.children].forEach((el,i)=>{
+    const pen=S.plots[i];if(!pen)return;
+    let food=0,fun=0;
+    pen.animals.forEach(a=>{food+=a.food;fun+=mood(a,pen)*100;
+      if(a._el){const m=mood(a,pen);a._el.querySelector('.mood').textContent=m<.4?'😢':(a.food<35?'🍽️':'');a._el.classList.toggle('sad',m<.4)}});
+    const n=pen.animals.length||1;
+    const bf=el.querySelector('.bf'),bh=el.querySelector('.bh');
+    if(bf){const v=pen.animals.length?food/n:0;bf.style.width=v+'%';bf.style.background=barColor(v)}
+    if(bh){const v=pen.animals.length?fun/n:0;bh.style.width=v+'%';bh.style.background=barColor(v)}
+    const fb=el.querySelector('.b-feed'),cb=el.querySelector('.b-clean'),bb=el.querySelector('.b-buy');
+    fb.classList.toggle('need',pen.animals.some(a=>a.food<35));
+    cb.classList.toggle('need',pen.poop.length>=3);
+    cb.disabled=!pen.poop.length;
+    bb.classList.toggle('need',!pen.animals.length);
+  });
+  hint();
+}
+function hint(){
+  const pens=S.plots.filter(p=>p);
+  let t;
+  if(!pens.length)t='לחצו על חלקה ריקה כדי לבנות מתחם ראשון 🏗️ (החווה בחינם!)';
+  else if(!pens.some(p=>p.animals.length))t='עכשיו קנו חיה ראשונה: לחצו על ➕ חיה';
+  else if(pens.some(p=>p.animals.some(a=>a.food<35)))t='יש חיות רעבות! לחצו על 🍽️ האכלה ובחרו את האוכל הנכון';
+  else if(pens.some(p=>p.poop.length>=3))t='איכס, יש הרבה קקי! לחצו על 💩 או על 🧹 ניקיון';
+  else if(pens.some(p=>p.animals.some(a=>a.fun<35)))t='חיות משתעממות. לחצו עליהן כדי ללטף ❤️';
+  else if(S.coins>=cheapestNext())t='יש לכם מספיק כסף לחיה חדשה או למתחם חדש! 🎉';
+  else t='החיות שמחות 😊 המבקרים משלמים יותר. לחצו על המטבעות 🪙 בשביל לאסוף אותם מהר!';
+  $('#hint').textContent=t;
+}
+function cheapestNext(){
+  let m=1e9;
+  S.plots.forEach(p=>{if(p&&p.animals.length<PER_PEN)Object.values(ANIMALS).forEach(a=>{if(a.hab===p.hab)m=Math.min(m,a.price)})});
+  if(S.plots.some(p=>!p))Object.keys(HAB).forEach(h=>{if(!S.plots.some(p=>p&&p.hab===h))m=Math.min(m,HAB[h].price)});
+  return m;
+}
+
+/* ---------- בנייה ---------- */
+let curPlot=0;
+function habPrice(h){ // מתחם ראשון מכל סוג במחיר רגיל, השני יקר יותר
+  const n=S.plots.filter(p=>p&&p.hab===h).length;
+  return Math.round(HAB[h].price*(n?1.5:1)+(n?40:0));
+}
+function openBuild(i){
+  curPlot=i;const box=$('#buildOpts');box.innerHTML='';
+  Object.entries(HAB).forEach(([k,h])=>{
+    const pr=habPrice(k);
+    const o=document.createElement('div');o.className='opt'+(S.coins<pr?' no':'');
+    o.innerHTML=`<span class="em">${h.em}</span>${h.name}<small>${h.desc}</small><span class="pr">${pr?'🪙 '+pr:'בחינם!'}</span>`;
+    o.onclick=()=>{
+      if(S.coins<pr){SND.no();toast('צריך עוד '+Math.ceil(pr-S.coins)+' 🪙');return}
+      S.coins-=pr;S.plots[i]={hab:k,animals:[],poop:[]};
+      SND.buy();closeM();save();render();toast('בניתם '+h.name+'! '+h.em);
+    };
+    box.appendChild(o);
+  });
+  openM('#mBuild');
+}
+function openBuy(i){
+  curPlot=i;const pen=S.plots[i];const box=$('#buyOpts');box.innerHTML='';
+  $('#buyTitle').textContent='🐾 איזו חיה תגור ב'+HAB[pen.hab].name+'?';
+  Object.entries(ANIMALS).filter(([k,a])=>a.hab===pen.hab).forEach(([k,a])=>{
+    const o=document.createElement('div');o.className='opt'+(S.coins<a.price?' no':'')+(S.album[k]?' have':'');
+    o.innerHTML=`<span class="em">${a.em}</span>${a.name}<small>אוכל: ${a.food} · ${'⭐'.repeat(Math.min(4,Math.ceil(a.value/2)))}</small><span class="pr">🪙 ${a.price}</span>`;
+    o.onclick=()=>{
+      if(S.coins<a.price){SND.no();toast('צריך עוד '+Math.ceil(a.price-S.coins)+' 🪙');return}
+      S.coins-=a.price;
+      pen.animals.push({type:k,food:80,fun:80});
+      const isNew=!S.album[k];S.album[k]=1;
+      SND.buy();closeM();save();render();
+      toast(isNew?'חיה חדשה באלבום: '+a.name+' '+a.em+' 📖':'ברוכים הבאים, '+a.name+'! '+a.em);
+      if(Object.keys(S.album).length===15&&!S.won){S.won=true;save();setTimeout(()=>openM('#mWin'),900)}
+    };
+    box.appendChild(o);
+  });
+  openM('#mBuy');
+}
+
+/* ---------- טיפול ---------- */
+function openFeed(i){
+  curPlot=i;const pen=S.plots[i];
+  if(!pen.animals.length){toast('אין עדיין חיות במתחם הזה');return}
+  const want=[...new Set(pen.animals.map(a=>ANIMALS[a.type].food))];
+  const others=ALL_FOODS.filter(f=>!want.includes(f)).sort(()=>Math.random()-.5);
+  const shown=[...want,...others.slice(0,Math.max(2,5-want.length))].sort(()=>Math.random()-.5);
+  $('#feedTitle').textContent='🍽️ מה נותנים לאכול? '+pen.animals.map(a=>ANIMALS[a.type].em).join('');
+  const box=$('#foodOpts');box.innerHTML='';
+  shown.forEach(f=>{
+    const b=document.createElement('button');b.className='food';b.textContent=f;
+    b.onclick=()=>feed(i,f);box.appendChild(b);
+  });
+  openM('#mFeed');
+}
+function feed(i,f){
+  const pen=S.plots[i];let ok=0,bad=0;
+  closeM();
+  pen.animals.forEach(a=>{
+    const d=ANIMALS[a.type];
+    if(!a._el)return;
+    if(d.food===f){a.food=Math.min(100,a.food+55);a.fun=Math.min(100,a.fun+10);ok++;floatOn(a._el,'😋');hop(a._el)}
+    else{bad++;floatOn(a._el,'🤢')}
+  });
+  if(ok){SND.yum();toast(ok>1?'יאמי! החיות אוהבות '+f:'יאמי! '+f)}
+  else{SND.yuck();toast('יאק! החיות לא אוכלות '+f+'. נסו אוכל אחר')}
+  save();refresh();
+}
+function cleanAll(i,el){
+  const pen=S.plots[i];if(!pen.poop.length)return;
+  pen.poop=[];SND.clean();
+  floatOn(el.querySelector('.pen'),'✨🧹✨');
+  save();render();
+}
+function hop(el){el.classList.remove('hop');void el.offsetWidth;el.classList.add('hop')}
+function pet(pi,k,el){
+  const a=S.plots[pi].animals[k];if(!a)return;
+  a.fun=Math.min(100,a.fun+18);
+  hop(el);floatOn(el,'❤️');SND.pet();save();refresh();
+}
+
+/* ---------- זמן עובר ---------- */
+setInterval(()=>{
+  if(!S.started)return;
+  S.plots.forEach((pen,i)=>{
+    if(!pen)return;
+    pen.animals.forEach(a=>{
+      a.food=Math.max(0,a.food-0.7);
+      a.fun=Math.max(0,a.fun-0.5);
+      // קקי מדי פעם
+      if(Math.random()<0.012&&pen.poop.length<5){
+        const pp={x:rnd(12,88),y:rnd(25,85)};pen.poop.push(pp);
+        const p=zoo.children[i]&&zoo.children[i].querySelector('.pen');
+        if(p)p.appendChild(makePoop(pp,pen,i));
+      }
+    });
+  });
+  refresh();
+},1000);
+setInterval(save,5000);
+
+// החיות מסתובבות במתחם
+setInterval(()=>{
+  S.plots.forEach(pen=>{if(!pen)return;pen.animals.forEach(a=>{
+    if(!a._el||Math.random()<.4)return;
+    const nx=rnd(12,88),ny=rnd(25,78);
+    a._el.classList.toggle('flip',nx>a.x); // האימוג׳י מסתכל שמאלה, אז הופכים כשהולכים ימינה
+    a.x=nx;a.y=ny;a._el.style.left=nx+'%';a._el.style.top=ny+'%';
+  })});
+},2200);
+
+/* ---------- מבקרים ---------- */
+const path=$('#path');
+function zooValue(){
+  let v=0,all=[];
+  S.plots.forEach(pen=>{if(!pen)return;pen.animals.forEach(a=>{const m=mood(a,pen);v+=ANIMALS[a.type].value*(0.25+0.75*m);all.push(a)})});
+  return {v,all};
+}
+function spawnVisitor(){
+  const {v,all}=zooValue();
+  if(!all.length||!S.started)return;
+  const el=document.createElement('div');el.className='visitor';
+  const fav=pick(all);
+  el.innerHTML=pick(VISITORS)+`<span class="bub">❤️${ANIMALS[fav.type].em}</span>`;
+  path.appendChild(el);
+  const W=path.clientWidth;let x=W-20;const speed=rnd(55,85);
+  let dropped=false;const dropAt=rnd(W*.2,W*.75);
+  let last=performance.now();
+  S.visitors++;stats();
+  function step(t){
+    const dt=(t-last)/1000;last=t;x-=speed*dt;
+    el.style.transform=`translateX(${x}px)`;
+    if(!dropped&&x<dropAt){dropped=true;
+      const amt=Math.max(1,Math.round(1+v/2.2));
+      dropCoin(x,amt);
+    }
+    if(x<-60){el.remove();return}
+    requestAnimationFrame(step);
+  }
+  el.style.transform=`translateX(${x}px)`;
+  requestAnimationFrame(step);
+}
+function dropCoin(x,amt){
+  const c=document.createElement('div');c.className='coin';c.textContent='🪙';
+  c.style.left=(x+6)+'px';c.style.top=rnd(60,78)+'px';
+  path.appendChild(c);
+  let got=false;
+  const take=fast=>{
+    if(got)return;got=true;
+    S.coins+=amt;SND.coin();bump('#sCoins');stats();
+    const r=c.getBoundingClientRect();floatAt(r.left+r.width/2+scrollX,r.top+scrollY,'+'+amt,'#b8860b');
+    c.classList.add('fly');c.style.top='-200px';
+    setTimeout(()=>c.remove(),600);save();
+  };
+  c.onclick=()=>take(true);
+  c.onpointerdown=()=>take(true);
+  setTimeout(take,4500); // אם לא לחצו, המטבע נאסף לבד
+}
+(function loop(){
+  const n=zooValue().all.length;
+  const wait=n?Math.max(1800,6000-n*350):1500;
+  setTimeout(()=>{spawnVisitor();loop()},wait);
+})();
+
+/* ---------- אלבום ---------- */
+function openAlbum(){
+  const g=$('#albumGrid');g.innerHTML='';
+  Object.entries(ANIMALS).forEach(([k,a])=>{
+    const d=document.createElement('div');if(!S.album[k])d.className='lock';
+    d.innerHTML=`<span class="em">${a.em}</span>${S.album[k]?a.name:'???'}`;g.appendChild(d);
+  });
+  resetArm=false;$('#reset').textContent='להתחיל גן חדש מההתחלה';
+  openM('#mAlbum');
+}
+$('#sAlbum').onclick=openAlbum;
+let resetArm=false;
+$('#reset').onclick=()=>{
+  if(!resetArm){resetArm=true;$('#reset').textContent='בטוחים? לחצו שוב כדי למחוק את הגן';return}
+  try{localStorage.removeItem('myZoo1')}catch(e){}
+  location.reload();
+};
+
+/* ---------- התחלה ---------- */
+$('#startBtn').onclick=()=>{S.started=true;save();closeM();SND.buy()};
+render();
+if(!S.started)openM('#mIntro');
+</script>
+</body>
+</html>
