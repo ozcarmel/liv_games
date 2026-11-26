@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מי אני | אתר המשחקים של ליב</title>
-<meta name="description" content="על אתר המשחקים של ליב: אוסף משחקי דפדפן בחינם, בלי הורדה ובלי הרשמה.">
+<meta name="description" content="הכירו את ליב, הילדה שיוצרת את המשחקים באתר: איך נולד משחק, המשחקים הכי אהובים, ויוצרים אורחים. כל המשחקים בחינם, בלי הורדה ובלי הרשמה.">
 <meta name="theme-color" content="#6fd3ff">
 <link rel="canonical" href="https://ozcarmel.github.io/liv_games/about.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -21,49 +21,264 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; }
+  html { overflow-x: hidden; }
   body {
-    direction: rtl; margin: 0;
+    direction: rtl; margin: 0; position: relative; overflow-x: hidden;
     background-color: var(--sky);
     background-image: radial-gradient(rgba(255,255,255,.55) 3px, transparent 3.5px);
     background-size: 34px 34px;
-    color: var(--ink); font-family: var(--body); font-size: 17px;
-    padding: 0 max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+    color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.7;
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
   }
-  .wrap { max-width: 46em; margin: 0 auto; }
+  a { color: inherit; }
+  .wrap { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* רצועות שמות משחקים שזזות למעלה ולמטה */
+  .ticker { margin: 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))); overflow: hidden; border-block: 4px solid var(--ink); background: var(--sun); position: relative; z-index: 2; }
+  .ticker.alt { background: var(--pink); margin-top: 48px; }
+  .ticker .track { display: flex; width: max-content; animation: slide 38s linear infinite; }
+  .ticker.alt .track { animation-direction: reverse; animation-duration: 44s; }
+  .ticker a { display: inline-flex; align-items: center; padding: 8px 18px; text-decoration: none; font-family: var(--display); font-size: 1.1rem; white-space: nowrap; }
+  .ticker a::after { content: "★"; color: var(--paper); -webkit-text-stroke: 1.5px var(--ink); margin-inline-start: 18px; }
+  .ticker a:hover { text-decoration: underline; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(50%); } }
+
+  /* שמות משחקים שמרחפים בצדדים */
+  .floaters { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .chip {
+    position: absolute; display: inline-block; white-space: nowrap;
+    font-family: var(--display); font-size: 1rem; line-height: 1;
+    padding: 8px 14px; border: 3px solid var(--ink); border-radius: 999px;
+    background: var(--c, var(--paper)); box-shadow: 3px 3px 0 var(--ink);
+    animation: bob var(--d, 6s) ease-in-out infinite; animation-delay: var(--w, 0s);
+    rotate: var(--r, 0deg);
+  }
+  @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -16px; } }
+  @media (max-width: 1180px) { .floaters { display: none; } }
+
   .topbar { display: flex; justify-content: center; padding-top: 18px; }
   .back {
     display: inline-block; text-decoration: none; color: var(--ink);
     font-family: var(--display); font-size: 1.15rem; line-height: 1; padding: 10px 24px;
-    background: var(--sun); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink);
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink);
     transition: transform .18s ease, box-shadow .18s ease;
   }
   .back:hover, .back:focus-visible { transform: translateY(-3px); box-shadow: 6px 7px 0 var(--ink); }
-  .back:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
+  .back:focus-visible, .game:focus-visible, .cta a:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
+
+  /* פתיחה */
+  .hero { display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: center; margin: 30px 0 34px; }
+  .badge {
+    width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center;
+    background: conic-gradient(var(--pink), var(--sun), var(--mint), var(--sky), var(--grape), var(--pink));
+    border: 5px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    animation: spin 14s linear infinite;
+  }
+  .badge span { animation: spin 14s linear infinite reverse; display: grid; place-items: center; width: 104px; height: 104px; border-radius: 50%; background: var(--paper); border: 4px solid var(--ink); font-family: var(--display); font-size: 3.6rem; line-height: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   h1 {
-    font-family: var(--display); font-weight: 400; text-align: center;
-    font-size: clamp(2.4rem, 8vw, 4rem); line-height: 1.1; margin: 32px 0 24px;
+    font-family: var(--display); font-weight: 400; margin: 0 0 10px;
+    font-size: clamp(2.4rem, 8vw, 4rem); line-height: 1.05;
     color: var(--paper); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill;
     text-shadow: 4px 5px 0 var(--ink);
   }
-  .about {
-    background: var(--paper); border: 4px solid var(--ink); border-radius: 26px;
-    box-shadow: 8px 8px 0 var(--pink); padding: 20px 26px 22px; line-height: 1.75;
+  h1 .wave { display: inline-block; animation: wave 2.2s ease-in-out infinite; transform-origin: 70% 80%; -webkit-text-stroke: 0; text-shadow: none; }
+  @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(16deg); } 20%, 40% { transform: rotate(-8deg); } }
+  .hero p { margin: 0; font-size: 1.15rem; font-weight: 700; background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; padding: 10px 16px; box-shadow: 4px 4px 0 var(--ink); display: inline-block; }
+
+  .box { background: var(--paper); border: 4px solid var(--ink); border-radius: 26px; box-shadow: 8px 8px 0 var(--c, var(--pink)); padding: 22px 26px 24px; margin: 0 0 34px; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 1.8rem; line-height: 1.2; margin: 0 0 12px; }
+  .box p { margin: 0 0 .7em; }
+  .box p:last-child { margin-bottom: 0; }
+
+  /* מספרים */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 0 34px; }
+  .stat { text-align: center; background: var(--c); border: 4px solid var(--ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--ink); padding: 12px 8px; }
+  .stat:nth-child(1) { --c: var(--sun); rotate: -2deg; } .stat:nth-child(2) { --c: var(--mint); rotate: 1.5deg; } .stat:nth-child(3) { --c: var(--pink); rotate: -1deg; }
+  .stat b { display: block; font-family: var(--display); font-weight: 400; font-size: 2.6rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .stat small { font-weight: 700; font-size: .95rem; }
+
+  /* איך נולד משחק */
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; counter-reset: s; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 46px 1fr; gap: 12px; align-items: start; }
+  .steps li::before { content: counter(s); width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 1.4rem; }
+  .steps li:nth-child(2)::before { background: var(--mint); } .steps li:nth-child(3)::before { background: var(--pink); } .steps li:nth-child(4)::before { background: var(--grape); color: var(--paper); }
+  .steps b { display: block; font-family: var(--display); font-weight: 400; font-size: 1.2rem; line-height: 1.3; }
+
+  /* משחקים אהובים */
+  .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 22px; }
+  .game {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; overflow: hidden;
+    box-shadow: 5px 5px 0 var(--c); transition: transform .18s ease, box-shadow .18s ease;
   }
-  .about h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0 0 8px; }
-  .about p { margin: 0 0 .7em; }
-  .about p:last-child { margin-bottom: 0; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  .game:nth-child(4n+1) { --c: var(--pink); } .game:nth-child(4n+2) { --c: var(--grape); } .game:nth-child(4n+3) { --c: var(--mint); } .game:nth-child(4n+4) { --c: var(--sun); }
+  .game:hover, .game:focus-visible { transform: translateY(-6px) rotate(-1deg); box-shadow: 8px 10px 0 var(--c); }
+  .game img { display: block; width: 100%; height: auto; aspect-ratio: 400 / 240; border-bottom: 3px solid var(--ink); }
+  .game div { padding: 10px 14px 14px; }
+  .game h3 { font-family: var(--display); font-weight: 400; font-size: 1.25rem; margin: 0 0 2px; line-height: 1.2; }
+  .game p { margin: 0; font-size: .95rem; line-height: 1.5; }
+
+  /* יוצרים אורחים */
+  .guests { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .guests a { text-decoration: none; display: inline-block; padding: 6px 14px; border: 3px solid var(--ink); border-radius: 999px; background: var(--c); font-weight: 700; box-shadow: 3px 3px 0 var(--ink); transition: transform .15s ease; }
+  .guests a:hover { transform: translateY(-2px); }
+  .guests b { font-family: var(--display); font-weight: 400; }
+
+  .cta { text-align: center; }
+  .cta a {
+    display: inline-block; text-decoration: none; color: var(--ink); font-family: var(--display); font-size: 1.5rem; line-height: 1;
+    padding: 14px 34px; border: 4px solid var(--ink); border-radius: 999px; box-shadow: 6px 6px 0 var(--ink);
+    background: linear-gradient(90deg, var(--pink), var(--sun), var(--mint), var(--grape)); background-size: 300% 100%;
+    animation: shimmer 6s ease-in-out infinite alternate;
+  }
+  @keyframes shimmer { to { background-position: 100% 0; } }
+
+  /* כניסה עדינה של קטעים בגלילה */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .js .reveal.on { opacity: 1; transform: none; }
+
+  @media (max-width: 560px) {
+    .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .badge { width: 120px; height: 120px; } .badge span { width: 84px; height: 84px; font-size: 2.8rem; }
+    .stats { gap: 10px; } .stat b { font-size: 2rem; } .stat small { font-size: .8rem; }
+    .box { padding: 18px 18px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .js .reveal { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
+
+<div class="floaters" aria-hidden="true">
+  <span class="chip" style="top:250px; right:1.5%; --c:var(--sun); --r:-6deg; --d:6s">מאפיית העוגות</span>
+  <span class="chip" style="top:480px; right:3%; --c:var(--mint); --r:5deg; --d:7s; --w:-2s">מגן החלל</span>
+  <span class="chip" style="top:720px; right:1%; --c:var(--pink); --r:-4deg; --d:5.5s; --w:-1s">גן החיות שלי</span>
+  <span class="chip" style="top:970px; right:2.5%; --c:var(--paper); --r:7deg; --d:6.5s; --w:-3s">חדר זעם</span>
+  <span class="chip" style="top:1220px; right:1.5%; --c:var(--sun); --r:-5deg; --d:7.5s">מספרת החיות</span>
+  <span class="chip" style="top:1480px; right:3%; --c:var(--mint); --r:4deg; --d:6s; --w:-2.5s">מעצבים דירה</span>
+  <span class="chip" style="top:1740px; right:1.5%; --c:var(--pink); --r:-3deg; --d:6.4s; --w:-1.2s">עולם הקוביות</span>
+  <span class="chip" style="top:330px; left:1.5%; --c:var(--pink); --r:6deg; --d:6.8s; --w:-1.5s">משחק לבוש</span>
+  <span class="chip" style="top:580px; left:3%; --c:var(--paper); --r:-5deg; --d:5.8s">דוכן לימונדה</span>
+  <span class="chip" style="top:830px; left:1%; --c:var(--sun); --r:5deg; --d:7.2s; --w:-2s">מפעל הסקווישים</span>
+  <span class="chip" style="top:1080px; left:2.5%; --c:var(--mint); --r:-7deg; --d:6.2s; --w:-3.5s">חלום בחלום</span>
+  <span class="chip" style="top:1330px; left:1.5%; --c:var(--pink); --r:4deg; --d:6.6s">החנות של לונה</span>
+  <span class="chip" style="top:1590px; left:3%; --c:var(--paper); --r:-4deg; --d:7s; --w:-1s">בונים בית</span>
+</div>
+
+<div class="ticker" aria-label="משחקים באתר"><div class="track" id="tickerTop"></div></div>
+
 <div class="wrap">
   <nav class="topbar"><a class="back" href="./">חזרה למשחקים</a></nav>
-  <h1>מי אני</h1>
-  <section class="about" aria-labelledby="aboutTitle">
-    <h2 id="aboutTitle">על האתר</h2>
-    <p>אתר המשחקים של ליב הוא אוסף משחקי דפדפן בחינם. כל משחק נפתח בלחיצה אחת, בלי הורדה ובלי הרשמה.</p>
-    <p>אפשר לבעוט פנדלים מול מחשב, לנהל דוכן לימונדה שהופך לדוכן תה ועוגיות כשקר בחוץ, להגן על החלל, לבנות בית ועוד. ליד כל משחק מוצג כמה אנשים כבר נכנסו אליו.</p>
+
+  <section class="hero">
+    <div class="badge" aria-hidden="true"><span>ל</span></div>
+    <div>
+      <h1>היי, אני ליב! <span class="wave" aria-hidden="true">👋</span></h1>
+      <p>אני ממציאה משחקים, ואתם מוזמנים לשחק בכולם.</p>
+    </div>
   </section>
+
+  <section class="box reveal" style="--c: var(--grape)">
+    <h2>קצת עליי</h2>
+    <p>אני ילדה שאוהבת להמציא. כל פעם שעולה לי רעיון מגניב, אני הופכת אותו למשחק: מאפייה שבה אופים עוגות ענקיות, מספרה לכלבלבים, גן חיות שבונים מאפס או חנות קסומה ביער.</p>
+    <p>הרעיונות מגיעים מכל מקום: מדברים שאני אוהבת, מחלומות, ממשחקים עם חברים, ולפעמים סתם משאלה כמו "מה אם היה לי מפעל סקווישים משלי?".</p>
+  </section>
+
+  <div class="stats reveal">
+    <div class="stat"><b data-count="20">20</b><small>משחקים באתר</small></div>
+    <div class="stat"><b data-count="5">5</b><small>יוצרים ויוצרות</small></div>
+    <div class="stat"><b>0</b><small>הורדות והרשמות</small></div>
+  </div>
+
+  <section class="box reveal" style="--c: var(--mint)">
+    <h2>איך נולד משחק?</h2>
+    <ol class="steps">
+      <li><span><b>רעיון</b>משהו שאני אוהבת, כמו עוגות, חיות או חלל, הופך לשאלה: איך משחקים בזה?</span></li>
+      <li><span><b>ציור ותכנון</b>אני מחליטה איך הכול נראה, מה עושים ומה מרוויחים בכל שלב.</span></li>
+      <li><span><b>בנייה</b>המשחק נבנה צעד אחרי צעד, עם צבעים, צלילים והפתעות קטנות.</span></li>
+      <li><span><b>בדיקה ושיפורים</b>משחקים בו, מגלים מה עוד אפשר לשפר, ומוסיפים עוד ועוד.</span></li>
+    </ol>
+  </section>
+
+  <section class="box reveal" style="--c: var(--sun)">
+    <h2>המשחקים שאני הכי ממליצה עליהם</h2>
+    <div class="games">
+      <a class="game" href="cake-bakery.html"><img src="cake-bakery.svg" alt="" width="400" height="240" loading="lazy"><div><h3>מאפיית העוגות</h3><p>מערבבים בצק, אופים בדיוק בזמן, מקשטים בציפוי ובדובדבנים ומוכרים ללקוחות.</p></div></a>
+      <a class="game" href="my-zoo.html"><img src="my-zoo.svg" alt="" width="400" height="240" loading="lazy"><div><h3>גן החיות שלי</h3><p>בונים מתחמים, מאכילים ומטפלים בחיות, ומשתמשים בכסף מהמבקרים כדי להביא עוד חיות.</p></div></a>
+      <a class="game" href="animal-salon.html"><img src="animal-salon.svg" alt="" width="400" height="240" loading="lazy"><div><h3>מספרת החיות</h3><p>מספרים, מסרקים ומקשטים חיות פרוותיות עד שהן יוצאות הכי יפות בעיר.</p></div></a>
+      <a class="game" href="squishy-factory.html"><img src="squishy-factory.svg" alt="" width="400" height="240" loading="lazy"><div><h3>מפעל הסקווישים</h3><p>בוחרים צורה, צבע, פרצוף וקישוט, ואז סוחטים את הסקוויש עד שהוא מתפוצץ.</p></div></a>
+      <a class="game" href="design-apartment.html"><img src="design-apartment.svg" alt="" width="400" height="240" loading="lazy"><div><h3>מעצבים דירה</h3><p>צובעים קירות, בוחרים רצפה ומוסיפים רהיטים בשבעה חדרים בתלת מימד.</p></div></a>
+      <a class="game" href="space-shooter.html"><img src="space-shooter.svg" alt="" width="400" height="240" loading="lazy"><div><h3>מגן החלל</h3><p>מזיזים את החללית, אוספים בונוסים ומגינים על כדור הארץ כמה שיותר זמן.</p></div></a>
+    </div>
+  </section>
+
+  <section class="box reveal" style="--c: var(--pink)">
+    <h2>יוצרים אורחים</h2>
+    <p>לפעמים מצטרפים עוד יוצרים ויוצרות ומוסיפים משחקים משלהם לאתר:</p>
+    <div class="guests">
+      <a href="star-gardener.html" style="--c: var(--sun)"><b>עוז</b> · הגנן של הכוכבים</a>
+      <a href="penalty-kicks.html" style="--c: var(--mint)"><b>עוז</b> · בעיטות לשער</a>
+      <a href="leaf-cleaners.html" style="--c: var(--pink)"><b>מיקה</b> · מנקי העלים</a>
+      <a href="territory-3d.html" style="--c: var(--sky)"><b>גילי</b> · כובשי השטח 3D</a>
+      <a href="cops-and-robbers.html" style="--c: var(--sun)"><b>גאיה</b> · שוטרים וגנבים</a>
+    </div>
+  </section>
+
+  <section class="box reveal" style="--c: var(--grape)">
+    <h2>מה מיוחד באתר?</h2>
+    <p>כל המשחקים בחינם ונפתחים בלחיצה אחת, בלי הורדה ובלי הרשמה. הם עובדים במחשב, בטאבלט ובטלפון. ליד כל משחק בדף הבית רואים כמה אנשים כבר נכנסו אליו, וכל הזמן מתווספים משחקים חדשים.</p>
+  </section>
+
+  <div class="cta reveal"><a href="./">בואו לשחק!</a></div>
 </div>
+
+<div class="ticker alt" aria-hidden="true"><div class="track" id="tickerBottom"></div></div>
+
+<script>
+  document.documentElement.classList.add("js");
+  var games = [
+    ["מאפיית העוגות", "cake-bakery.html"], ["גן החיות שלי", "my-zoo.html"], ["מספרת החיות", "animal-salon.html"],
+    ["משחק לבוש", "dressup-city.html"], ["חלום בחלום", "dream-house.html"], ["החנות של לונה", "luna-game.html"],
+    ["מגן החלל", "space-shooter.html"], ["עולם הקוביות", "https://ozcarmel.github.io/cube_world/"], ["בונים בית", "build-house.html"],
+    ["דוכן לימונדה", "lemonade-stand.html"], ["מפעל הסקווישים", "squishy-factory.html"], ["מעצבים דירה", "design-apartment.html"],
+    ["חדר זעם", "rage-room.html"], ["משחק פנדה", "panda.html"], ["קופסת הכרטיסיות", "flashcards.html"]
+  ];
+  // כל רצועה מקבלת את הרשימה פעמיים ברצף, כדי שתסתובב בלי קפיצה
+  function fill(id, list, focusable) {
+    var el = document.getElementById(id); if (!el) return;
+    for (var r = 0; r < 2; r++) list.forEach(function (g) {
+      var a = document.createElement("a"); a.href = g[1]; a.textContent = g[0];
+      if (r || !focusable) { a.tabIndex = -1; a.setAttribute("aria-hidden", "true"); }
+      el.appendChild(a);
+    });
+  }
+  fill("tickerTop", games, true);
+  fill("tickerBottom", games.slice().reverse(), false);
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function countUp(el) {
+    var to = +el.getAttribute("data-count"), t0 = null;
+    if (reduce || !to) return;
+    function step(t) { if (!t0) t0 = t; var p = Math.min(1, (t - t0) / 900); el.textContent = Math.round(to * p); if (p < 1) requestAnimationFrame(step); }
+    el.textContent = "0"; requestAnimationFrame(step);
+  }
+  var items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("on");
+        e.target.querySelectorAll("[data-count]").forEach(countUp);
+        io.unobserve(e.target);
+      });
+    }, { threshold: .15 });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add("on"); });
+  }
+</script>
 </body>
 </html>
