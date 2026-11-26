@@ -620,9 +620,11 @@
   (function () {
     var base = "https://abacus.jasoncameron.dev/", path = "ozcarmel-liv-games/visits";
     var counted = false;
+    var START = 669; // השירות היה על 71 כשהוספנו את זה, אז 71+669 = 740
     try { counted = localStorage.getItem("livGamesCounted") === "1"; } catch (e) {}
     function show(n) {
       if (typeof n !== "number") return;
+      n += START; // כך המונה מתחיל מ־740 ועולה משם
       document.getElementById("visitorCount").textContent = n.toLocaleString("he-IL");
       document.getElementById("visitors").hidden = false;
     }
