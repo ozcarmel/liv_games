@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מאפיית העוגות | משחק אפייה בחינם</title>
+<meta name="description" content="משחק אפייה בחינם: מערבבים בצק, אופים בתנור בדיוק בזמן, מקשטים בציפוי ובדובדבנים ומוכרים עוגות ללקוחות. עם הכסף קונים טעמים, צורות וקישוטים חדשים.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/cake-bakery.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="מאפיית העוגות | משחק אפייה בחינם">
+<meta property="og:description" content="משחק אפייה בחינם: מערבבים בצק, אופים בתנור בדיוק בזמן, מקשטים בציפוי ובדובדבנים ומוכרים עוגות ללקוחות. עם הכסף קונים טעמים, צורות וקישוטים חדשים.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/cake-bakery.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "מאפיית העוגות",
+  "description": "משחק אפייה בחינם: מערבבים בצק, אופים בתנור בדיוק בזמן, מקשטים בציפוי ובדובדבנים ומוכרים עוגות ללקוחות. עם הכסף קונים טעמים, צורות וקישוטים חדשים.",
+  "url": "https://ozcarmel.github.io/liv_games/cake-bakery.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "סימולציה",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "אתר המשחקים של ליב",
+    "url": "https://ozcarmel.github.io/liv_games/"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+/* תוכנית העיצוב: מאפייה ורודה ונעימה, דלפק עץ, קרם ודובדבנים.
+   העוגה היא הכוכבת, וכל השאר שקט סביבה. */
+:root{
+  --cream:#fff6ea; --pink:#ff8fb8; --pink2:#ffd3e3; --berry:#d6336c; --choco:#6b3e26;
+  --mint:#3bb273; --ink:#4a2a1f; --muted:#8b6a5c; --gold:#f6c744; --card:#ffffff;
+  --display:"Secular One","Rubik",Arial,sans-serif; --body:"Rubik","Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:var(--body);color:var(--ink);min-height:100vh;user-select:none;-webkit-user-select:none;
+  background:var(--cream);
+  background-image:radial-gradient(#ffd9e6 2.5px,transparent 3px);background-size:28px 28px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:var(--berry);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+header h1{margin:0;font-family:var(--display);font-weight:400;font-size:24px;flex:1;min-width:150px}
+header a,header button{color:#fff;text-decoration:none;font:inherit;font-size:15px;background:rgba(255,255,255,.2);border:0;padding:5px 11px;border-radius:14px;cursor:pointer}
+.stat{background:#fff;color:var(--ink);border-radius:16px;padding:4px 12px;font-weight:700;font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.stat.bump{animation:bump .45s}
+@keyframes bump{50%{transform:scale(1.25);background:#fff3b0}}
+
+.app{max-width:980px;margin:0 auto;padding:14px 16px 40px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.app{grid-template-columns:minmax(0,1fr)}}
+
+/* ----- הלקוח וההזמנה ----- */
+#counter{background:#fff;border:4px solid var(--pink);border-radius:24px;padding:12px;text-align:center;box-shadow:0 6px 0 var(--pink2);position:relative}
+#cust{font-size:76px;line-height:1;margin:2px 0 4px;display:inline-block}
+#cust.enter{animation:enter .6s ease-out}
+#cust.happy{animation:hop .5s ease 2}
+@keyframes enter{from{transform:translateX(-120px);opacity:0}}
+@keyframes hop{50%{transform:translateY(-16px)}}
+#custName{font-weight:700;color:var(--muted);font-size:14px}
+#say{background:var(--cream);border:3px solid #f3d6c4;border-radius:16px;padding:8px 10px;margin-top:8px;font-size:15px;line-height:1.45;min-height:3em}
+#orderCake{width:100%;max-width:220px;height:auto;display:block;margin:6px auto 0}
+.chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:6px}
+.chip{font-size:14px;background:#fff0f6;border:2px solid #ffc2d9;border-radius:12px;padding:2px 8px;white-space:nowrap}
+.dayinfo{margin-top:8px;font-size:13px;color:var(--muted)}
+@media (max-width:760px){
+  #counter{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"c s" "k k" "d d";gap:4px 10px;text-align:right;align-items:center}
+  #custBox{grid-area:c;text-align:center} #say{grid-area:s;margin:0} #orderWrap{grid-area:k} .dayinfo{grid-area:d;text-align:center}
+  #cust{font-size:58px} #orderWrap{display:flex;align-items:center;gap:8px} #orderCake{max-width:130px;flex:0 0 130px;margin:0} #orderWrap .chips{flex:1}
+}
+
+/* ----- אזור העבודה ----- */
+#work{background:#fff;border:4px solid #f3d6c4;border-radius:24px;padding:12px 14px 16px;box-shadow:0 6px 0 #f3e1d4;min-height:420px;display:flex;flex-direction:column;gap:10px}
+#steps{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+#steps span{background:#f6ede6;color:var(--muted);border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px}
+#steps span.on{background:var(--berry);color:#fff}
+#steps span.done{background:#d9f7de;color:#24813a}
+#hint{text-align:center;font-size:17px;font-weight:700;min-height:1.4em;text-wrap:balance}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.btn{border:3px solid #f0d5c5;background:#fff;border-radius:16px;padding:6px 10px;cursor:pointer;font:inherit;font-weight:700;font-size:15px;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:76px;transition:transform .1s}
+.btn .ic{font-size:30px;line-height:1.1}
+.btn:active{transform:scale(.94)}
+.btn.on{border-color:var(--berry);background:#fff0f6;box-shadow:0 0 0 3px var(--pink2)}
+.btn.used{opacity:.45}
+.btn.lock{opacity:.4;cursor:default}
+.sw{display:block;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #b9a49a}
+.go{align-self:center;background:var(--mint);color:#fff;border:0;border-radius:22px;font:inherit;font-family:var(--display);font-size:21px;padding:8px 28px;cursor:pointer;box-shadow:0 4px 0 #278a55}
+.go:active{transform:translateY(2px);box-shadow:0 2px 0 #278a55}
+.go:disabled{background:#c9bdb6;box-shadow:none;cursor:default}
+.go.alt{background:#fff;color:var(--ink);border:3px solid #f0d5c5;box-shadow:none;font-size:17px}
+
+/* ערבוב */
+#bowlBox{position:relative;width:min(300px,90%);margin:0 auto;touch-action:none;cursor:grab}
+#bowlBox svg{width:100%;display:block;pointer-events:none;overflow:visible}
+.drop{position:absolute;top:-10px;left:50%;font-size:40px;animation:drop .55s ease-in forwards;pointer-events:none}
+@keyframes drop{from{transform:translate(-50%,-40px) rotate(-20deg)}to{transform:translate(-50%,90px) rotate(15deg);opacity:0}}
+.bar{height:16px;background:#f3e6dc;border-radius:10px;overflow:hidden;width:min(300px,90%);margin:0 auto}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--berry));border-radius:10px}
+
+/* תנור */
+#oven{width:min(300px,90%);margin:0 auto;display:block}
+.gauge{position:relative;height:30px;width:min(320px,94%);margin:4px auto 0;border-radius:14px;border:3px solid var(--ink);overflow:hidden;
+  background:linear-gradient(to left,#f7e8b5 0 50%,#a5e3a0 50% 62%,#3bb273 62% 78%,#a5e3a0 78% 88%,#3a2215 88%)}
+.gauge .needle{position:absolute;top:-2px;bottom:-2px;width:6px;margin-right:-3px;background:var(--berry);right:0;box-shadow:0 0 0 2px #fff}
+.glabels{display:flex;justify-content:space-between;width:min(320px,94%);margin:2px auto 0;font-size:12px;color:var(--muted);font-weight:700}
+.result{text-align:center;font-family:var(--display);font-size:26px;min-height:1.3em}
+
+/* קישוט */
+#deco{width:min(380px,100%);margin:0 auto;display:block;touch-action:manipulation;cursor:pointer}
+.flame{animation:flick .35s infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes flick{to{transform:scale(.85,1.12)}}
+.tabs{display:flex;gap:6px;justify-content:center}
+.tabs button{border:2px solid #f0d5c5;background:#fff6f0;border-radius:14px;padding:4px 14px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--berry);border-color:var(--berry);color:#fff}
+
+/* מכירה */
+.check{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;max-width:480px;margin:0 auto;width:100%}
+.check div{border-radius:12px;padding:6px 10px;font-weight:700;font-size:15px;background:#fde8e8}
+.check div.ok{background:#d9f7de}
+.check div.half{background:#fff3c4}
+.starsbig{text-align:center;font-size:44px;letter-spacing:4px}
+.pay{text-align:center;font-family:var(--display);font-size:30px;color:#b8860b}
+
+/* חלונות */
+.ov{position:fixed;inset:0;background:rgba(74,42,31,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ov[hidden]{display:none}
+.box{background:#fff;border-radius:26px;border:5px solid var(--pink);padding:18px 20px;max-width:520px;width:100%;max-height:90vh;overflow:auto;text-align:center;box-shadow:0 10px 0 var(--pink2)}
+.box h2{font-family:var(--display);font-weight:400;font-size:30px;margin:0 0 8px;color:var(--berry)}
+.box p{margin:6px 0;line-height:1.5}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:12px 0}
+.item{border:3px solid #f0d5c5;border-radius:16px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.item .ic{font-size:34px;height:40px;display:flex;align-items:center}
+.item button{border:0;border-radius:14px;padding:5px 12px;font:inherit;font-weight:700;background:var(--gold);cursor:pointer;color:var(--ink)}
+.item button:disabled{background:#eee;color:#999;cursor:default}
+.item.owned{background:#f1fbf3;border-color:#a5e3a0}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 18px;border-radius:18px;font-weight:700;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+@media (max-width:760px){.btn{min-width:64px;padding:4px 6px;font-size:14px}.btn .ic{font-size:25px}.row{gap:6px}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎂 מאפיית העוגות</h1>
+  <span class="stat" id="sCoins">🪙 0</span>
+  <span class="stat" id="sStars">⭐ 0</span>
+  <button id="shopBtn" title="חנות">🛒 חנות</button>
+  <button id="mute" title="צלילים">🔊</button>
+  <a href="index.html">← למשחקים</a>
+</header>
+
+<div class="app">
+  <aside id="counter">
+    <div id="custBox"><div id="cust">🐻</div><div id="custName"></div></div>
+    <div id="say"></div>
+    <div id="orderWrap">
+      <svg id="orderCake" viewBox="0 0 200 175" aria-label="העוגה שהלקוח רוצה"></svg>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="dayinfo" id="dayinfo"></div>
+  </aside>
+
+  <main id="work">
+    <div id="steps"><span>1 ערבוב</span><span>2 אפייה</span><span>3 קישוט</span><span>4 מכירה</span></div>
+    <div id="hint"></div>
+    <div id="stage" style="display:flex;flex-direction:column;gap:10px"></div>
+  </main>
+</div>
+
+<div class="ov" id="intro"><div class="box">
+  <h2>🎂 מאפיית העוגות 🧁</h2>
+  <p>לקוחות נכנסים למאפייה, וכל אחד רוצה עוגה אחרת.</p>
+  <p><b>1.</b> שימי בקערה את כל המצרכים ואת הטעם, וערבבי.</p>
+  <p><b>2.</b> בחרי תבנית ואפי. הוציאי מהתנור כשהמחוג באזור הירוק!</p>
+  <p><b>3.</b> קשטי בציפוי ובקישוטים, בדיוק כמו בהזמנה.</p>
+  <p><b>4.</b> הגישי, קבלי מטבעות, וקני בחנות טעמים וקישוטים חדשים.</p>
+  <button class="go" id="startBtn">פותחים את המאפייה!</button>
+</div></div>
+
+<div class="ov" id="shopOv" hidden><div class="box">
+  <h2>🛒 החנות של המאפייה</h2>
+  <p>יש לך <b id="shopCoins">0</b> 🪙. כל מה שקונים מופיע גם בהזמנות של הלקוחות.</p>
+  <div class="shop" id="shopList"></div>
+  <button class="go" id="shopClose">חזרה למאפייה</button>
+</div></div>
+
+<div class="ov" id="dayOv" hidden><div class="box">
+  <h2 id="dayTitle">סוף היום!</h2>
+  <div id="dayText"></div>
+  <div class="row" style="margin-top:12px">
+    <button class="go alt" id="dayShop">🛒 לחנות</button>
+    <button class="go" id="dayNext">יום חדש ☀️</button>
+  </div>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+// ===== מה יש במאפייה =====
+// price = כמה עולה בחנות. בלי price = יש מההתחלה.
+const FLAVORS={
+  vanilla:{n:'וניל',e:'🌼',c:'#f3d48f'},
+  choco:{n:'שוקולד',e:'🍫',c:'#8a5434'},
+  straw:{n:'תות',e:'🍓',c:'#f29bb0'},
+  lemon:{n:'לימון',e:'🍋',c:'#f5df5a',price:30},
+  rainbow:{n:'קשת',e:'🌈',c:'rainbow',price:60}
+};
+const RAINBOW=['#ff6b6b','#ffa94d','#ffd43b','#69db7c','#4dabf7','#9775fa'];
+const SHAPES={
+  round:{n:'עגולה',e:'⚪',d:'M30 100 A70 70 0 1 0 170 100 A70 70 0 1 0 30 100 Z'},
+  square:{n:'מרובעת',e:'⬜',d:'M52 35 H148 Q165 35 165 52 V148 Q165 165 148 165 H52 Q35 165 35 148 V52 Q35 35 52 35 Z'},
+  heart:{n:'בצורת לב',e:'❤️',d:'M100 168 C45 128 26 98 30 68 C34 38 76 26 100 62 C124 26 166 38 170 68 C174 98 155 128 100 168 Z',price:40}
+};
+const FROSTS={
+  white:{n:'לבן',c:'#fffaf3'},
+  pink:{n:'ורוד',c:'#ff9ec7'},
+  blue:{n:'תכלת',c:'#9fd8ff'},
+  choco:{n:'שוקולד',c:'#6b3e26'},
+  mint:{n:'מנטה',c:'#9ef0c9',price:25},
+  purple:{n:'סגול',c:'#c9a2ff',price:25}
+};
+const TOPS={
+  cherry:{n:'דובדבן',p:'דובדבנים',e:'🍒'},
+  straw:{n:'תות',p:'תותים',e:'🍓'},
+  candle:{n:'נר',p:'נרות',e:'🕯️'},
+  sprinkle:{n:'פיזור סוכריות',p:'פיזורי סוכריות',e:'🎊'},
+  chip:{n:'פתית שוקולד',p:'פתיתי שוקולד',e:'🟫',price:20},
+  star:{n:'כוכב',p:'כוכבים',e:'⭐',price:35},
+  flower:{n:'פרח',p:'פרחים',e:'🌸',price:35}
+};
+const BASICS=[['flour','🌾','קמח'],['eggs','🥚','ביצים'],['sugar','🍬','סוכר'],['milk','🥛','חלב']];
+const CUSTOMERS=[['🐻','דובי'],['🐰','ארנבונה'],['🦊','שועלי'],['🐼','פנדי'],['🐱','חתולי'],['🐶','כלבלב'],['🐸','קרפדי'],['🦄','חד־קרן'],['🐨','קואלה'],['🐷','חזרזירה'],['🐵','קופיקו'],['🐧','פינגווין']];
+const PER_DAY=5;
+
+// ===== שמירה =====
+const KEY='cakeBakery1';
+let S={coins:0,stars:0,served:0,day:1,inDay:0,dayCoins:0,dayStars:0,own:[],muted:false};
+try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&typeof r==='object')S=Object.assign(S,r)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const owned=(cat,k,obj)=>!obj[k].price||S.own.includes(cat+':'+k);
+const ownedKeys=(cat,obj)=>Object.keys(obj).filter(k=>owned(cat,k,obj));
+
+// ===== צלילים =====
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,f2){const c=ac();if(!c||S.muted)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.15,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}
+const sfx={
+  plop:()=>tone(420,.18,'sine',.2,180),
+  tap:()=>tone(700,.08,'triangle',.12),
+  ding:()=>{tone(880,.25,'sine',.15);setTimeout(()=>tone(1320,.35,'sine',.13),120)},
+  coin:()=>{tone(988,.1,'square',.07);setTimeout(()=>tone(1319,.25,'square',.07),90)},
+  bad:()=>tone(220,.35,'sawtooth',.08,140),
+  yay:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.25,'triangle',.12),i*110))
+};
+
+// ===== צבעים =====
+function hex(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))}
+function mix(a,b,t){t=Math.max(0,Math.min(1,t));const A=hex(a),B=hex(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+// p = כמה זמן העוגה הייתה בתנור (0 עד 100). בלי p = עוגה מוכנה ויפה
+function sponge(base,p){
+  if(p==null)return base;
+  if(p<70)return mix(mix(base,'#fff7e0',.65),base,p/70);
+  return mix(base,'#24140a',(p-70)/30*.9);
+}
+
+// ===== ציור עוגה =====
+// העוגה מצוירת מלמעלה ומעוכה לגובה, ושכבות הבצק נערמות אחת על השנייה
+const TOPY=40,SQ=.45;
+const proj=(x,y)=>[x,TOPY+y*SQ];
+function cakeSVG(c,o){
+  o=o||{};
+  const thick=o.thick==null?34:o.thick, d=SHAPES[c.shape||'round'].d;
+  let s='';
+  if(o.plate!==false)s+=`<ellipse cx="100" cy="${TOPY+100*SQ+36}" rx="94" ry="40" fill="#fff" stroke="#e3d3cc" stroke-width="3"/><ellipse cx="100" cy="${TOPY+100*SQ+33}" rx="80" ry="32" fill="#f7f0ec"/>`;
+  const fl=FLAVORS[c.flavor||'vanilla'];
+  for(let i=Math.round(thick);i>=1;i-=2){
+    let col=fl.c==='rainbow'?RAINBOW[Math.floor((i/(thick+1))*RAINBOW.length)]:fl.c;
+    col=sponge(col,c.bake);
+    if(i>=thick-1)col=mix(col,'#000',.18);
+    s+=`<path d="${d}" fill="${col}" transform="translate(0 ${TOPY+i}) scale(1 ${SQ})"/>`;
+  }
+  let top=fl.c==='rainbow'?'#fff0b3':fl.c; top=sponge(top,c.bake);
+  if(c.frost){
+    const fc=FROSTS[c.frost].c;
+    for(let i=7;i>=1;i-=2)s+=`<path d="${d}" fill="${mix(fc,'#000',.08)}" transform="translate(0 ${TOPY+i}) scale(1 ${SQ})"/>`;
+    top=fc;
+  }
+  s+=`<path d="${d}" fill="${top}" stroke="${mix(top,'#000',.25)}" stroke-width="3" vector-effect="non-scaling-stroke" transform="translate(0 ${TOPY}) scale(1 ${SQ})"/>`;
+  if(c.frost)s+=`<path d="${d}" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-dasharray="6 14" vector-effect="non-scaling-stroke" transform="translate(0 ${TOPY-2}) scale(.97 ${SQ*.97}) translate(3 3)"/>`;
+  (c.tops||[]).slice().sort((a,b)=>a.y-b.y).forEach(t=>{s+=topSVG(t)});
+  return s;
+}
+function topSVG(t){
+  const [x,y]=proj(t.x,t.y);
+  switch(t.t){
+    case 'cherry':return `<g><path d="M${x} ${y-12} q4 -14 12 -16" stroke="#3a7d2c" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="${x}" cy="${y-6}" r="8" fill="#d90429" stroke="#8d0220" stroke-width="2"/><circle cx="${x-3}" cy="${y-9}" r="2.4" fill="#fff" opacity=".8"/></g>`;
+    case 'straw':return `<g><path d="M${x-9} ${y-12} Q${x} ${y-16} ${x+9} ${y-12} Q${x+8} ${y} ${x} ${y+3} Q${x-8} ${y} ${x-9} ${y-12}Z" fill="#ff3b5c" stroke="#b5172f" stroke-width="2"/><path d="M${x-8} ${y-13} l4 -5 4 3 4 -3 4 5" fill="#3bb273" stroke="#237a43" stroke-width="1.5"/><g fill="#ffe08a"><circle cx="${x-3}" cy="${y-7}" r="1.2"/><circle cx="${x+3}" cy="${y-6}" r="1.2"/><circle cx="${x}" cy="${y-2}" r="1.2"/></g></g>`;
+    case 'candle':return `<g><rect x="${x-3.5}" y="${y-30}" width="7" height="30" rx="2" fill="${t.col||'#74c0fc'}" stroke="#fff" stroke-width="1.5"/><path d="M${x-3.5} ${y-22} l7 -4 M${x-3.5} ${y-12} l7 -4" stroke="#fff" stroke-width="2"/><ellipse class="flame" cx="${x}" cy="${y-37}" rx="4" ry="7" fill="#ffb703"/><ellipse class="flame" cx="${x}" cy="${y-35}" rx="2" ry="3.5" fill="#fff3b0"/></g>`;
+    case 'sprinkle':return '<g>'+(t.bits||[]).map(b=>`<rect x="${x+b[0]-4}" y="${y+b[1]-1.5}" width="8" height="3" rx="1.5" fill="${b[3]}" transform="rotate(${b[2]} ${x+b[0]} ${y+b[1]})"/>`).join('')+'</g>';
+    case 'chip':return `<path d="M${x} ${y-12} Q${x+2} ${y-6} ${x+7} ${y-1} Q${x} ${y+3} ${x-7} ${y-1} Q${x-2} ${y-6} ${x} ${y-12}Z" fill="#5a321d" stroke="#3a1f10" stroke-width="1.5"/>`;
+    case 'star':{let p='';for(let i=0;i<10;i++){const r=i%2?4.5:11,a=-Math.PI/2+i*Math.PI/5;p+=(i?'L':'M')+(x+r*Math.cos(a)).toFixed(1)+' '+(y-9+r*Math.sin(a)).toFixed(1)}return `<path d="${p}Z" fill="#ffd43b" stroke="#e0a800" stroke-width="2" stroke-linejoin="round"/>`}
+    case 'flower':{let p='';for(let i=0;i<5;i++){const a=i*Math.PI*2/5;p+=`<circle cx="${(x+6*Math.cos(a)).toFixed(1)}" cy="${(y-8+6*Math.sin(a)).toFixed(1)}" r="5" fill="${t.col||'#ff8fb8'}" stroke="#fff" stroke-width="1"/>`}return `<g>${p}<circle cx="${x}" cy="${y-8}" r="3.5" fill="#ffd43b"/></g>`}
+  }
+  return '';
+}
+const CANDLE_COLS=['#74c0fc','#ff8fb8','#ffd43b','#8ce99a','#b197fc'];
+const SPR_COLS=['#ff6b6b','#ffd43b','#4dabf7','#69db7c','#f783ac','#fff'];
+function makeTop(t,x,y){
+  const o={t,x,y};
+  if(t==='sprinkle')o.bits=Array.from({length:7},()=>[rint(-14,14),rint(-6,6),rint(0,180),pick(SPR_COLS)]);
+  if(t==='candle')o.col=pick(CANDLE_COLS);
+  if(t==='flower')o.col=pick(['#ff8fb8','#fff','#c9a2ff','#ffa94d']);
+  return o;
+}
+// הקישוטים בהזמנה: מסודרים יפה במעגל
+function autoTops(req){
+  const list=[];req.forEach(r=>{for(let i=0;i<r.n;i++)list.push(r.t)});
+  const n=list.length;
+  return list.map((t,i)=>{const a=-Math.PI/2+i/n*Math.PI*2,r=n===1?0:(n<5?34:44);return makeTop(t,100+r*Math.cos(a),100+r*Math.sin(a)*.95)});
+}
+
+// ===== מצב המשחק =====
+let O=null, W=null, step=0;
+function newOrder(){
+  const req=[];
+  const tk=shuffle(ownedKeys('t',TOPS));
+  const two=S.day>=3&&Math.random()<.4;
+  req.push({t:tk[0],n:rint(1,Math.min(5,2+S.day))});
+  if(two)req.push({t:tk[1],n:rint(1,3)});
+  const [e,name]=pick(CUSTOMERS);
+  O={e,name,flavor:pick(ownedKeys('f',FLAVORS)),shape:pick(ownedKeys('s',SHAPES)),frost:pick(ownedKeys('r',FROSTS)),req};
+  W={added:[],flavor:null,mix:0,shape:null,bake:null,bakeQ:null,frost:null,tops:[]};
+  showOrder(true);
+  goStep(0);
+}
+function topsText(r){return r.n===1?TOPS[r.t].n+' אחד':r.n+' '+TOPS[r.t].p}
+function showOrder(enter){
+  const c=$('#cust');c.textContent=O.e;c.className='';if(enter){void c.offsetWidth;c.className='enter'}
+  $('#custName').textContent=O.name;
+  const birthday=O.req.some(r=>r.t==='candle');
+  $('#say').innerHTML=`שלום! אפשר בבקשה עוגת <b>${FLAVORS[O.flavor].n}</b> ${SHAPES[O.shape].n}, עם ציפוי <b>${FROSTS[O.frost].n}</b> ${O.req.map(r=>{const t=topsText(r);return(/^\d/.test(t)?'ו־':'ו')+t}).join(' ')}?`+(birthday?' זה ליום ההולדת שלי! 🎉':'');
+  $('#orderCake').innerHTML=cakeSVG({flavor:O.flavor,shape:O.shape,frost:O.frost,tops:autoTops(O.req)});
+  const fc=FROSTS[O.frost].c;
+  $('#chips').innerHTML=`<span class="chip">${FLAVORS[O.flavor].e} ${FLAVORS[O.flavor].n}</span><span class="chip">${SHAPES[O.shape].e} ${SHAPES[O.shape].n}</span><span class="chip"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${fc};border:1px solid #aaa;vertical-align:-1px"></span> ציפוי ${FROSTS[O.frost].n}</span>`+O.req.map(r=>`<span class="chip">${TOPS[r.t].e} ×${r.n}</span>`).join('');
+  $('#dayinfo').textContent=`יום ${S.day} · לקוח ${S.inDay+1} מתוך ${PER_DAY}`;
+}
+function goStep(n){
+  step=n;
+  [...$('#steps').children].forEach((s,i)=>s.className=i===n?'on':i<n?'done':'');
+  [stepMix,stepBake,stepDeco,stepSell][n]();
+}
+function hint(t){$('#hint').innerHTML=t}
+function updStats(bump){
+  $('#sCoins').textContent='🪙 '+S.coins;$('#sStars').textContent='⭐ '+S.stars;
+  if(bump){['#sCoins','#sStars'].forEach(s=>{const e=$(s);e.classList.remove('bump');void e.offsetWidth;e.classList.add('bump')})}
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),1800)}
+
+// ===== 1. ערבוב =====
+function bowlSVG(){
+  const fl=W.flavor?FLAVORS[W.flavor]:null;
+  const raw='#fbf1dc';
+  let batter=W.added.length?raw:null;
+  if(fl){const fc=fl.c==='rainbow'?'#ffd43b':fl.c;batter=mix(raw,mix(fc,'#fff7e0',.3),W.mix)}
+  const lvl=W.added.length+(W.flavor?1:0);
+  const by=118-lvl*7;
+  let swirl='';
+  if(fl&&W.mix<1){const sc=fl.c==='rainbow'?RAINBOW:[fl.c];swirl=`<path d="M${100-46*(1-W.mix)} ${by+2} q25 -12 46 0 t46 0" stroke="${sc[Math.floor(W.mix*12)%sc.length]}" stroke-width="7" fill="none" opacity="${.9-W.mix*.8}" stroke-linecap="round"/>`}
+  if(fl&&fl.c==='rainbow'&&W.mix>=1)swirl=RAINBOW.map((c,i)=>`<circle cx="${60+i*16}" cy="${by+1}" r="4" fill="${c}"/>`).join('');
+  return `<svg viewBox="0 0 200 160">
+    <ellipse cx="100" cy="150" rx="70" ry="8" fill="#000" opacity=".08"/>
+    <path d="M14 70 Q20 150 100 150 Q180 150 186 70 Z" fill="#8fd3ff" stroke="#3a86b8" stroke-width="4" stroke-linejoin="round"/>
+    ${batter?`<ellipse cx="100" cy="${by}" rx="${Math.min(80,62+lvl*3.5)}" ry="15" fill="${batter}" stroke="${mix(batter,'#000',.15)}" stroke-width="2"/>`:''}
+    ${swirl}
+    <ellipse cx="100" cy="70" rx="86" ry="16" fill="none" stroke="#3a86b8" stroke-width="4"/>
+    <path d="M34 92 Q40 128 74 140" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".6"/>
+    <g id="spoon" transform="translate(${W.sx||120} ${W.sy||60}) rotate(-25)"><rect x="-4" y="-70" width="8" height="70" rx="4" fill="#c98a4b" stroke="#8d5524" stroke-width="2"/><ellipse cx="0" cy="4" rx="12" ry="17" fill="#c98a4b" stroke="#8d5524" stroke-width="2"/></g>
+  </svg>`;
+}
+function stepMix(){
+  const fk=ownedKeys('f',FLAVORS);
+  $('#stage').innerHTML=`
+    <div class="row" id="basics">${BASICS.map(b=>`<button class="btn" data-b="${b[0]}"><span class="ic">${b[1]}</span>${b[2]}</button>`).join('')}</div>
+    <div class="row" id="flavs">${fk.map(k=>`<button class="btn" data-f="${k}"><span class="ic">${FLAVORS[k].e}</span>${FLAVORS[k].n}</button>`).join('')}</div>
+    <div id="bowlBox">${bowlSVG()}</div>
+    <div class="bar"><i id="mixBar"></i></div>`;
+  const refresh=()=>{
+    $('#bowlBox').innerHTML=bowlSVG();
+    document.querySelectorAll('#basics .btn').forEach(b=>b.classList.toggle('used',W.added.includes(b.dataset.b)));
+    document.querySelectorAll('#flavs .btn').forEach(b=>b.classList.toggle('on',b.dataset.f===W.flavor));
+    $('#mixBar').style.width=Math.round(W.mix*100)+'%';
+    const miss=BASICS.length-W.added.length;
+    if(miss>0)hint(`שימי בקערה את כל המצרכים (חסרים עוד ${miss}) 🥣`);
+    else if(!W.flavor)hint('ועכשיו בחרי טעם! מה הלקוח ביקש? 👀');
+    else hint('גררי את הכף בתוך הקערה כדי לערבב! 🥄');
+  };
+  const dropIt=em=>{const d=document.createElement('span');d.className='drop';d.textContent=em;$('#bowlBox').appendChild(d);setTimeout(()=>d.remove(),600)};
+  $('#basics').onclick=e=>{const b=e.target.closest('.btn');if(!b||W.added.includes(b.dataset.b))return;W.added.push(b.dataset.b);sfx.plop();refresh();dropIt(b.querySelector('.ic').textContent)};
+  $('#flavs').onclick=e=>{const b=e.target.closest('.btn');if(!b)return;if(W.mix>0&&W.flavor!==b.dataset.f){W.mix=0}W.flavor=b.dataset.f;sfx.plop();refresh();dropIt(FLAVORS[W.flavor].e)};
+  const box=$('#bowlBox');let down=false,last=null;
+  const pos=e=>{const r=box.getBoundingClientRect();return[(e.clientX-r.left)/r.width*200,(e.clientY-r.top)/r.width*200]};
+  box.onpointerdown=e=>{down=true;last=pos(e);try{box.setPointerCapture(e.pointerId)}catch(_){}};
+  box.onpointerup=box.onpointercancel=()=>{down=false};
+  box.onpointermove=e=>{
+    if(!down)return;
+    const p=pos(e);
+    const ready=W.added.length===BASICS.length&&W.flavor;
+    W.sx=Math.max(40,Math.min(160,p[0]));W.sy=Math.max(40,Math.min(110,p[1]));
+    if(ready&&W.mix<1){
+      const dist=Math.hypot(p[0]-last[0],p[1]-last[1]);
+      W.mix=Math.min(1,W.mix+dist/1400);
+      if(Math.random()<.08)tone(300+Math.random()*120,.06,'sine',.05);
+      if(W.mix>=1){sfx.ding();refresh();hint('הבצק מוכן! 🎉');setTimeout(()=>goStep(1),700);down=false;return}
+    }
+    last=p;
+    const sp=box.querySelector('#spoon');if(sp)sp.setAttribute('transform',`translate(${W.sx} ${W.sy}) rotate(${-25+Math.sin(W.mix*40)*15})`);
+    if(ready)refresh();
+  };
+  refresh();
+}
+
+// ===== 2. אפייה =====
+let raf=0;
+function ovenSVG(){
+  const c={flavor:W.flavor,shape:W.shape||'round',bake:W.bake==null?0:W.bake};
+  const rise=W.bake==null?8:8+26*Math.min(1,W.bake/60);
+  const glow=W.bake==null?0:.5+.3*Math.sin(Date.now()/150);
+  return `<svg id="oven" viewBox="0 0 220 190">
+    <rect x="6" y="6" width="208" height="178" rx="18" fill="#e9ecef" stroke="#868e96" stroke-width="4"/>
+    <rect x="6" y="6" width="208" height="30" rx="14" fill="#ced4da"/>
+    ${[40,80,120,160].map(x=>`<circle cx="${x+10}" cy="21" r="8" fill="#fff" stroke="#868e96" stroke-width="3"/>`).join('')}
+    <rect x="22" y="48" width="176" height="122" rx="12" fill="#3a2a22" stroke="#495057" stroke-width="4"/>
+    <rect x="28" y="54" width="164" height="110" rx="9" fill="#ff922b" opacity="${glow}"/>
+    <g transform="translate(36 40) scale(.74)">${cakeSVG(c,{thick:rise,plate:false})}</g>
+    <rect x="30" y="150" width="160" height="5" rx="2" fill="#adb5bd"/>
+    <path d="M40 60 L70 60" stroke="#fff" stroke-width="5" opacity=".35" stroke-linecap="round"/>
+  </svg>`;
+}
+function bakeQ(p){return p<50?'raw':p<62?'good':p<=78?'perfect':p<=88?'good':'burnt'}
+const QTEXT={raw:'עוד לא אפוי! 😬',good:'יצא טוב 🙂',perfect:'מושלם! 🌟',burnt:'אוי, נשרף! 😱'};
+function stepBake(){
+  cancelAnimationFrame(raf);
+  const sk=ownedKeys('s',SHAPES);
+  $('#stage').innerHTML=`
+    <div class="row" id="pans">${sk.map(k=>`<button class="btn" data-s="${k}"><span class="ic">${SHAPES[k].e}</span>${SHAPES[k].n}</button>`).join('')}</div>
+    <div id="ovenBox">${ovenSVG()}</div>
+    <div class="gauge"><div class="needle" id="needle"></div></div>
+    <div class="glabels"><span>נא</span><span>מושלם</span><span>נשרף</span></div>
+    <div class="result" id="bakeRes"></div>
+    <div class="row" id="bakeBtns"></div>`;
+  const btns=$('#bakeBtns');
+  const idle=()=>{
+    document.querySelectorAll('#pans .btn').forEach(b=>b.classList.toggle('on',b.dataset.s===W.shape));
+    $('#ovenBox').innerHTML=ovenSVG();
+    btns.innerHTML=`<button class="go" id="inBtn" ${W.shape?'':'disabled'}>🔥 לתנור!</button>`;
+    $('#inBtn').onclick=start;
+    hint(W.shape?'מעולה! עכשיו מכניסים לתנור 🔥':'איזו תבנית? בחרי צורה לעוגה');
+  };
+  $('#pans').onclick=e=>{const b=e.target.closest('.btn');if(!b||W.bake!=null)return;W.shape=b.dataset.s;sfx.tap();idle()};
+  function start(){
+    W.bake=0;W.bakeQ=null;$('#bakeRes').textContent='';
+    document.querySelectorAll('#pans .btn').forEach(b=>b.classList.add('lock'));
+    btns.innerHTML='<button class="go" id="outBtn">🧤 להוציא מהתנור!</button>';
+    hint('הוציאי כשהמחוג באזור הירוק הכהה!');
+    tone(160,.6,'sawtooth',.05,90);
+    const speed=100/(6.2-Math.min(2,S.day*.25));
+    let t0=performance.now();
+    const loop=now=>{
+      W.bake=Math.min(100,W.bake+(now-t0)/1000*speed);t0=now;
+      $('#needle').style.right=W.bake+'%';
+      $('#ovenBox').innerHTML=ovenSVG();
+      if(W.bake>=100){stop();return}
+      raf=requestAnimationFrame(loop);
+    };
+    raf=requestAnimationFrame(loop);
+    $('#outBtn').onclick=stop;
+  }
+  function stop(){
+    cancelAnimationFrame(raf);
+    W.bakeQ=bakeQ(W.bake);
+    $('#bakeRes').textContent=QTEXT[W.bakeQ];
+    $('#ovenBox').innerHTML=ovenSVG();
+    const ok=W.bakeQ==='good'||W.bakeQ==='perfect';
+    ok?(W.bakeQ==='perfect'?sfx.yay():sfx.ding()):sfx.bad();
+    btns.innerHTML=(ok?'':`<button class="go alt" id="againBtn">🔁 לאפות שוב</button>`)+`<button class="go" id="decoBtn">${ok?'🎨 לקישוט!':'לקשט בכל זאת'}</button>`;
+    hint(ok?'איזה ריח! עכשיו מקשטים':'אפשר לנסות שוב, או לקשט ככה (הלקוח ישלם פחות)');
+    if($('#againBtn'))$('#againBtn').onclick=()=>{W.bake=null;W.bakeQ=null;stepBake()};
+    $('#decoBtn').onclick=()=>goStep(2);
+  }
+  if(W.bake!=null&&W.bakeQ){idle();stop()}else{W.bake=null;idle()}
+}
+
+// ===== 3. קישוט =====
+let decoTab='frost', decoTool=null;
+function stepDeco(){
+  const rk=ownedKeys('r',FROSTS), tk=ownedKeys('t',TOPS);
+  if(!decoTool||!tk.includes(decoTool))decoTool=tk[0];
+  $('#stage').innerHTML=`
+    <svg id="deco" viewBox="0 0 200 175"></svg>
+    <div class="tabs"><button data-tab="frost">🎨 ציפוי</button><button data-tab="tops">🍒 קישוטים</button></div>
+    <div class="row" id="tools"></div>
+    <div class="row"><button class="go alt" id="clearBtn">🧽 לנקות קישוטים</button><button class="go" id="serveBtn">🛎️ להגיש!</button></div>`;
+  const svg=$('#deco');
+  const draw=()=>{
+    svg.innerHTML=cakeSVG({flavor:W.flavor,shape:W.shape,frost:W.frost,bake:W.bake,tops:W.tops})+`<path id="hit" d="${SHAPES[W.shape].d}" fill="none" pointer-events="none"/>`;
+    $('#serveBtn').disabled=!W.frost&&!W.tops.length;
+  };
+  const tools=()=>{
+    document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===decoTab));
+    if(decoTab==='frost'){
+      $('#tools').innerHTML=rk.map(k=>`<button class="btn ${W.frost===k?'on':''}" data-r="${k}"><span class="sw" style="background:${FROSTS[k].c}"></span>${FROSTS[k].n}</button>`).join('');
+      hint(W.frost?'ציפוי יפה! עכשיו קישוטים 🍒':'בחרי צבע ציפוי 🎨');
+    }else{
+      $('#tools').innerHTML=tk.map(k=>{const n=W.tops.filter(t=>t.t===k).length;return`<button class="btn ${decoTool===k?'on':''}" data-t="${k}"><span class="ic">${TOPS[k].e}</span>${TOPS[k].n}${n?` (${n})`:''}</button>`}).join('');
+      hint(`לחצי על העוגה כדי לשים ${TOPS[decoTool].e}`);
+    }
+  };
+  document.querySelector('.tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;decoTab=b.dataset.tab;sfx.tap();tools()};
+  $('#tools').onclick=e=>{
+    const b=e.target.closest('.btn');if(!b)return;
+    if(b.dataset.r){W.frost=b.dataset.r;sfx.plop();draw();decoTab='tops';tools();return}
+    decoTool=b.dataset.t;sfx.tap();tools();
+  };
+  svg.onpointerdown=e=>{
+    const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+    const m=svg.getScreenCTM();if(!m)return;
+    const p=pt.matrixTransform(m.inverse());
+    const px=p.x, py=(p.y+6-TOPY)/SQ; // +6: נקודת הלחיצה היא בערך מרכז הקישוט
+    let inside;
+    try{inside=$('#hit').isPointInFill(new DOMPoint(px,py))}catch(_){inside=Math.hypot(px-100,py-100)<70}
+    if(!inside){toast('שימי את הקישוט על העוגה 🙂');return}
+    if(W.tops.length>=24){toast('אין יותר מקום על העוגה!');return}
+    if(decoTab!=='tops'){decoTab='tops';tools()}
+    W.tops.push(makeTop(decoTool,px,py));
+    tone(600+W.tops.length*25,.09,'triangle',.12);
+    draw();tools();
+  };
+  $('#clearBtn').onclick=()=>{W.tops=[];sfx.tap();draw();tools()};
+  $('#serveBtn').onclick=()=>goStep(3);
+  draw();tools();
+}
+
+// ===== 4. מכירה =====
+function stepSell(){
+  const ok=(a,b)=>a===b;
+  const parts=[];
+  parts.push({l:`${FLAVORS[W.flavor].e} טעם ${FLAVORS[W.flavor].n}`,v:ok(W.flavor,O.flavor)?1:0,w:.2});
+  parts.push({l:`${SHAPES[W.shape].e} צורה ${SHAPES[W.shape].n}`,v:ok(W.shape,O.shape)?1:0,w:.15});
+  parts.push({l:W.frost?`🎨 ציפוי ${FROSTS[W.frost].n}`:'🎨 בלי ציפוי',v:ok(W.frost,O.frost)?1:0,w:.2});
+  O.req.forEach(r=>{
+    const n=W.tops.filter(t=>t.t===r.t).length, d=Math.abs(n-r.n);
+    parts.push({l:`${TOPS[r.t].e} ${n} מתוך ${r.n}`,v:d===0?1:d===1?.5:0,w:.3/O.req.length});
+  });
+  const bq=W.bakeQ==='perfect'?1:W.bakeQ==='good'?.7:0;
+  parts.push({l:`🔥 ${QTEXT[W.bakeQ]}`,v:bq,w:.15});
+  const frac=parts.reduce((s,p)=>s+p.v*p.w,0);
+  const stars=frac>=.9?3:frac>=.6?2:1;
+  const tip=stars===3?3+S.day:0;
+  const coins=Math.max(2,Math.round((8+S.day*2)*frac))+tip;
+  S.coins+=coins;S.stars+=stars;S.served++;S.inDay++;S.dayCoins+=coins;S.dayStars+=stars;save();
+  const lines={3:['וואו! בדיוק מה שרציתי! 😍','זאת העוגה הכי טעימה בעולם! 🤩','מושלם! אני אחזור מחר! 💖'],2:['יפה מאוד, תודה! 😊','טעים! כמעט בדיוק מה שביקשתי 🙂'],1:['אממ... זה לא ממש מה שביקשתי 😕','נו טוב, תודה בכל זאת 😐']};
+  $('#say').innerHTML='<b>'+pick(lines[stars])+'</b>';
+  const c=$('#cust');c.className='';void c.offsetWidth;if(stars>1)c.className='happy';
+  stars===3?sfx.yay():stars===2?sfx.ding():sfx.bad();
+  setTimeout(sfx.coin,500);
+  updStats(true);
+  hint(stars===3?'הלקוח מאושר! 🎉':stars===2?'כמעט מושלם!':'בפעם הבאה נשים לב להזמנה 💪');
+  const last=S.inDay>=PER_DAY;
+  $('#stage').innerHTML=`
+    <svg id="deco" viewBox="0 0 200 175" style="max-width:240px">${cakeSVG({flavor:W.flavor,shape:W.shape,frost:W.frost,bake:W.bake,tops:W.tops})}</svg>
+    <div class="starsbig">${'⭐'.repeat(stars)}${'<span style="opacity:.25">⭐</span>'.repeat(3-stars)}</div>
+    <div class="check">${parts.map(p=>`<div class="${p.v>=1?'ok':p.v>0?'half':''}">${p.v>=1?'✔':p.v>0?'≈':'✘'} ${p.l}</div>`).join('')}</div>
+    <div class="pay">+${coins} 🪙${tip?` <small style="font-size:16px">(כולל טיפ ${tip})</small>`:''}</div>
+    <button class="go" id="nextBtn">${last?'לסיום היום 🌙':'הלקוח הבא 👋'}</button>`;
+  $('#nextBtn').onclick=()=>{last?endDay():newOrder()};
+}
+function endDay(){
+  $('#dayTitle').textContent=`סוף יום ${S.day}! 🌙`;
+  $('#dayText').innerHTML=`<p>היום מכרת ${PER_DAY} עוגות.</p><p style="font-size:24px"><b>+${S.dayCoins} 🪙</b> · <b>+${S.dayStars} ⭐</b></p><p>מחר יגיעו לקוחות עם הזמנות קצת יותר מסובכות. אולי כדאי לקנות משהו חדש בחנות?</p>`;
+  $('#dayOv').hidden=false;
+}
+$('#dayNext').onclick=()=>{S.day++;S.inDay=0;S.dayCoins=0;S.dayStars=0;save();$('#dayOv').hidden=true;newOrder()};
+$('#dayShop').onclick=()=>{openShop()};
+
+// ===== חנות =====
+const CATS=[['f',FLAVORS,'טעם'],['s',SHAPES,'תבנית'],['r',FROSTS,'ציפוי'],['t',TOPS,'קישוט']];
+function openShop(){
+  $('#shopCoins').textContent=S.coins;
+  let h='';
+  CATS.forEach(([cat,obj,lbl])=>Object.keys(obj).forEach(k=>{
+    const it=obj[k];if(!it.price)return;
+    const has=S.own.includes(cat+':'+k);
+    const ic=cat==='r'?`<span class="sw" style="background:${it.c};width:34px;height:34px"></span>`:it.e;
+    h+=`<div class="item ${has?'owned':''}"><span class="ic">${ic}</span><b>${lbl} ${it.n}</b><button data-k="${cat}:${k}" ${has||S.coins<it.price?'disabled':''}>${has?'✔ יש לך':it.price+' 🪙'}</button></div>`;
+  }));
+  $('#shopList').innerHTML=h;
+  $('#shopOv').hidden=false;
+}
+$('#shopList').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;
+  const [cat,k]=b.dataset.k.split(':');const obj=CATS.find(c=>c[0]===cat)[1];
+  if(S.coins<obj[k].price)return;
+  S.coins-=obj[k].price;S.own.push(b.dataset.k);save();sfx.yay();updStats(true);
+  toast('קנית '+obj[k].n+'! 🎉');openShop();
+  if(step===0||step===2)goStep(step); // שיופיע מיד בכפתורים
+};
+$('#shopClose').onclick=()=>{$('#shopOv').hidden=true};
+$('#shopBtn').onclick=openShop;
+
+// ===== התחלה =====
+const setMute=()=>{$('#mute').textContent=S.muted?'🔇':'🔊'};
+$('#mute').onclick=()=>{S.muted=!S.muted;save();setMute()};
+$('#startBtn').onclick=()=>{ac();sfx.ding();$('#intro').hidden=true};
+setMute();updStats();
+if(S.inDay>=PER_DAY){S.day++;S.inDay=0;S.dayCoins=0;S.dayStars=0;save()}
+newOrder();
+</script>
+</body>
+</html>
