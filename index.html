@@ -40,7 +40,7 @@
   },
   "mainEntity": {
     "@type": "ItemList",
-    "numberOfItems": 17,
+    "numberOfItems": 18,
     "itemListElement": [
       {
         "@type": "ListItem",
@@ -279,6 +279,20 @@
           "playMode": "SinglePlayer",
           "isAccessibleForFree": true
         }
+      },
+      {
+        "@type": "ListItem",
+        "position": 18,
+        "item": {
+          "@type": "VideoGame",
+          "name": "הסטודיו הקסום",
+          "url": "https://ozcarmel.github.io/liv_games/magic-studio.html",
+          "inLanguage": "he",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any (web browser)",
+          "playMode": "SinglePlayer",
+          "isAccessibleForFree": true
+        }
       }
     ]
   }
@@ -485,6 +499,7 @@
       <li><a href="territory-3d.html">כובשי השטח 3D</a></li>
       <li><a href="my-zoo.html">גן החיות שלי</a></li>
       <li><a href="cake-bakery.html">מאפיית העוגות</a></li>
+      <li><a href="magic-studio.html">הסטודיו הקסום</a></li>
     </ul></nav>
   </noscript>
   </main>
@@ -508,6 +523,7 @@
   //   image   = התמונה הקטנה    url     = הדף של המשחק
   //   soon: true = כרטיס "בקרוב" שעוד אי אפשר לפתוח
   var games = [
+    { key: "magic-studio", name: "הסטודיו הקסום", creator: "ליב", image: "magic-studio.svg", url: "magic-studio.html" },
     { key: "cake-bakery", name: "מאפיית העוגות", creator: "ליב", image: "cake-bakery.svg", url: "cake-bakery.html" },
     { key: "my-zoo", name: "גן החיות שלי", creator: "ליב", image: "my-zoo.svg", url: "my-zoo.html" },
     { key: "animal-salon", name: "מספרת החיות", creator: "ליב", image: "animal-salon.svg", url: "animal-salon.html" },
@@ -582,7 +598,7 @@
     var current = null; // המספר שמוצג עכשיו
     // מספר התחלה קבוע לכל משחק (נבחר באקראי בין 30 ל־160), והמונה עולה משם כרגיל.
     // משחק חדש שלא ברשימה מקבל מספר קבוע בטווח הזה לפי השם שלו.
-    var startAt = { "cake-bakery": 50, "my-zoo": 72, "animal-salon": 109, "dressup-city": 61, "dream-in-dream": 102, "luna-game": 112, "space-shooter": 146, "cube-world": 47, "cops-and-robbers": 101, "build-house": 125, "flashcards": 130, "panda": 61, "star-gardener": 71, "lemonade-stand": 119, "leaf-cleaners": 144, "penalty-kicks": 132, "squishy-factory": 106, "design-apartment": 58, "rage-room": 32, "territory-3d": 129 };
+    var startAt = { "magic-studio": 87, "cake-bakery": 50, "my-zoo": 72, "animal-salon": 109, "dressup-city": 61, "dream-in-dream": 102, "luna-game": 112, "space-shooter": 146, "cube-world": 47, "cops-and-robbers": 101, "build-house": 125, "flashcards": 130, "panda": 61, "star-gardener": 71, "lemonade-stand": 119, "leaf-cleaners": 144, "penalty-kicks": 132, "squishy-factory": 106, "design-apartment": 58, "rage-room": 32, "territory-3d": 129 };
     var offset = startAt[g.key];
     if (typeof offset !== "number") { offset = 0; for (var i = 0; i < g.key.length; i++) offset = (offset * 31 + g.key.charCodeAt(i)) % 131; offset += 30; }
 

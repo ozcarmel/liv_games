@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הסטודיו הקסום | משחק ציור וצביעה בחינם</title>
+<meta name="description" content="משחק ציור בחינם לילדים: מציירים כל מה שרוצים, לוחצים על הקסם והציור מתעורר לחיים, הולך, עף, שוחה וקופץ על המסך. יש גם דפי צביעה שהופכים לחיות שזזות.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/magic-studio.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="הסטודיו הקסום | משחק ציור וצביעה בחינם">
+<meta property="og:description" content="מציירים ציור, לוחצים על הקסם והוא מתעורר לחיים וזז על המסך. יש גם דפי צביעה שהופכים לחיות שזזות.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/magic-studio.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "הסטודיו הקסום",
+  "description": "משחק ציור בחינם לילדים: מציירים כל מה שרוצים, לוחצים על הקסם והציור מתעורר לחיים, הולך, עף, שוחה וקופץ על המסך. יש גם דפי צביעה שהופכים לחיות שזזות.",
+  "url": "https://ozcarmel.github.io/liv_games/magic-studio.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "ציור ויצירה",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "אתר המשחקים של ליב",
+    "url": "https://ozcarmel.github.io/liv_games/"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+/* תוכנית העיצוב: סטודיו ציור סגול וקסום. הדף הלבן הוא הבמה,
+   והעולם שבו הציורים חיים הוא המקום הכי צבעוני במשחק. */
+:root{
+  --ink:#1d1b4b; --violet:#7a5cff; --violet2:#e9e3ff; --pink:#ff5fa2; --mint:#2fd1a0; --sun:#ffd23f;
+  --paper:#fffdf8; --bg:#f6f2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Rubik,system-ui,sans-serif;color:var(--ink);background:var(--bg);
+  background-image:radial-gradient(#e2d9ff 2.5px,transparent 3px);background-size:28px 28px;min-height:100vh}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:var(--violet);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+header h1{font-family:"Secular One",Rubik,sans-serif;font-weight:400;font-size:22px;margin:0;flex:1;min-width:150px}
+header a,header button{color:#fff;text-decoration:none;font:inherit;font-size:15px;background:rgba(255,255,255,.2);border:0;padding:5px 11px;border-radius:14px;cursor:pointer}
+main{max-width:920px;margin:0 auto;padding:12px 12px 40px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tab{flex:1;min-width:96px;font:inherit;font-weight:700;font-size:16px;padding:10px 8px;border-radius:16px;border:3px solid var(--violet2);background:#fff;color:var(--ink);cursor:pointer;box-shadow:0 4px 0 var(--violet2)}
+.tab[aria-selected="true"]{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:0 4px 0 #5537d6}
+.tab .badge{display:inline-block;min-width:22px;background:var(--sun);color:var(--ink);border-radius:11px;padding:0 6px;font-size:13px;margin-inline-start:4px}
+.panel{background:#fff;border:4px solid var(--violet2);border-radius:24px;padding:12px;box-shadow:0 6px 0 #ddd3ff}
+.panel[hidden]{display:none}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+.label{font-weight:700;font-size:14px;margin-inline-end:2px}
+.sw{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #cfc6f5;cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink);transform:scale(1.12)}
+.sw.rainbow{background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red)}
+.tool{font:inherit;font-size:15px;padding:6px 11px;border-radius:14px;border:2px solid #d9d0ff;background:#faf8ff;color:var(--ink);cursor:pointer;white-space:nowrap}
+.tool[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.size{display:inline-flex;align-items:center;justify-content:center;width:38px;height:34px}
+.size i{display:block;border-radius:50%;background:currentColor}
+.big{font:inherit;font-family:"Secular One",Rubik,sans-serif;font-size:21px;padding:10px 20px;border-radius:20px;border:0;color:#fff;cursor:pointer;
+  background:linear-gradient(90deg,#ff5fa2,#7a5cff,#2fb8ff);box-shadow:0 5px 0 #4b2fb8;animation:glow 2.4s ease-in-out infinite}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 #4b2fb8}
+@keyframes glow{50%{filter:brightness(1.15) saturate(1.2)}}
+.paper{position:relative;border-radius:18px;overflow:hidden;border:3px solid #e6e0fb;background:var(--paper)}
+#pad{display:block;width:100%;aspect-ratio:16/11;touch-action:none;cursor:crosshair}
+.hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:#b3a9dd;font-size:20px;pointer-events:none;transition:opacity .3s}
+.paper.magic{animation:shake .7s ease-in-out}
+@keyframes shake{20%{transform:rotate(-2deg) scale(1.02)}40%{transform:rotate(2deg) scale(1.03)}60%{transform:rotate(-1deg) scale(1.02)}80%{transform:rotate(1deg)}}
+.spark{position:fixed;pointer-events:none;z-index:50;font-size:22px;animation:fly 1s ease-out forwards}
+@keyframes fly{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(200deg);opacity:0}}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
+.pg{font:inherit;font-size:14px;border:3px solid #e6e0fb;background:#faf8ff;border-radius:14px;padding:6px 4px;cursor:pointer;color:var(--ink)}
+.pg b{display:block;font-size:26px;line-height:1.2}
+.pg[aria-pressed="true"]{border-color:var(--violet);background:var(--violet2)}
+#color svg{display:block;width:100%;max-height:60vh;aspect-ratio:300/240;cursor:pointer}
+#color svg .r{transition:fill .15s}
+#world{position:relative;width:100%;aspect-ratio:16/10;border-radius:18px;overflow:hidden;border:3px solid #e6e0fb;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#world.meadow{background:linear-gradient(#9fdcff 0,#d9f3ff 78%,#7ed957 78%,#56b83a 100%)}
+#world.sea{background:linear-gradient(#5fc8ff 0,#1f8fe0 55%,#126bb8 82%,#f2d28b 82%,#e3b764 100%)}
+#world.space{background:linear-gradient(transparent 78%,#8d8aa8 78%,#6d6a8c 100%),radial-gradient(circle at 80% 20%,#3b2a7a 0,#17123d 50%,#0b0a22 100%)}
+.deco{position:absolute;pointer-events:none;line-height:1}
+.bub{position:absolute;bottom:18%;width:10px;height:10px;border-radius:50%;border:2px solid rgba(255,255,255,.8);animation:rise linear infinite;pointer-events:none}
+@keyframes rise{from{transform:translateY(0);opacity:.9}to{transform:translateY(-70vh);opacity:0}}
+.twinkle{animation:tw 1.6s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.3}to{opacity:1}}
+.cr{position:absolute;left:0;top:0;will-change:transform;cursor:pointer}
+.cr .bd{position:relative;transform-origin:50% 100%}
+.cr img{display:block;width:100%;height:auto;pointer-events:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}
+.eyes{position:absolute;left:0;right:0;top:14%;display:flex;justify-content:center;gap:6%;pointer-events:none}
+.eye{position:relative;width:22%;aspect-ratio:1;background:#fff;border:3px solid var(--ink);border-radius:50%;animation:blink 4s infinite}
+.eye::after{content:"";position:absolute;width:45%;height:45%;background:var(--ink);border-radius:50%;top:30%;left:42%}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.tag{position:absolute;left:50%;top:-30px;transform:translateX(-50%);background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 9px;font-weight:700;font-size:14px;white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none}
+.cr.talk .tag{opacity:1}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;text-align:center;font-size:19px;color:var(--ink);padding:20px;pointer-events:none}
+.empty b{background:rgba(255,255,255,.85);padding:10px 16px;border-radius:16px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:18px;font-weight:700;z-index:60;transition:transform .35s;max-width:90vw;text-align:center}
+#toast.on{transform:translateX(-50%) translateY(0)}
+.note{font-size:14px;color:#6a6494;margin:6px 2px 0}
+@media (max-width:520px){header h1{font-size:19px}.sw{width:30px;height:30px}.big{font-size:18px;padding:9px 14px}.tool{font-size:14px;padding:5px 9px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎨 הסטודיו הקסום</h1>
+  <button id="mute" title="צלילים">🔊</button>
+  <a href="index.html">← למשחקים</a>
+</header>
+<main>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="draw" aria-selected="true">🖌️ מציירים</button>
+    <button class="tab" role="tab" data-tab="color" aria-selected="false">🖍️ דפי צביעה</button>
+    <button class="tab" role="tab" data-tab="world" aria-selected="false">🌈 העולם הקסום<span class="badge" id="count">0</span></button>
+  </div>
+
+  <section class="panel" id="p-draw">
+    <div class="row" id="drawColors"><span class="label">צבע:</span></div>
+    <div class="row">
+      <span class="label">מכחול:</span>
+      <button class="tool size" data-size="6" title="דק"><i style="width:6px;height:6px"></i></button>
+      <button class="tool size" data-size="14" title="בינוני" aria-pressed="true"><i style="width:12px;height:12px"></i></button>
+      <button class="tool size" data-size="28" title="עבה"><i style="width:20px;height:20px"></i></button>
+      <button class="tool" id="eraser">🧽 מחק</button>
+      <button class="tool" id="undo">↩️ בטל</button>
+      <button class="tool" id="clear">🗑️ דף חדש</button>
+      <button class="tool" id="idea">💡 רעיון</button>
+    </div>
+    <div class="paper" id="paper">
+      <canvas id="pad" width="800" height="550" aria-label="דף ציור"></canvas>
+      <div class="hint" id="hint">ציירו כאן כל מה שבא לכם:<br>חיה, מפלצת, מכונית או סתם קשקוש 🙂</div>
+    </div>
+    <div class="row" id="drawMotion"><span class="label">איך הוא יזוז?</span></div>
+    <div class="row" style="justify-content:space-between">
+      <button class="tool" id="eyes" aria-pressed="true">👀 להוסיף עיניים</button>
+      <button class="big" id="makeDraw">✨ תתעורר לחיים!</button>
+    </div>
+  </section>
+
+  <section class="panel" id="p-color" hidden>
+    <div class="pages" id="pages"></div>
+    <div class="row" id="colorColors"><span class="label">צבע:</span></div>
+    <div class="paper" id="color"></div>
+    <p class="note">נוגעים בחלק של הציור והוא נצבע בצבע שבחרתם.</p>
+    <div class="row">
+      <button class="tool" id="randomFill">🎲 צבעים אקראיים</button>
+      <button class="tool" id="resetFill">🧽 לנקות דף</button>
+    </div>
+    <div class="row" id="colorMotion"><span class="label">איך הוא יזוז?</span></div>
+    <div class="row" style="justify-content:flex-end">
+      <button class="big" id="makeColor">✨ תתעורר לחיים!</button>
+    </div>
+  </section>
+
+  <section class="panel" id="p-world" hidden>
+    <div class="row">
+      <span class="label">איפה הם גרים?</span>
+      <button class="tool" data-scene="meadow">🌳 אחו</button>
+      <button class="tool" data-scene="sea">🌊 ים</button>
+      <button class="tool" data-scene="space">🚀 חלל</button>
+    </div>
+    <div id="world" class="meadow"><div id="decor"></div><div class="empty" id="empty"><b>העולם עוד ריק.<br>ציירו משהו ולחצו על ✨ כדי שיתעורר לחיים!</b></div></div>
+    <p class="note">נוגעים בציור והוא קופץ ואומר שלום. אפשר לשמור עד 12 ציורים חיים.</p>
+    <div class="row">
+      <button class="tool" id="party">🎉 מסיבה!</button>
+      <button class="tool" id="wipe">🧹 לפנות את העולם</button>
+    </div>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+var KEY = "magicStudio:v1", MAX = 12;
+var COLORS = ["#1d1b4b","#e8174d","#ff8a1f","#ffd23f","#7ed957","#2fd1a0","#2fb8ff","#3a5bff","#7a5cff","#ff5fa2","#a0522d","#ffffff"];
+var MOTIONS = [
+  {id:"walk", name:"🚶 הולך"}, {id:"hop", name:"🐸 קופץ"}, {id:"fly", name:"🦋 עף"},
+  {id:"swim", name:"🐟 שוחה"}, {id:"dance", name:"💃 רוקד"}, {id:"spin", name:"🌀 מסתובב"}
+];
+var NAMES = ["בובו","פיצי","זוזו","לולו","טוטו","קיקי","מומו","ניני","פופו","שושו","דודו","ביבי","צ'יקו","רוני","גוגו","פלפל","תותי","שמשון"];
+var HELLO = ["שלום!","היי! 👋","יש לי חיים!","אני עף! 😄","בואו נשחק!","יו־הו!","תודה שציירת אותי!","אני הכי יפה 💖"];
+var IDEAS = ["ציירו דג ענק עם סנפירים","ציירו מפלצת מצחיקה עם הרבה רגליים","ציירו חתול עם זנב ארוך","ציירו פרפר צבעוני","ציירו מכונית מירוץ","ציירו ענן שמח","ציירו דינוזאור","ציירו כוכב עם ידיים","ציירו כלב עם אוזניים גדולות","ציירו פרח שרוקד","ציירו רובוט","ציירו ציפור עם כנפיים גדולות"];
+
+// ---------- שמירה ----------
+var S = {world:[], scene:"meadow", mute:false, fills:{}, made:0};
+try{ var r = JSON.parse(localStorage.getItem(KEY)||"null"); if(r && typeof r==="object") S = Object.assign(S, r); }catch(e){}
+if(!Array.isArray(S.world)) S.world = [];
+function save(){
+  for(var tries=0; tries<6; tries++){
+    try{ localStorage.setItem(KEY, JSON.stringify(S)); return; }
+    catch(e){ if(S.world.length>1) S.world.shift(); else return; }
+  }
+}
+
+// ---------- צלילים ----------
+var ac = null;
+function ctx(){ if(!ac){ try{ ac = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(ac && ac.state==="suspended") ac.resume(); return ac; }
+function tone(f, d, type, when, vol, slide){
+  if(S.mute) return; var a = ctx(); if(!a) return;
+  var t = a.currentTime + (when||0), o = a.createOscillator(), g = a.createGain();
+  o.type = type||"sine"; o.frequency.setValueAtTime(f, t);
+  if(slide) o.frequency.exponentialRampToValueAtTime(slide, t+d);
+  g.gain.setValueAtTime(vol||0.15, t); g.gain.exponentialRampToValueAtTime(0.001, t+d);
+  o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+d+0.02);
+}
+function sMagic(){ [523,659,784,1047,1319].forEach(function(f,i){ tone(f,0.3,"triangle",i*0.08,0.13); }); }
+function sBoing(){ tone(220,0.35,"sine",0,0.2,660); }
+function sBlop(){ tone(500,0.12,"sine",0,0.15,260); }
+function sClick(){ tone(880,0.05,"square",0,0.04); }
+var muteBtn = document.getElementById("mute");
+function showMute(){ muteBtn.textContent = S.mute ? "🔇" : "🔊"; }
+muteBtn.onclick = function(){ S.mute = !S.mute; showMute(); save(); };
+showMute();
+
+// ---------- עזרים ----------
+var toastEl = document.getElementById("toast"), toastT;
+function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("on"); }, 2600); }
+function sparkle(x, y, n, chars){
+  chars = chars || ["✨","⭐","💫","🌟","💖"];
+  for(var i=0;i<n;i++){
+    var s = document.createElement("span"); s.className = "spark";
+    s.textContent = chars[i % chars.length];
+    var ang = Math.random()*Math.PI*2, dist = 60 + Math.random()*120;
+    s.style.left = (x-11)+"px"; s.style.top = (y-11)+"px";
+    s.style.setProperty("--dx", Math.cos(ang)*dist+"px"); s.style.setProperty("--dy", Math.sin(ang)*dist+"px");
+    document.body.appendChild(s); setTimeout(s.remove.bind(s), 1050);
+  }
+}
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+// ---------- לשוניות ----------
+var tabs = document.querySelectorAll(".tab");
+function showTab(id){
+  tabs.forEach(function(t){ t.setAttribute("aria-selected", t.dataset.tab===id ? "true" : "false"); });
+  ["draw","color","world"].forEach(function(p){ document.getElementById("p-"+p).hidden = p!==id; });
+  if(id==="world") measure();
+}
+tabs.forEach(function(t){ t.onclick = function(){ sClick(); showTab(t.dataset.tab); }; });
+
+// ---------- צבעים ותנועות ----------
+var drawColor = "#7a5cff", fillColor = "#ff5fa2", rainbow = false, motion = "walk", colorMotion = "swim";
+function swatches(rowId, getC, setC, withRainbow){
+  var row = document.getElementById(rowId), btns = [];
+  COLORS.forEach(function(c){
+    var b = document.createElement("button"); b.className = "sw"; b.style.background = c; b.title = c; b.dataset.c = c;
+    row.appendChild(b); btns.push(b);
+  });
+  if(withRainbow){ var rb = document.createElement("button"); rb.className = "sw rainbow"; rb.title = "קשת"; rb.dataset.c = "rainbow"; row.appendChild(rb); btns.push(rb); }
+  function mark(){ btns.forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.c===getC() ? "true" : "false"); }); }
+  btns.forEach(function(b){ b.onclick = function(){ sClick(); setC(b.dataset.c); mark(); }; });
+  mark(); return mark;
+}
+var markDraw = swatches("drawColors", function(){ return rainbow ? "rainbow" : (erasing ? "" : drawColor); },
+  function(c){ erasing = false; eraserBtn.setAttribute("aria-pressed","false"); if(c==="rainbow") rainbow = true; else { rainbow = false; drawColor = c; } }, true);
+swatches("colorColors", function(){ return fillColor; }, function(c){ fillColor = c; }, false);
+function motionChips(rowId, get, set){
+  var row = document.getElementById(rowId), btns = [];
+  MOTIONS.forEach(function(m){ var b = document.createElement("button"); b.className = "tool"; b.textContent = m.name; b.dataset.m = m.id; row.appendChild(b); btns.push(b); });
+  function mark(){ btns.forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.m===get() ? "true" : "false"); }); }
+  btns.forEach(function(b){ b.onclick = function(){ sClick(); set(b.dataset.m); mark(); }; });
+  mark(); return mark;
+}
+motionChips("drawMotion", function(){ return motion; }, function(m){ motion = m; });
+var markColorMotion = motionChips("colorMotion", function(){ return colorMotion; }, function(m){ colorMotion = m; });
+
+// ---------- דף הציור ----------
+var pad = document.getElementById("pad"), g = pad.getContext("2d"), hint = document.getElementById("hint");
+var size = 14, erasing = false, drawing = false, last = null, hue = 0, undoStack = [], hasInk = false;
+var eraserBtn = document.getElementById("eraser");
+document.querySelectorAll("[data-size]").forEach(function(b){
+  b.onclick = function(){ sClick(); size = +b.dataset.size; document.querySelectorAll("[data-size]").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true" : "false"); }); };
+});
+eraserBtn.onclick = function(){ sClick(); erasing = !erasing; eraserBtn.setAttribute("aria-pressed", erasing ? "true" : "false"); markDraw(); };
+function pos(e){ var r = pad.getBoundingClientRect(); return {x:(e.clientX-r.left)*pad.width/r.width, y:(e.clientY-r.top)*pad.height/r.height}; }
+function stroke(a, b){
+  g.globalCompositeOperation = erasing ? "destination-out" : "source-over";
+  g.lineCap = "round"; g.lineJoin = "round";
+  g.lineWidth = erasing ? size*2 : size;
+  if(rainbow && !erasing){ hue = (hue + 4) % 360; g.strokeStyle = "hsl("+hue+",95%,55%)"; } else g.strokeStyle = drawColor;
+  g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x + 0.01, b.y); g.stroke();
+}
+pad.addEventListener("pointerdown", function(e){
+  e.preventDefault(); ctx();
+  try{ undoStack.push(g.getImageData(0,0,pad.width,pad.height)); if(undoStack.length>15) undoStack.shift(); }catch(err){}
+  drawing = true; last = pos(e); stroke(last, last);
+  if(!erasing){ hasInk = true; hint.style.opacity = 0; }
+  try{ pad.setPointerCapture(e.pointerId); }catch(err){}
+});
+pad.addEventListener("pointermove", function(e){
+  if(!drawing) return; e.preventDefault();
+  var evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; if(!evs.length) evs = [e];
+  evs.forEach(function(ev){ var p = pos(ev); stroke(last, p); last = p; });
+});
+function up(){ drawing = false; }
+pad.addEventListener("pointerup", up); pad.addEventListener("pointercancel", up); pad.addEventListener("lostpointercapture", up);
+document.getElementById("undo").onclick = function(){ sClick(); var d = undoStack.pop(); if(d){ g.putImageData(d,0,0); } };
+document.getElementById("clear").onclick = function(){
+  sClick(); try{ undoStack.push(g.getImageData(0,0,pad.width,pad.height)); }catch(err){}
+  g.clearRect(0,0,pad.width,pad.height); hint.style.opacity = 1; hasInk = false;
+};
+document.getElementById("idea").onclick = function(){ sClick(); toast("💡 " + pick(IDEAS)); };
+var eyesBtn = document.getElementById("eyes"), wantEyes = true;
+eyesBtn.onclick = function(){ sClick(); wantEyes = !wantEyes; eyesBtn.setAttribute("aria-pressed", wantEyes ? "true" : "false"); };
+
+// גוזרים את הציור מהדף: מוצאים איפה יש צבע ומקטינים לתמונה קטנה
+function cropDrawing(){
+  var w = pad.width, h = pad.height, data;
+  try{ data = g.getImageData(0,0,w,h).data; }catch(e){ return null; }
+  var minX = w, minY = h, maxX = -1, maxY = -1;
+  for(var y=0; y<h; y+=2){ for(var x=0; x<w; x+=2){ if(data[(y*w+x)*4+3] > 20){ if(x<minX) minX=x; if(x>maxX) maxX=x; if(y<minY) minY=y; if(y>maxY) maxY=y; } } }
+  if(maxX < 0) return null;
+  var pad2 = 6; minX = Math.max(0,minX-pad2); minY = Math.max(0,minY-pad2); maxX = Math.min(w-1,maxX+pad2); maxY = Math.min(h-1,maxY+pad2);
+  var cw = maxX-minX+1, ch = maxY-minY+1;
+  if(cw < 14 && ch < 14) return null;
+  var k = Math.min(1, 240/Math.max(cw,ch)), out = document.createElement("canvas");
+  out.width = Math.max(1, Math.round(cw*k)); out.height = Math.max(1, Math.round(ch*k));
+  out.getContext("2d").drawImage(pad, minX, minY, cw, ch, 0, 0, out.width, out.height);
+  return {src: out.toDataURL("image/png"), ar: out.height/out.width};
+}
+document.getElementById("makeDraw").onclick = function(){
+  ctx();
+  var c = hasInk ? cropDrawing() : null;
+  if(!c){ toast("קודם מציירים משהו, ואז מפעילים את הקסם ✏️"); return; }
+  var paper = document.getElementById("paper"), r = paper.getBoundingClientRect();
+  paper.classList.remove("magic"); void paper.offsetWidth; paper.classList.add("magic");
+  sMagic(); sparkle(r.left + r.width/2, r.top + r.height/2, 22);
+  setTimeout(function(){
+    var cr = addCreature({src:c.src, ar:c.ar, motion:motion, eyes:wantEyes});
+    try{ undoStack.push(g.getImageData(0,0,pad.width,pad.height)); }catch(err){}
+    g.clearRect(0,0,pad.width,pad.height); hint.style.opacity = 1; hasInk = false;
+    showTab("world");
+    toast(cr.name + " התעורר לחיים! 🎉 גם הציור הבא יכול");
+  }, 750);
+};
+
+// ---------- דפי צביעה ----------
+// כל חלק שאפשר לצבוע מסומן בכיתה r. השאר הם קווים ופרטים.
+var PAGES = [
+  {id:"fish", name:"דג", e:"🐟", m:"swim", svg:
+    '<path class="r" d="M78 120L22 70L34 120L22 170Z"/>'+
+    '<path class="r" d="M118 72Q150 18 196 74Z"/>'+
+    '<path class="r" d="M140 168Q152 210 186 168Z"/>'+
+    '<ellipse class="r" cx="152" cy="120" rx="88" ry="56"/>'+
+    '<path class="r" d="M134 70Q114 120 134 170Q146 172 156 170Q136 120 156 68Q144 66 134 70Z"/>'+
+    '<path class="r" d="M100 84Q84 120 100 158Q108 160 116 160Q100 120 116 80Q108 80 100 84Z"/>'+
+    '<circle class="r" cx="200" cy="104" r="15"/><circle cx="205" cy="104" r="6" fill="#1d1b4b"/>'+
+    '<path d="M236 128Q226 140 214 132" fill="none"/>'+
+    '<circle class="r" cx="262" cy="70" r="10"/><circle class="r" cx="278" cy="40" r="7"/><circle class="r" cx="256" cy="22" r="5"/>'},
+  {id:"butterfly", name:"פרפר", e:"🦋", m:"fly", svg:
+    '<path class="r" d="M150 112C112 34 40 26 42 88C44 124 100 130 150 122Z"/>'+
+    '<path class="r" d="M150 112C188 34 260 26 258 88C256 124 200 130 150 122Z"/>'+
+    '<path class="r" d="M150 126C100 130 58 168 84 200C110 222 142 182 150 136Z"/>'+
+    '<path class="r" d="M150 126C200 130 242 168 216 200C190 222 158 182 150 136Z"/>'+
+    '<circle class="r" cx="92" cy="80" r="17"/><circle class="r" cx="208" cy="80" r="17"/>'+
+    '<circle class="r" cx="104" cy="174" r="12"/><circle class="r" cx="196" cy="174" r="12"/>'+
+    '<ellipse class="r" cx="150" cy="134" rx="12" ry="56"/>'+
+    '<circle class="r" cx="150" cy="70" r="17"/>'+
+    '<path d="M144 56Q132 28 118 22M156 56Q168 28 182 22" fill="none"/>'+
+    '<circle cx="118" cy="22" r="5" fill="#1d1b4b"/><circle cx="182" cy="22" r="5" fill="#1d1b4b"/>'+
+    '<circle cx="144" cy="68" r="3" fill="#1d1b4b"/><circle cx="156" cy="68" r="3" fill="#1d1b4b"/>'},
+  {id:"cat", name:"חתול", e:"🐱", m:"walk", svg:
+    '<path class="r" d="M74 150Q18 142 34 88Q40 78 50 86Q42 128 84 136Z"/>'+
+    '<rect class="r" x="88" y="174" width="22" height="46" rx="10"/><rect class="r" x="118" y="178" width="22" height="42" rx="10"/>'+
+    '<rect class="r" x="162" y="178" width="22" height="42" rx="10"/><rect class="r" x="190" y="174" width="22" height="46" rx="10"/>'+
+    '<ellipse class="r" cx="146" cy="154" rx="78" ry="42"/>'+
+    '<path class="r" d="M186 86L190 36L220 66Z"/><path class="r" d="M224 64L254 38L260 88Z"/>'+
+    '<circle class="r" cx="222" cy="104" r="46"/>'+
+    '<path class="r" d="M196 98Q206 86 216 98Q206 112 196 98Z"/><path class="r" d="M230 98Q240 86 250 98Q240 112 230 98Z"/>'+
+    '<circle cx="206" cy="98" r="4" fill="#1d1b4b"/><circle cx="240" cy="98" r="4" fill="#1d1b4b"/>'+
+    '<path class="r" d="M216 116L228 116L222 124Z"/>'+
+    '<path d="M222 124Q214 134 206 128M222 124Q230 134 238 128M200 118L172 112M200 124L172 128M244 118L272 112M244 124L272 128" fill="none"/>'},
+  {id:"rocket", name:"חללית", e:"🚀", m:"fly", svg:
+    '<path class="r" d="M126 180Q150 236 174 180Z"/><path class="r" d="M138 180Q150 210 162 180Z"/>'+
+    '<path class="r" d="M116 136L74 192L118 182Z"/><path class="r" d="M184 136L226 192L182 182Z"/>'+
+    '<path class="r" d="M150 18C190 58 196 130 186 182L114 182C104 130 110 58 150 18Z"/>'+
+    '<path class="r" d="M150 18C168 34 178 48 183 62L117 62C122 48 132 34 150 18Z"/>'+
+    '<circle class="r" cx="150" cy="104" r="24"/><circle class="r" cx="150" cy="104" r="14"/>'+
+    '<rect class="r" x="122" y="146" width="56" height="14" rx="7"/>'+
+    '<path class="r" d="M46 50L52 64L66 66L56 76L58 90L46 82L34 90L36 76L26 66L40 64Z"/>'+
+    '<path class="r" d="M252 120L257 131L268 133L260 141L262 152L252 146L242 152L244 141L236 133L247 131Z"/>'+
+    '<circle class="r" cx="246" cy="44" r="16"/><path d="M226 50Q246 38 268 40" fill="none"/>'},
+  {id:"turtle", name:"צב", e:"🐢", m:"walk", svg:
+    '<path class="r" d="M56 150L28 160L56 166Z"/>'+
+    '<ellipse class="r" cx="92" cy="176" rx="18" ry="26"/><ellipse class="r" cx="208" cy="176" rx="18" ry="26"/>'+
+    '<circle class="r" cx="256" cy="134" r="30"/><circle cx="266" cy="126" r="5" fill="#1d1b4b"/>'+
+    '<path d="M262 146Q270 152 278 144" fill="none"/>'+
+    '<path class="r" d="M52 162Q56 58 150 58Q244 58 248 162Z"/>'+
+    '<path class="r" d="M150 80L182 98L182 134L150 150L118 134L118 98Z"/>'+
+    '<path class="r" d="M118 98L118 134L76 156Q70 108 100 82Z"/>'+
+    '<path class="r" d="M182 98L182 134L224 156Q230 108 200 82Z"/>'+
+    '<path class="r" d="M118 98L150 80L174 66Q150 58 126 66Z"/>'+
+    '<rect class="r" x="46" y="156" width="208" height="16" rx="8"/>'},
+  {id:"bird", name:"ציפור", e:"🐦", m:"fly", svg:
+    '<path class="r" d="M78 116L24 88L36 126L24 164L78 142Z"/>'+
+    '<ellipse class="r" cx="142" cy="132" rx="72" ry="52"/>'+
+    '<path class="r" d="M106 124Q138 60 192 112Q150 146 106 124Z"/>'+
+    '<path class="r" d="M236 92L274 102L236 114Z"/>'+
+    '<circle class="r" cx="208" cy="96" r="36"/>'+
+    '<circle class="r" cx="216" cy="88" r="9"/><circle cx="219" cy="88" r="4" fill="#1d1b4b"/>'+
+    '<path class="r" d="M186 112Q196 124 206 116Q200 108 186 112Z"/>'+
+    '<path d="M126 182L120 214M126 214L114 220M158 182L164 214M164 214L176 220" fill="none"/>'}
+];
+var page = PAGES[0], pagesEl = document.getElementById("pages"), colorEl = document.getElementById("color");
+PAGES.forEach(function(p){
+  var b = document.createElement("button"); b.className = "pg"; b.innerHTML = "<b>"+p.e+"</b>"+p.name; b.dataset.id = p.id;
+  b.onclick = function(){ sClick(); openPage(p); }; pagesEl.appendChild(b);
+});
+function pageSvg(p){
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240"><g fill="#ffffff" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">'+p.svg+'</g></svg>';
+}
+function regions(){ return colorEl.querySelectorAll(".r"); }
+function applyFills(){
+  var f = S.fills[page.id] || {};
+  regions().forEach(function(el, i){ el.setAttribute("fill", f[i] || "#ffffff"); });
+}
+function openPage(p){
+  page = p; colorEl.innerHTML = pageSvg(p);
+  regions().forEach(function(el, i){ el.dataset.i = i; });
+  applyFills();
+  colorMotion = p.m; markColorMotion();
+  pagesEl.querySelectorAll(".pg").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.id===p.id ? "true" : "false"); });
+}
+colorEl.addEventListener("click", function(e){
+  var el = e.target.closest && e.target.closest(".r"); if(!el) return;
+  el.setAttribute("fill", fillColor); sBlop();
+  var f = S.fills[page.id] = S.fills[page.id] || {}; f[el.dataset.i] = fillColor; save();
+});
+document.getElementById("randomFill").onclick = function(){
+  var f = S.fills[page.id] = {};
+  regions().forEach(function(el, i){ f[i] = pick(COLORS.slice(1,11)); });
+  applyFills(); sMagic(); save();
+};
+document.getElementById("resetFill").onclick = function(){ sClick(); S.fills[page.id] = {}; applyFills(); save(); };
+document.getElementById("makeColor").onclick = function(){
+  ctx();
+  var f = S.fills[page.id] || {};
+  if(!Object.keys(f).length){ toast("קודם צובעים קצת, ואז מפעילים את הקסם 🖍️"); return; }
+  var svg = colorEl.querySelector("svg").outerHTML;
+  if(svg.indexOf("xmlns=") < 0) svg = svg.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+  var src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  var r = colorEl.getBoundingClientRect();
+  colorEl.classList.remove("magic"); void colorEl.offsetWidth; colorEl.classList.add("magic");
+  sMagic(); sparkle(r.left + r.width/2, r.top + r.height/2, 22);
+  setTimeout(function(){
+    var cr = addCreature({src:src, ar:0.8, motion:colorMotion, eyes:false});
+    showTab("world"); toast(cr.name + " ה" + page.name + " התעורר לחיים! 🎉");
+  }, 750);
+};
+openPage(PAGES[0]);
+
+// ---------- העולם הקסום ----------
+var world = document.getElementById("world"), decor = document.getElementById("decor"), emptyEl = document.getElementById("empty"), countEl = document.getElementById("count");
+var W = 600, H = 375, live = [];
+function measure(){ var r = world.getBoundingClientRect(); if(r.width > 0){ W = r.width; H = r.height; live.forEach(sizeIt); } }
+window.addEventListener("resize", measure);
+var DECOR = {
+  meadow: [["☀️",4,6,44,""],["☁️",30,8,40,""],["☁️",62,16,32,""],["🌳",2,52,70,""],["🌳",84,56,58,""],["🌼",20,80,22,""],["🌷",46,82,22,""],["🌼",70,80,22,""],["🍄",90,82,22,""]],
+  sea:    [["🌿",6,64,48,""],["🪸",80,66,44,""],["🐚",30,86,24,""],["⭐",60,87,22,""],["🌿",92,64,40,""]],
+  space:  [["🪐",78,8,50,""],["⭐",10,10,18,"twinkle"],["⭐",40,22,14,"twinkle"],["✨",60,12,18,"twinkle"],["⭐",25,40,12,"twinkle"],["⭐",88,44,14,"twinkle"],["🌍",6,30,34,""],["✨",50,50,14,"twinkle"]]
+};
+function setScene(s){
+  if(!DECOR[s]) s = "meadow";
+  S.scene = s; world.className = s; decor.innerHTML = "";
+  DECOR[s].forEach(function(d){
+    var el = document.createElement("span"); el.className = "deco " + d[4]; el.textContent = d[0];
+    el.style.left = d[1]+"%"; el.style.top = d[2]+"%"; el.style.fontSize = "clamp(" + Math.round(d[3]*0.55) + "px," + (d[3]/6) + "vw," + d[3] + "px)";
+    if(d[4]) el.style.animationDelay = (Math.random()*1.5)+"s";
+    decor.appendChild(el);
+  });
+  if(s==="sea"){ for(var i=0;i<7;i++){ var b = document.createElement("span"); b.className = "bub"; b.style.left = (8+Math.random()*84)+"%"; b.style.animationDuration = (5+Math.random()*5)+"s"; b.style.animationDelay = (-Math.random()*8)+"s"; decor.appendChild(b); } }
+  document.querySelectorAll("[data-scene]").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.scene===s ? "true" : "false"); });
+  save();
+}
+document.querySelectorAll("[data-scene]").forEach(function(b){ b.onclick = function(){ sClick(); setScene(b.dataset.scene); }; });
+
+function sizeIt(c){
+  var base = Math.min(W*0.2, 170) * c.k;
+  c.w = base; c.h = base * c.ar;
+  if(c.h > H*0.42){ c.h = H*0.42; c.w = c.h / c.ar; }
+  c.el.style.width = c.w + "px";
+}
+function makeEl(c){
+  var el = document.createElement("div"); el.className = "cr";
+  var bd = document.createElement("div"); bd.className = "bd";
+  var img = new Image(); img.alt = c.name; img.src = c.src; img.draggable = false;
+  img.onload = function(){ if(img.naturalWidth && img.naturalHeight){ c.ar = img.naturalHeight/img.naturalWidth; sizeIt(c); } };
+  bd.appendChild(img);
+  if(c.eyes){ var ey = document.createElement("div"); ey.className = "eyes"; ey.innerHTML = '<span class="eye"></span><span class="eye"></span>'; bd.appendChild(ey); }
+  var tag = document.createElement("span"); tag.className = "tag"; tag.textContent = c.name;
+  el.appendChild(bd); el.appendChild(tag);
+  el.addEventListener("pointerdown", function(e){
+    e.preventDefault(); ctx(); c.boost = 0.7; sBoing();
+    tag.textContent = c.name + ": " + pick(HELLO); el.classList.add("talk");
+    clearTimeout(c.talkT); c.talkT = setTimeout(function(){ el.classList.remove("talk"); }, 1800);
+    sparkle(e.clientX, e.clientY, 6, ["💖","✨","💫"]);
+  });
+  c.el = el; c.bd = bd; c.tag = tag; world.appendChild(el);
+}
+function spawn(d, fresh){
+  var c = {src:d.src, ar:d.ar||1, motion:d.motion||"walk", eyes:!!d.eyes, name:d.name||pick(NAMES),
+    k: 0.85 + Math.random()*0.3, seed: Math.random()*10, t: Math.random()*5, boost: 0, age: fresh ? 0 : 1,
+    vx: (Math.random()<0.5?-1:1) * (0.06 + Math.random()*0.05)};
+  makeEl(c); sizeIt(c);
+  c.x = fresh ? W/2 : c.w/2 + Math.random()*Math.max(1, W - c.w);
+  live.push(c); return c;
+}
+function addCreature(d){
+  d.name = pick(NAMES);
+  S.world.push({src:d.src, ar:d.ar, motion:d.motion, eyes:d.eyes, name:d.name});
+  while(S.world.length > MAX){ S.world.shift(); var old = live.shift(); if(old) old.el.remove(); }
+  S.made = (S.made||0) + 1; save();
+  measure();
+  var c = spawn(d, true); updateCount(); return c;
+}
+function updateCount(){ countEl.textContent = live.length; emptyEl.style.display = live.length ? "none" : "flex"; }
+
+var prev = 0;
+function frame(now){
+  var dt = Math.min(0.05, (now - prev)/1000 || 0); prev = now;
+  var ground = H*0.82;
+  for(var i=0;i<live.length;i++){
+    var c = live[i], t = (c.t += dt), x, y, rot = 0, sx = 1, sy = 1;
+    c.age = Math.min(1, c.age + dt*1.6);
+    var speed = c.vx * W;
+    if(c.motion==="dance" || c.motion==="spin") speed *= 0.4;
+    c.x += speed * dt;
+    if(c.x < c.w/2){ c.x = c.w/2; c.vx = Math.abs(c.vx); }
+    if(c.x > W - c.w/2){ c.x = W - c.w/2; c.vx = -Math.abs(c.vx); }
+    var bottom;
+    switch(c.motion){
+      case "hop":
+        var p = (t % 0.9)/0.9; bottom = ground - Math.sin(p*Math.PI)*H*0.22;
+        if(p < 0.12 || p > 0.94){ sy = 0.85; sx = 1.12; } else { sy = 1.06; sx = 0.96; }
+        break;
+      case "fly":
+        bottom = H*0.42 + Math.sin(t*2 + c.seed)*H*0.12 + c.h/2;
+        sy = 1 - 0.14*Math.abs(Math.sin(t*9)); rot = Math.sin(t*2 + c.seed)*8;
+        break;
+      case "swim":
+        bottom = H*0.55 + Math.sin(t*1.6 + c.seed)*H*0.14 + c.h/2;
+        rot = Math.cos(t*1.6 + c.seed)*-14; sx = 1 + Math.sin(t*6)*0.05;
+        break;
+      case "dance":
+        bottom = ground - Math.abs(Math.sin(t*5))*H*0.06;
+        rot = Math.sin(t*5)*16; sy = 1 + Math.sin(t*10)*0.06;
+        break;
+      case "spin":
+        bottom = H*0.5 + Math.sin(t*1.2 + c.seed)*H*0.1 + c.h/2;
+        rot = (t*140) % 360;
+        break;
+      default: // walk
+        bottom = ground - Math.abs(Math.sin(t*7))*H*0.025;
+        rot = Math.sin(t*7)*6; sy = 1 - Math.abs(Math.cos(t*7))*0.05;
+    }
+    if(c.boost > 0){ c.boost = Math.max(0, c.boost - dt); var bp = 1 - c.boost/0.7; bottom -= Math.sin(bp*Math.PI)*H*0.25; rot += bp*360; }
+    var e = c.age < 1 ? (1 - Math.pow(1 - c.age, 3)) * (1 + Math.sin(c.age*Math.PI)*0.25) : 1;
+    if(c.motion==="fly" || c.motion==="swim" || c.motion==="spin") bottom = Math.min(bottom, ground);
+    x = c.x - c.w/2; y = bottom - c.h;
+    var face = c.vx < 0 ? -1 : 1;
+    c.el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+    c.bd.style.transformOrigin = (c.motion==="spin" || c.boost>0) ? "50% 50%" : "50% 100%";
+    c.bd.style.transform = "scale(" + (face*sx*e).toFixed(3) + "," + (sy*e).toFixed(3) + ") rotate(" + (rot*face).toFixed(1) + "deg)";
+  }
+  requestAnimationFrame(frame);
+}
+
+document.getElementById("party").onclick = function(){
+  if(!live.length){ toast("אין עדיין אף אחד במסיבה. ציירו מישהו! 🎈"); return; }
+  live.forEach(function(c, i){ setTimeout(function(){ c.boost = 0.7; }, i*120); });
+  [523,659,784,659,880,1047].forEach(function(f,i){ tone(f,0.22,"square",i*0.12,0.06); });
+  var r = world.getBoundingClientRect(); sparkle(r.left + r.width/2, r.top + r.height/3, 26, ["🎉","🎈","✨","🎊","💖"]);
+};
+var wipeBtn = document.getElementById("wipe"), wipeT;
+wipeBtn.onclick = function(){
+  if(!live.length) return;
+  if(wipeBtn.dataset.sure !== "1"){ wipeBtn.dataset.sure = "1"; wipeBtn.textContent = "בטוח? ללחוץ שוב"; clearTimeout(wipeT);
+    wipeT = setTimeout(function(){ wipeBtn.dataset.sure = ""; wipeBtn.textContent = "🧹 לפנות את העולם"; }, 3000); return; }
+  wipeBtn.dataset.sure = ""; wipeBtn.textContent = "🧹 לפנות את העולם";
+  live.forEach(function(c){ c.el.remove(); }); live = []; S.world = []; save(); updateCount(); sBlop();
+};
+
+// התחלה
+setScene(S.scene);
+measure();
+S.world.forEach(function(d){ spawn(d, false); });
+updateCount();
+requestAnimationFrame(function(n){ prev = n; frame(n); });
+})();
+</script>
+</body>
+</html>
