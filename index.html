@@ -387,8 +387,8 @@
   .card:hover, .card:focus-visible { transform: rotate(0deg) translateY(-8px) scale(1.03); box-shadow: 8px 10px 0 var(--c); outline: none; }
   .card:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
   .thumb { border-bottom: 3px solid var(--ink); background: var(--c); }
-  .thumb img { display: block; width: 100%; aspect-ratio: 400 / 260; object-fit: cover; }
-  .info { padding: 11px 12px 13px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .thumb img { display: block; width: 100%; height: auto; aspect-ratio: 400 / 240; object-fit: cover; }
+  .info { padding: 9px 12px 11px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
   .info h3 { font-family: var(--display); font-weight: 400; font-size: 1.05rem; line-height: 1.15; margin: 0; text-wrap: balance; }
   .by { margin: 0; font-size: .8rem; font-weight: 500; opacity: .8; }
   .by b { color: var(--ink); opacity: 1; }
@@ -401,7 +401,7 @@
   .card:hover .play { animation: wiggle .5s ease; }
 
   /* שורה תחתונה בכרטיס: כפתור "שחקו" בצד אחד, ומספר הנכנסים (עין ומספר) בצד השני */
-  .actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; }
+  .actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 7px; }
   .actions .play { margin-top: 0; }
   .seen { display: inline-flex; align-items: center; gap: 4px; font-family: var(--display); font-size: .9rem; line-height: 1; font-variant-numeric: tabular-nums; }
   .seen svg { width: 16px; height: 16px; flex: none; }
@@ -411,7 +411,7 @@
   /* כרטיס "בקרוב" */
   .soon { background: rgba(255,255,255,.65); border-style: dashed; box-shadow: none; cursor: default; }
   .soon:hover { transform: rotate(var(--tilt)); box-shadow: none; }
-  .soon .thumb { display: grid; place-items: center; aspect-ratio: 400 / 260; background: transparent; }
+  .soon .thumb { display: grid; place-items: center; aspect-ratio: 400 / 240; background: transparent; }
   .soon .q { font-family: var(--display); font-size: 3.3rem; color: var(--grape); line-height: 1; }
   .soon .play { background: var(--paper); box-shadow: none; }
 
@@ -554,7 +554,7 @@
     if (!g.soon) { card.href = g.url; card.target = "_blank"; card.rel = "noopener"; ready++; }
     var thumb = g.soon
       ? '<div class="thumb"><span class="q">?</span></div>'
-      : '<div class="thumb"><img src="' + g.image + '" alt="" width="400" height="260" loading="lazy"></div>';
+      : '<div class="thumb"><img src="' + g.image + '" alt="" width="400" height="240" loading="lazy"></div>';
     // ליד כפתור "שחקו" יש עין ומספר: כמה אנשים נכנסו למשחק (מוצג רק אחרי שהמספר מגיע)
     var seen = g.soon ? "" :
       '<span class="seen" hidden>' +
