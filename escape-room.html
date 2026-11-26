@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>חדר הבריחה | משחק חידות לילדים בחינם</title>
+<meta name="description" content="משחק חדר בריחה לילדים בחינם: מחפשים רמזים בחדר, פותרים חידות של צורות, צבעים ומספרים ופותחים את הדלת. ארבעה חדרים, וכל חדר קצת יותר קשה.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/escape-room.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="חדר הבריחה | משחק חידות לילדים בחינם">
+<meta property="og:description" content="משחק חדר בריחה לילדים בחינם: מחפשים רמזים בחדר, פותרים חידות של צורות, צבעים ומספרים ופותחים את הדלת. ארבעה חדרים, וכל חדר קצת יותר קשה.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/escape-room.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "חדר הבריחה",
+  "description": "משחק חדר בריחה לילדים בחינם: מחפשים רמזים בחדר, פותרים חידות של צורות, צבעים ומספרים ופותחים את הדלת. ארבעה חדרים, וכל חדר קצת יותר קשה.",
+  "url": "https://ozcarmel.github.io/liv_games/escape-room.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "חידות והיגיון",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "אתר המשחקים של ליב",
+    "url": "https://ozcarmel.github.io/liv_games/"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1b4b;--sun:#ffd23f;--pink:#ff5fa2;--grape:#7a5cff;--mint:#2fd1a0;--night:#2b2160}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Rubik,Arial,sans-serif;color:var(--ink);background:var(--night);
+  background-image:radial-gradient(rgba(255,255,255,.09) 2px,transparent 3px);background-size:26px 26px;min-height:100vh}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:var(--grape);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+header h1{font-family:"Secular One","Arial Rounded MT Bold",Arial,sans-serif;font-size:22px;margin:0;flex:1;white-space:nowrap}
+header a,header button{color:#fff;text-decoration:none;font:inherit;font-size:15px;background:rgba(255,255,255,.2);border:0;padding:5px 11px;border-radius:14px;cursor:pointer}
+header button[hidden]{display:none}
+.stat{background:#fff;color:var(--ink);border-radius:16px;padding:4px 12px;font-weight:700;font-size:17px;white-space:nowrap}
+main{max-width:920px;margin:0 auto;padding:14px 16px 40px}
+h2{font-family:"Secular One",Arial,sans-serif;color:#fff;text-align:center;font-size:30px;margin:8px 0 4px}
+.lead{color:#e6e0ff;text-align:center;font-size:17px;margin:0 0 18px;line-height:1.5}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.room{background:#fff;border:4px solid var(--ink);border-radius:20px;box-shadow:0 6px 0 #120d33;padding:14px 10px;text-align:center;cursor:pointer;font:inherit;color:inherit;transition:transform .15s}
+.room:hover:not([disabled]){transform:translateY(-3px) rotate(-1deg)}
+.room[disabled]{opacity:.55;cursor:not-allowed}
+.room .em{font-size:54px;line-height:1.1}
+.room b{display:block;font-size:20px;margin:6px 0 2px}
+.room .lvl{display:inline-block;font-size:14px;border-radius:10px;padding:1px 9px;color:#fff;margin:2px 0 6px}
+.room .st{font-size:22px;letter-spacing:2px}
+#scene svg{width:100%;height:auto;display:block;border:5px solid var(--ink);border-radius:18px;background:#fff;box-shadow:0 7px 0 #120d33;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.hot{cursor:pointer}
+.hot:hover{filter:brightness(1.12) drop-shadow(0 0 5px #fff)}
+.shake{animation:shake .45s}
+svg .shake,svg .wig{transform-box:fill-box;transform-origin:center}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.wig{animation:wig .5s}
+@keyframes wig{30%{transform:rotate(-8deg) scale(1.05)}70%{transform:rotate(8deg) scale(1.05)}}
+.bob{animation:bob 3s ease-in-out infinite;transform-box:fill-box}
+@keyframes bob{50%{transform:translateY(-6px)}}
+#talk{display:flex;gap:10px;align-items:center;background:#fff;border:4px solid var(--ink);border-radius:18px;padding:8px 12px;margin-top:14px}
+#talk svg{flex:none;width:54px;height:54px}
+#say{flex:1;font-size:17px;line-height:1.45;min-height:2.9em;display:flex;align-items:center}
+#say.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.04)}}
+#invWrap{margin-top:12px;background:rgba(255,255,255,.12);border-radius:18px;padding:8px 12px}
+#invWrap p{color:#fff;margin:0 0 6px;font-size:15px}
+#inv{display:flex;gap:8px;flex-wrap:wrap}
+.slot{width:62px;height:62px;border:3px dashed rgba(255,255,255,.45);border-radius:14px;background:rgba(255,255,255,.08);padding:2px;font:inherit}
+.slot.full{border:3px solid var(--ink);background:#fff;cursor:pointer}
+.slot svg{width:100%;height:100%}
+.slot.new{animation:newi .8s}
+@keyframes newi{0%{transform:scale(.2)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.ov{position:fixed;inset:0;background:rgba(20,14,50,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ov.on{display:flex}
+.box{background:#fff;border:5px solid var(--ink);border-radius:24px;max-width:470px;width:100%;padding:20px 16px 18px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.35);position:relative;max-height:92vh;overflow:auto;animation:pop .3s}
+.box h3{font-family:"Secular One",Arial,sans-serif;font-size:24px;margin:0 0 6px}
+.box p{font-size:17px;line-height:1.5;margin:6px 0}
+.x{position:absolute;top:8px;left:8px;width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);background:#ffe0ec;font-size:20px;cursor:pointer;line-height:1}
+.btn{font:inherit;font-weight:700;font-size:18px;background:var(--mint);color:#fff;border:3px solid var(--ink);border-radius:16px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 0 var(--ink);margin:4px}
+.btn.alt{background:var(--grape)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.row{display:flex;justify-content:center;gap:12px;margin:14px 0;flex-wrap:wrap}
+.cslot{width:64px;height:64px;border-radius:50%;border:4px solid var(--ink);cursor:pointer;padding:0}
+.dot{width:54px;height:54px;border-radius:50%;border:4px solid var(--ink);display:inline-block}
+.digit{display:flex;flex-direction:column;align-items:center;gap:5px}
+.digit .v{width:62px;height:72px;border:5px solid var(--ink);border-radius:14px;font-size:42px;font-weight:700;display:flex;align-items:center;justify-content:center;background:#fff}
+.digit button{width:48px;height:34px;border:3px solid var(--ink);border-radius:10px;background:#fff3b0;font-size:18px;cursor:pointer;font-weight:700;color:var(--ink)}
+.grid3{display:grid;grid-template-columns:repeat(3,72px);gap:8px;justify-content:center;margin:14px 0}
+.cell{width:72px;height:72px;border:4px solid var(--ink);border-radius:14px;background:#2b2160;font-size:38px;cursor:pointer;padding:0;color:#ffd23f}
+.cell.on{background:#ffeaa0}
+.pick{width:78px;height:78px;border:4px solid var(--ink);border-radius:16px;background:#f4f2ff;cursor:pointer;padding:4px}
+.pick.sel{background:#fff3b0;outline:4px solid var(--pink)}
+.pick svg{width:100%;height:100%}
+.bad{animation:shake .45s}
+.stars{font-size:52px;letter-spacing:6px;margin:6px 0}
+.stars .off{filter:grayscale(1);opacity:.35}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+#confetti i{position:absolute;top:-20px;width:12px;height:16px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.small{font-size:14px;color:#6a6690}
+@media (max-width:520px){header h1{font-size:19px}#say{font-size:15px}.slot{width:54px;height:54px}.grid3{grid-template-columns:repeat(3,64px)}.cell{width:64px;height:64px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔐 חדר הבריחה</h1>
+  <span class="stat" id="sStars">⭐ 0</span>
+  <button id="hintBtn" hidden title="רמז">💡 רמז</button>
+  <button id="menuBtn" hidden title="כל החדרים">🚪 חדרים</button>
+  <button id="mute" title="צלילים">🔊</button>
+  <a href="index.html">← למשחקים</a>
+</header>
+<main>
+  <section id="menu">
+    <h2>אפשר לצאת מכאן?</h2>
+    <p class="lead">נכנסתם לחדר והדלת נטרקה! 😮 לחצו על דברים בחדר, מצאו רמזים ופתרו חידות כדי לפתוח את הדלת.<br>כל חדר קצת יותר קשה מהקודם.</p>
+    <div class="rooms" id="rooms"></div>
+  </section>
+  <section id="game" hidden>
+    <div id="scene"></div>
+    <div id="talk">
+      <svg viewBox="0 0 60 60" aria-hidden="true"><g stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"><path d="M12 14l8 8M48 14l-8 8" /><ellipse cx="30" cy="34" rx="20" ry="22" fill="#b07a4f"/><ellipse cx="30" cy="40" rx="12" ry="13" fill="#f3d9b0"/><circle cx="22" cy="28" r="8" fill="#fff"/><circle cx="38" cy="28" r="8" fill="#fff"/><circle cx="23" cy="29" r="3.5" fill="#1d1b4b" stroke="none"/><circle cx="37" cy="29" r="3.5" fill="#1d1b4b" stroke="none"/><path d="M27 35l3 5 3-5z" fill="#ffb02e"/></g></svg>
+      <div id="say" aria-live="polite"></div>
+    </div>
+    <div id="invWrap"><p>🎒 התיק שלי (לחצו על חפץ כדי להסתכל עליו)</p><div id="inv"></div></div>
+  </section>
+</main>
+<div class="ov" id="modal"><div class="box" id="mbox"></div></div>
+<div class="ov" id="win"><div class="box" id="wbox"></div></div>
+<div id="confetti"></div>
+
+<script>
+(function () {
+"use strict";
+var INK = "#1d1b4b";
+var C = { red: "#ff4d5e", blue: "#3d8bff", yellow: "#ffd23f", green: "#34c759", purple: "#9b5cff", orange: "#ff9a2f", pink: "#ff7ac0", brown: "#9a6a3c" };
+var CHE = { red: "אדום", blue: "כחול", yellow: "צהוב", green: "ירוק", purple: "סגול", orange: "כתום" };
+var SHAPES = ["circle", "square", "triangle", "star", "heart", "hexagon"];
+var SHE = { circle: "עיגול", square: "ריבוע", triangle: "משולש", star: "כוכב", heart: "לב", hexagon: "משושה" };
+
+function $(s) { return document.querySelector(s); }
+function rnd(n) { return Math.floor(Math.random() * n); }
+function pick(a) { return a[rnd(a.length)]; }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function has(id) { return S.inv.indexOf(id) >= 0; }
+
+// ===== צלילים =====
+var actx = null, muted = false;
+function tone(f, d, type, when, vol) {
+  if (muted) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    var t = actx.currentTime + (when || 0), o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(vol || 0.15, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d + 0.02);
+  } catch (e) {}
+}
+var sfx = {
+  click: function () { tone(520, 0.08, "triangle"); },
+  find: function () { tone(660, 0.12, "sine"); tone(880, 0.12, "sine", 0.1); tone(1180, 0.2, "sine", 0.2); },
+  bad: function () { tone(200, 0.2, "sawtooth", 0, 0.08); tone(150, 0.25, "sawtooth", 0.15, 0.08); },
+  ok: function () { [523, 659, 784].forEach(function (f, i) { tone(f, 0.18, "triangle", i * 0.1); }); },
+  win: function () { [523, 659, 784, 1046, 784, 1046].forEach(function (f, i) { tone(f, 0.22, "triangle", i * 0.13); }); },
+  note: function (k) { tone([330, 392, 494, 587][k], 0.4, "sine", 0, 0.2); }
+};
+$("#mute").onclick = function () { muted = !muted; this.textContent = muted ? "🔇" : "🔊"; };
+
+// ===== ציורים קטנים =====
+function shapeSVG(t, x, y, r, fill, extra) {
+  var st = 'fill="' + fill + '" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round" ' + (extra || "");
+  function poly(p) { return '<polygon points="' + p.map(function (q) { return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" ") + '" ' + st + "/>"; }
+  var p = [], i, a;
+  if (t === "circle") return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" ' + st + "/>";
+  if (t === "square") return '<rect x="' + (x - r * 0.85) + '" y="' + (y - r * 0.85) + '" width="' + r * 1.7 + '" height="' + r * 1.7 + '" rx="' + r * 0.15 + '" ' + st + "/>";
+  if (t === "triangle") return poly([[x, y - r], [x + r * 0.98, y + r * 0.75], [x - r * 0.98, y + r * 0.75]]);
+  if (t === "star") { for (i = 0; i < 10; i++) { a = -Math.PI / 2 + i * Math.PI / 5; var rr = i % 2 ? r * 0.46 : r; p.push([x + rr * Math.cos(a), y + rr * Math.sin(a)]); } return poly(p); }
+  if (t === "hexagon") { for (i = 0; i < 6; i++) { a = i * Math.PI / 3; p.push([x + r * Math.cos(a), y + r * Math.sin(a)]); } return poly(p); }
+  if (t === "heart") return '<path d="M' + x + " " + (y + r * 0.85) + "C" + (x - r * 1.35) + " " + (y - r * 0.1) + " " + (x - r * 0.7) + " " + (y - r * 1.15) + " " + x + " " + (y - r * 0.45) + "C" + (x + r * 0.7) + " " + (y - r * 1.15) + " " + (x + r * 1.35) + " " + (y - r * 0.1) + " " + x + " " + (y + r * 0.85) + 'Z" ' + st + "/>";
+  return "";
+}
+function keyIcon(c) { return '<g stroke="' + INK + '" stroke-width="3.5" stroke-linejoin="round"><circle cx="17" cy="30" r="11" fill="' + c + '"/><circle cx="17" cy="30" r="4" fill="#fff"/><path d="M27 26.5h26v7h-5v7h-5v-7h-4v5h-5v-5h-7z" fill="' + c + '"/></g>'; }
+var noteIcon = '<g stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"><path d="M12 6h30l8 8v40H12z" fill="#fffbe6"/><path d="M19 20h22M19 29h22M19 38h14" stroke-width="2.5"/></g>';
+var wandIcon = '<g stroke="' + INK + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M12 50L38 24" stroke-width="8"/><path d="M12 50L38 24" stroke="#5a3e8c" stroke-width="3"/>' + shapeSVG("star", 43, 18, 13, C.yellow) + "</g>";
+var starKeyIcon = '<g stroke="' + INK + '" stroke-width="3.5" stroke-linejoin="round"><path d="M27 26.5h26v7h-5v7h-5v-7h-4v5h-5v-5h-7z" fill="#ffb3e0"/>' + shapeSVG("star", 17, 30, 15, "#ffb3e0") + "</g>";
+function apple(x, y) { return '<g stroke="' + INK + '" stroke-width="3"><path d="M' + x + " " + (y - 10) + "q2 -8 8 -9" + '" fill="none"/><circle cx="' + x + '" cy="' + (y + 2) + '" r="12" fill="' + C.red + '"/><circle cx="' + (x - 4) + '" cy="' + (y - 2) + '" r="3" fill="#fff" stroke="none" opacity=".7"/></g>'; }
+function pear(x, y) { return '<g stroke="' + INK + '" stroke-width="3"><path d="M' + x + " " + (y - 13) + "v-6" + '"/><path d="M' + x + " " + (y - 14) + "c-5 0 -6 6 -5 9c-7 3 -9 9 -7 14c2 5 8 6 12 6s10 -1 12 -6c2 -5 0 -11 -7 -14c1 -3 0 -9 -5 -9z" + '" fill="' + C.green + '"/></g>'; }
+function banana(x, y) { return '<g stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"><path d="M' + (x - 14) + " " + (y - 8) + "c2 16 18 22 30 12c-3 -1 -4 -3 -4 -5c-9 6 -20 2 -22 -9z" + '" fill="' + C.yellow + '"/></g>'; }
+var FRUIT = { apple: apple, pear: pear, banana: banana };
+var FCOL = { apple: "red", pear: "green", banana: "yellow" };
+var FHE = { apple: "תפוחים", pear: "אגסים", banana: "בננות" };
+function fruitIcon(t) { return '<svg viewBox="0 0 40 40">' + FRUIT[t](20, 22) + "</svg>"; }
+function door(open, inner) {
+  var s = '<rect x="28" y="98" width="184" height="304" rx="10" fill="#7a4a2a" stroke="' + INK + '" stroke-width="5"/>';
+  if (open) return s + '<rect x="40" y="110" width="160" height="290" fill="#fff6b0" stroke="' + INK + '" stroke-width="5"/><circle cx="120" cy="250" r="70" fill="#fff" opacity=".8"/><text x="120" y="272" font-size="64" text-anchor="middle">🌈</text><path d="M40 110L78 128V384L40 400Z" fill="#b8733f" stroke="' + INK + '" stroke-width="4"/>';
+  return s + '<g class="hot" data-h="door"><rect x="40" y="110" width="160" height="290" rx="6" fill="#b8733f" stroke="' + INK + '" stroke-width="5"/><rect x="56" y="126" width="128" height="112" rx="6" fill="#c98650" stroke="' + INK + '" stroke-width="3"/><rect x="56" y="252" width="128" height="132" rx="6" fill="#c98650" stroke="' + INK + '" stroke-width="3"/><circle cx="183" cy="262" r="9" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/>' + (inner || "") + "</g>";
+}
+function hot(id, inner, k) { return '<g class="hot" data-h="' + id + '"' + (k !== undefined ? ' data-k="' + k + '"' : "") + ">" + inner + "</g>"; }
+function floorWall(wall, floor, pattern) {
+  return '<rect width="800" height="370" fill="' + wall + '"/>' + (pattern || "") + '<rect y="370" width="800" height="130" fill="' + floor + '"/><rect y="362" width="800" height="12" fill="#fff" stroke="' + INK + '" stroke-width="3"/>';
+}
+
+// ===== חלון הודעות =====
+var modalClose = null;
+function openModal(html, onClose) {
+  $("#mbox").innerHTML = '<button class="x" aria-label="סגירה">✕</button>' + html;
+  $("#mbox .x").onclick = closeModal;
+  modalClose = onClose || null;
+  $("#modal").classList.add("on");
+}
+function closeModal() { $("#modal").classList.remove("on"); if (modalClose) { var f = modalClose; modalClose = null; f(); } }
+$("#modal").addEventListener("click", function (e) { if (e.target === this) closeModal(); });
+function badEl(el) { if (!el) return; el.classList.remove("bad"); void el.offsetWidth; el.classList.add("bad"); }
+
+// ===== מנעול צבעים =====
+function colorLock(title, palette, answer, onOk) {
+  var cur = answer.map(function () { return -1; });
+  var html = "<h3>" + title + "</h3><p>לחצו על כל עיגול כדי לשנות את הצבע שלו.</p><div class=\"row\" id=\"cl\">" +
+    answer.map(function (_, i) { return '<button class="cslot" data-i="' + i + '" style="background:#e8e6f5" aria-label="עיגול ' + (i + 1) + '"></button>'; }).join("") +
+    '</div><button class="btn" id="clGo">🔓 לפתוח</button>';
+  openModal(html);
+  [].forEach.call(document.querySelectorAll("#cl .cslot"), function (b) {
+    b.onclick = function () { var i = +b.dataset.i; cur[i] = (cur[i] + 1) % palette.length; b.style.background = C[palette[cur[i]]]; sfx.click(); };
+  });
+  $("#clGo").onclick = function () {
+    var ok = answer.every(function (c, i) { return palette[cur[i]] === c; });
+    if (ok) { closeModal(); onOk(); } else { sfx.bad(); badEl($("#cl")); say("הדלת לא נפתחה. בדקו שוב את הצבעים 🤔"); }
+  };
+}
+// ===== מנעול מספרים =====
+function numLock(title, sub, answer, slotColors, onOk) {
+  var cur = answer.map(function () { return 0; });
+  var html = "<h3>" + title + "</h3>" + sub + '<div class="row" id="nl">' + answer.map(function (_, i) {
+    var bc = slotColors ? C[slotColors[i]] : INK;
+    return '<div class="digit"><button data-i="' + i + '" data-d="1" aria-label="למעלה">▲</button><div class="v" id="nv' + i + '" style="border-color:' + bc + ';box-shadow:0 0 0 3px ' + INK + '">0</div><button data-i="' + i + '" data-d="-1" aria-label="למטה">▼</button></div>';
+  }).join("") + '</div><button class="btn" id="nlGo">🔓 לפתוח</button>';
+  openModal(html);
+  [].forEach.call(document.querySelectorAll("#nl button"), function (b) {
+    b.onclick = function () { var i = +b.dataset.i; cur[i] = (cur[i] + (+b.dataset.d) + 10) % 10; $("#nv" + i).textContent = cur[i]; sfx.click(); };
+  });
+  $("#nlGo").onclick = function () {
+    var ok = answer.every(function (n, i) { return cur[i] === n; });
+    if (ok) { closeModal(); onOk(); } else { sfx.bad(); badEl($("#nl")); say("המספר לא נכון. נסו לספור שוב 🤔"); }
+  };
+}
+
+// ===== החדרים =====
+var ROOMS = [
+// ---------- חדר 1: חדר השינה ----------
+{
+  name: "חדר השינה", em: "🛏️", lvl: "קל", lc: "#2fd1a0",
+  intro: "אוי! הדלת של חדר השינה נטרקה 😮 לחצו על דברים בחדר ונסו למצוא איך לפתוח אותה.",
+  setup: function () { return { seq: shuffle(["red", "blue", "yellow", "green"]).slice(0, 3) }; },
+  draw: function (S) {
+    var f = S.f, s = '<defs><pattern id="pd" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="4" fill="#ffb8d4"/></pattern></defs>';
+    s += floorWall("#ffd6e7", "#e3a96b", '<rect width="800" height="362" fill="url(#pd)"/>');
+    s += '<path d="M0 410H800M0 448H800M0 484H800" stroke="#c98a4e" stroke-width="3"/>';
+    s += hot("window", '<rect x="300" y="60" width="170" height="140" rx="8" fill="#8fdcff" stroke="' + INK + '" stroke-width="5"/><circle cx="432" cy="96" r="18" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/><path d="M385 60V200M300 130H470" stroke="' + INK + '" stroke-width="5"/><path d="M290 52h24v158h-24zM456 52h24v158h-24z" fill="#ff7ab6" stroke="' + INK + '" stroke-width="4"/>');
+    s += hot("painting", '<rect x="560" y="70" width="140" height="105" rx="6" fill="#fff" stroke="' + INK + '" stroke-width="5"/><rect x="572" y="82" width="116" height="81" fill="#bdf0c9"/><path d="M610 112l-6-20 16 12zM650 112l6-20-16 12z" fill="#ff9a2f" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><circle cx="630" cy="128" r="24" fill="#ff9a2f" stroke="' + INK + '" stroke-width="3"/><circle cx="621" cy="124" r="3" fill="' + INK + '"/><circle cx="639" cy="124" r="3" fill="' + INK + '"/><path d="M623 136q7 6 14 0" fill="none" stroke="' + INK + '" stroke-width="3"/>');
+    s += door(f.open, '<rect x="82" y="150" width="76" height="32" rx="10" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="100" cy="166" r="7" fill="#ddd"/><circle cx="120" cy="166" r="7" fill="#ddd"/><circle cx="140" cy="166" r="7" fill="#ddd"/>');
+    // שידה ומנורה
+    s += '<rect x="285" y="290" width="120" height="105" rx="6" fill="#9ad0ff" stroke="' + INK + '" stroke-width="5"/><rect x="298" y="352" width="94" height="32" rx="5" fill="#c4e4ff" stroke="' + INK + '" stroke-width="4"/><circle cx="345" cy="368" r="5" fill="' + INK + '"/>';
+    s += f.drawer
+      ? hot("drawer", '<rect x="292" y="300" width="106" height="48" rx="5" fill="#c4e4ff" stroke="' + INK + '" stroke-width="4"/><rect x="302" y="306" width="86" height="20" fill="#5b7aa8" stroke="' + INK + '" stroke-width="3"/>')
+      : hot("drawer", '<rect x="298" y="304" width="94" height="40" rx="5" fill="#c4e4ff" stroke="' + INK + '" stroke-width="4"/><circle cx="345" cy="324" r="6" fill="#ffd23f" stroke="' + INK + '" stroke-width="2.5"/><rect x="343.5" y="322" width="3" height="6" fill="' + INK + '"/>');
+    s += hot("lamp", (f.lampOff ? "" : '<circle cx="345" cy="232" r="55" fill="#fff6a0" opacity=".45"/>') + '<rect x="330" y="280" width="30" height="10" rx="4" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/><path d="M345 280V245" stroke="' + INK + '" stroke-width="4"/><path d="M322 248h46l-10-40h-26z" fill="' + (f.lampOff ? "#c8b6ff" : "#fff3a0") + '" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>');
+    // מיטה
+    s += '<rect x="735" y="200" width="45" height="200" rx="10" fill="#a879ff" stroke="' + INK + '" stroke-width="5"/><rect x="450" y="300" width="300" height="70" rx="10" fill="#c7a6ff" stroke="' + INK + '" stroke-width="5"/><rect x="460" y="368" width="16" height="30" fill="#a879ff" stroke="' + INK + '" stroke-width="4"/><rect x="455" y="268" width="285" height="42" rx="14" fill="#fff" stroke="' + INK + '" stroke-width="5"/><path d="M455 280q90 -14 180 0v70h-180z" fill="#ff7ab6" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/><path d="M480 300l10 10M520 296l10 10M560 300l10 10M600 296l10 10" stroke="#fff" stroke-width="4" stroke-linecap="round"/>';
+    s += hot("pillow", '<g transform="' + (f.key ? "translate(10,-26) rotate(-10 690 265)" : "") + '"><rect x="645" y="243" width="85" height="40" rx="18" fill="#fffbe6" stroke="' + INK + '" stroke-width="5"/></g>');
+    // שטיח ודובי
+    s += hot("rug", '<ellipse cx="560" cy="452" rx="150" ry="30" fill="#7fd8c0" stroke="' + INK + '" stroke-width="5"/><ellipse cx="560" cy="452" rx="110" ry="18" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="10 8"/>');
+    s += hot("teddy", '<g class="bob"><circle cx="245" cy="438" r="30" fill="#c58b55" stroke="' + INK + '" stroke-width="4"/><circle cx="245" cy="442" r="15" fill="#f0c99a"/><circle cx="225" cy="380" r="9" fill="#c58b55" stroke="' + INK + '" stroke-width="4"/><circle cx="265" cy="380" r="9" fill="#c58b55" stroke="' + INK + '" stroke-width="4"/><circle cx="245" cy="396" r="22" fill="#c58b55" stroke="' + INK + '" stroke-width="4"/><circle cx="237" cy="392" r="3" fill="' + INK + '"/><circle cx="253" cy="392" r="3" fill="' + INK + '"/><ellipse cx="245" cy="403" rx="8" ry="6" fill="#f0c99a" stroke="' + INK + '" stroke-width="2.5"/><circle cx="245" cy="401" r="2.5" fill="' + INK + '"/></g>');
+    return s;
+  },
+  note: function (S) {
+    openModal('<h3>📜 פתק סודי</h3><p>"הסוד של הדלת:"</p><div class="row">' + S.d.seq.map(function (c) { return '<span class="dot" style="background:' + C[c] + '"></span>'; }).join("") + "</div>");
+  },
+  click: function (h, S, el) {
+    var f = S.f, R = this;
+    if (h === "pillow") {
+      if (!f.key) { f.key = 1; give("key"); say("מצאת מפתח קטן מתחת לכרית! 🔑 איפה יש מנעול קטן?"); }
+      else say("סתם כרית רכה. הכי נעים לישון עליה 😴");
+    } else if (h === "drawer") {
+      if (f.drawer) R.note(S);
+      else if (has("key")) { f.drawer = 1; take("key"); give("note1"); say("המפתח פתח את המגירה! בפנים היה פתק 📜"); render(); setTimeout(function () { R.note(S); }, 500); return; }
+      else { sfx.bad(); shake(el); say("המגירה נעולה 🔒 יש בה חור קטן של מפתח."); }
+    } else if (h === "lamp") { f.lampOff = !f.lampOff; sfx.click(); say(f.lampOff ? "קליק! כיבית את המנורה." : "קליק! המנורה דולקת שוב 💡"); }
+    else if (h === "painting") say("ציור של חתול כתום. נראה שהוא מחייך אלייך 🐱");
+    else if (h === "teddy") { wiggle(el); say("הדובי לוחש: \"אני תמיד מחביא דברים מתחת לכרית...\" 🧸"); }
+    else if (h === "rug") say("הרמת את השטיח. יש מתחתיו רק קצת אבק 🧹");
+    else if (h === "window") say("בחוץ יש שמש ☀️ החלון לא נפתח. צריך לצאת מהדלת!");
+    else if (h === "door") colorLock("🚪 מנעול הצבעים", ["red", "blue", "yellow", "green"], S.d.seq, winRoom);
+    render();
+  },
+  hint: function (S) {
+    var f = S.f;
+    if (!f.key) return "הדובי יודע סוד 🧸 ואולי משהו מתחבא מתחת לכרית?";
+    if (!f.drawer) return "יש לך מפתח קטן! על השידה ליד המיטה יש מגירה עם מנעול.";
+    return "לחצו על הדלת וסדרו את הצבעים בדיוק כמו בפתק.";
+  }
+},
+// ---------- חדר 2: חדר המשחקים ----------
+{
+  name: "חדר המשחקים", em: "🧸", lvl: "בינוני", lc: "#3d8bff",
+  intro: "חדר המשחקים! על הדלת יש שלושה חורים בצורות מיוחדות. צריך למצוא בחדר את הצורות שמתאימות להם 🔍",
+  setup: function () {
+    var sh = shuffle(SHAPES).slice(0, 3), cols = shuffle(["orange", "green", "purple", "pink"]), pc = {};
+    sh.forEach(function (t, i) { pc[t] = C[cols[i]]; });
+    var pos = shuffle([[262, 78], [330, 112], [398, 66], [462, 104], [524, 70], [592, 108], [660, 74], [728, 112]]);
+    var n = 3 + rnd(5);
+    return { sh: sh, pc: pc, balloons: pos.slice(0, n).map(function (p) { return { x: p[0], y: p[1], c: C[pick(["red", "blue", "yellow", "green", "purple", "orange"])] }; }) };
+  },
+  draw: function (S) {
+    var f = S.f, d = S.d, s = '<defs><pattern id="pst" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="30" height="60" fill="#b4e6fb"/></pattern></defs>';
+    s += floorWall("#c8efff", "#ffe08a", '<rect width="800" height="362" fill="url(#pst)"/>');
+    s += '<path d="M0 420H800M0 465H800" stroke="#f3c95a" stroke-width="3"/>';
+    var holes = d.sh.map(function (t, i) {
+      var y = 165 + i * 85, placed = f.placed && f.placed[t];
+      return '<circle cx="120" cy="' + y + '" r="36" fill="#a35f30" stroke="' + INK + '" stroke-width="3"/>' + shapeSVG(t, 120, y, 26, placed ? d.pc[t] : "#3a2a5c");
+    }).join("");
+    s += door(f.open, holes);
+    d.balloons.forEach(function (b, k) {
+      s += hot("balloon", '<g class="bob" style="animation-delay:' + (k * 0.4) + 's"><path d="M' + b.x + " " + (b.y + 26) + "q-8 20 4 44" + '" fill="none" stroke="' + INK + '" stroke-width="2.5"/><ellipse cx="' + b.x + '" cy="' + b.y + '" rx="20" ry="25" fill="' + b.c + '" stroke="' + INK + '" stroke-width="4"/><path d="M' + (b.x - 5) + " " + (b.y + 24) + "h10l-5 7z" + '" fill="' + b.c + '" stroke="' + INK + '" stroke-width="3"/><ellipse cx="' + (b.x - 7) + '" cy="' + (b.y - 9) + '" rx="4" ry="7" fill="#fff" opacity=".6"/></g>', k);
+    });
+    // מדף עם רובוט
+    s += '<rect x="560" y="214" width="210" height="14" rx="4" fill="#d79a5c" stroke="' + INK + '" stroke-width="4"/>';
+    s += hot("robot", '<rect x="580" y="164" width="44" height="50" rx="8" fill="#b9c4d6" stroke="' + INK + '" stroke-width="4"/><circle cx="593" cy="183" r="5" fill="#ff4d5e" stroke="' + INK + '" stroke-width="2"/><circle cx="611" cy="183" r="5" fill="#ff4d5e" stroke="' + INK + '" stroke-width="2"/><path d="M592 200h20" stroke="' + INK + '" stroke-width="3"/><path d="M602 164v-12" stroke="' + INK + '" stroke-width="3"/><circle cx="602" cy="150" r="5" fill="#ffd23f" stroke="' + INK + '" stroke-width="2.5"/>');
+    s += hot("blocks", '<rect x="660" y="180" width="34" height="34" fill="#ff7ac0" stroke="' + INK + '" stroke-width="4"/><rect x="700" y="180" width="34" height="34" fill="#34c759" stroke="' + INK + '" stroke-width="4"/><rect x="680" y="146" width="34" height="34" fill="#ffd23f" stroke="' + INK + '" stroke-width="4"/>');
+    // שטיח
+    s += hot("rug", f.rug
+      ? '<ellipse cx="520" cy="452" rx="128" ry="28" fill="#e7d7a2" stroke="' + INK + '" stroke-width="3" stroke-dasharray="8 6"/><path d="M600 430q90 -10 140 18q-60 26 -130 14z" fill="#ff7ab6" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>'
+      : '<ellipse cx="520" cy="452" rx="130" ry="30" fill="#ff7ab6" stroke="' + INK + '" stroke-width="5"/><ellipse cx="520" cy="452" rx="90" ry="17" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/><ellipse cx="520" cy="452" rx="45" ry="8" fill="#3d8bff" stroke="' + INK + '" stroke-width="3"/>');
+    // תיבת צעצועים
+    s += hot("chest", f.chest
+      ? '<path d="M245 300l10 -55h140l10 55z" fill="#ffb35c" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/><rect x="250" y="300" width="150" height="100" rx="8" fill="#ff9a2f" stroke="' + INK + '" stroke-width="5"/><rect x="262" y="300" width="126" height="16" fill="#7a4a2a"/>'
+      : '<rect x="250" y="330" width="150" height="70" rx="8" fill="#ff9a2f" stroke="' + INK + '" stroke-width="5"/><rect x="244" y="300" width="162" height="36" rx="10" fill="#ffb35c" stroke="' + INK + '" stroke-width="5"/>' + shapeSVG("star", 325, 365, 16, "#ffd23f"));
+    // כספת
+    s += hot("safe", '<rect x="640" y="290" width="125" height="110" rx="10" fill="#b9c4d6" stroke="' + INK + '" stroke-width="5"/>' + (f.safe
+      ? '<rect x="652" y="302" width="101" height="86" rx="6" fill="#4b5670" stroke="' + INK + '" stroke-width="3"/>'
+      : '<circle cx="728" cy="345" r="18" fill="#fff" stroke="' + INK + '" stroke-width="4"/><path d="M728 331v10" stroke="' + INK + '" stroke-width="3"/><ellipse cx="672" cy="334" rx="11" ry="14" fill="#ff4d5e" stroke="' + INK + '" stroke-width="3"/><path d="M672 348q-4 8 2 16" fill="none" stroke="' + INK + '" stroke-width="2.5"/><text x="672" y="388" font-size="20" font-weight="700" text-anchor="middle" fill="' + INK + '">?</text>'));
+    return s;
+  },
+  click: function (h, S, el) {
+    var f = S.f, d = S.d, R = this;
+    if (h === "chest") {
+      if (!f.chest) { f.chest = 1; give("shape-" + d.sh[0]); say("פתחת את תיבת הצעצועים ומצאת " + SHE[d.sh[0]] + "! 🎉"); }
+      else say("התיבה ריקה עכשיו. רק דובי קטן ישן בפנים 🧸");
+    } else if (h === "rug") {
+      if (!f.rug) { f.rug = 1; give("shape-" + d.sh[1]); say("מתחת לשטיח הסתתר " + SHE[d.sh[1]] + "! 🎉"); }
+      else say("כבר בדקת מתחת לשטיח.");
+    } else if (h === "safe") {
+      if (f.safe) say("הכספת פתוחה וריקה.");
+      else numLock("🔐 כספת", '<p style="font-size:34px;margin:4px 0">🎈 = ?</p>', [d.balloons.length], null, function () {
+        f.safe = 1; give("shape-" + d.sh[2]); say("הכספת נפתחה! בפנים היה " + SHE[d.sh[2]] + " 🎉"); render();
+      });
+    } else if (h === "balloon") { wiggle(el); tone(700 + rnd(300), 0.1, "sine"); say("בלון! 🎈 כמה בלונים יש פה בחדר?"); }
+    else if (h === "robot") { wiggle(el); say("הרובוט: \"ביפ בופ! 🤖 אני אוהב לספור בלונים, אבל תמיד שוכח את המספר...\""); }
+    else if (h === "blocks") { wiggle(el); say("קוביות צבעוניות. בנית מגדל קטן! 🧱"); }
+    else if (h === "door") R.shapeDoor(S);
+    render();
+  },
+  shapeDoor: function (S) {
+    var f = S.f, d = S.d, R = this, sel = null;
+    f.placed = f.placed || {};
+    function draw() {
+      var holes = d.sh.map(function (t) {
+        return '<button class="pick" data-hole="' + t + '" aria-label="חור"><svg viewBox="0 0 60 60">' + shapeSVG(t, 30, 30, 22, f.placed[t] ? d.pc[t] : "#3a2a5c") + "</svg></button>";
+      }).join("");
+      var pieces = S.inv.filter(function (i) { return i.indexOf("shape-") === 0; });
+      var ph = pieces.length ? pieces.map(function (p) {
+        var t = p.slice(6);
+        return '<button class="pick' + (sel === t ? " sel" : "") + '" data-piece="' + t + '" aria-label="' + SHE[t] + '"><svg viewBox="0 0 60 60">' + shapeSVG(t, 30, 30, 22, d.pc[t]) + "</svg></button>";
+      }).join("") : '<p class="small">עוד אין לך צורות. חפשו אותן בחדר!</p>';
+      openModal('<h3>🚪 דלת הצורות</h3><p>בחרו צורה מהתיק ואז לחצו על החור שמתאים לה.</p><div class="row" id="holes">' + holes + '</div><p class="small">🎒 הצורות שלי:</p><div class="row">' + ph + "</div>");
+      [].forEach.call(document.querySelectorAll("[data-piece]"), function (b) { b.onclick = function () { sel = b.dataset.piece; sfx.click(); draw(); }; });
+      [].forEach.call(document.querySelectorAll("[data-hole]"), function (b) {
+        b.onclick = function () {
+          var t = b.dataset.hole;
+          if (f.placed[t]) return;
+          if (!sel) { say("קודם בחרו צורה מהתיק 👇"); badEl(b); return; }
+          if (sel !== t) { sfx.bad(); badEl(b); say("ה" + SHE[sel] + " לא נכנס לחור הזה. נסו חור אחר!"); return; }
+          f.placed[t] = 1; take("shape-" + t); sel = null; sfx.ok(); render();
+          if (d.sh.every(function (x) { return f.placed[x]; })) { closeModal(); winRoom(); return; }
+          say("קליק! ה" + SHE[t] + " נכנס בדיוק ✨"); draw();
+        };
+      });
+    }
+    draw();
+  },
+  hint: function (S) {
+    var f = S.f;
+    if (!f.chest) return "תיבת הצעצועים הכתומה נראית מעניינת...";
+    if (!f.rug) return "אולי משהו מתחבא מתחת לשטיח?";
+    if (!f.safe) return "על הכספת מצויר בלון 🎈 ספרו כמה בלונים יש בחדר, וזה הקוד!";
+    return "לחצו על הדלת, בחרו צורה ושימו אותה בחור שלה.";
+  }
+},
+// ---------- חדר 3: המטבח ----------
+{
+  name: "המטבח", em: "🍎", lvl: "קשה", lc: "#ff9a2f",
+  intro: "המטבח! לדלת יש מנעול עם שלושה מספרים בצבעים 🔴🟢🟡 אולי יש רמז איפשהו על הקיר?",
+  setup: function () {
+    for (;;) {
+      var cnt = { apple: 1 + rnd(4), pear: 1 + rnd(4), banana: 1 + rnd(4) }, loc = { table: [], fridge: [], cup: [] };
+      Object.keys(cnt).forEach(function (t) { for (var k = 0; k < cnt[t]; k++) loc[pick(["table", "fridge", "cup"])].push(t); });
+      var ok = loc.table.length && loc.fridge.length && loc.cup.length && loc.table.length <= 6 && loc.fridge.length <= 8 && loc.cup.length <= 12;
+      if (ok) return { cnt: cnt, loc: { table: shuffle(loc.table), fridge: shuffle(loc.fridge), cup: shuffle(loc.cup) }, order: shuffle(["apple", "pear", "banana"]) };
+    }
+  },
+  draw: function (S) {
+    var f = S.f, d = S.d, s = '<defs><pattern id="pt" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="none" stroke="#f3dc8f" stroke-width="3"/></pattern><pattern id="pc" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#fff"/><rect width="30" height="30" fill="#ff9ab8"/><rect x="30" y="30" width="30" height="30" fill="#ff9ab8"/></pattern></defs>';
+    s += floorWall("#fff3c4", "url(#pc)", '<rect width="800" height="362" fill="url(#pt)"/>');
+    s += door(f.open, '<rect x="70" y="140" width="100" height="40" rx="10" fill="#fff" stroke="' + INK + '" stroke-width="3"/>' + d.order.map(function (t, i) { return '<rect x="' + (142 - i * 30) + '" y="148" width="22" height="24" rx="5" fill="' + C[FCOL[t]] + '" stroke="' + INK + '" stroke-width="2.5"/>'; }).join(""));
+    s += hot("clock", '<circle cx="250" cy="80" r="30" fill="#fff" stroke="' + INK + '" stroke-width="5"/><path d="M250 80V60M250 80h14" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>');
+    // ארון עליון
+    var cupIn = d.loc.cup.map(function (t, k) { var row = k < 6 ? 0 : 1, col = k % 6; return FRUIT[t](318 + col * 38, row ? 150 : 98); }).join("");
+    s += hot("cupboard", f.cup
+      ? '<rect x="290" y="50" width="240" height="125" rx="6" fill="#f3d9b0" stroke="' + INK + '" stroke-width="5"/><path d="M292 120H528" stroke="' + INK + '" stroke-width="4"/>' + cupIn + '<path d="M290 50l-30 12v100l30 13z" fill="#7fd0a0" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/><path d="M530 50l30 12v100l-30 13z" fill="#7fd0a0" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+      : '<rect x="290" y="50" width="240" height="125" rx="6" fill="#7fd0a0" stroke="' + INK + '" stroke-width="5"/><path d="M410 50V175" stroke="' + INK + '" stroke-width="4"/><circle cx="398" cy="112" r="6" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="422" cy="112" r="6" fill="#fff" stroke="' + INK + '" stroke-width="3"/><circle cx="410" cy="140" r="8" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/><rect x="408.5" y="137" width="3" height="7" fill="' + INK + '"/>');
+    // פתק
+    s += hot("recipe", '<rect x="545" y="195" width="52" height="62" rx="3" fill="#fffbe6" stroke="' + INK + '" stroke-width="4" transform="rotate(4 571 226)"/><circle cx="571" cy="198" r="6" fill="#ff4d5e" stroke="' + INK + '" stroke-width="2.5"/><path d="M555 215h32M555 228h32M555 241h20" stroke="' + INK + '" stroke-width="2.5"/>');
+    // שולחן
+    s += '<rect x="240" y="290" width="330" height="16" rx="5" fill="#d79a5c" stroke="' + INK + '" stroke-width="5"/><rect x="250" y="306" width="310" height="90" fill="#ffb35c" stroke="' + INK + '" stroke-width="5"/><path d="M405 306v90" stroke="' + INK + '" stroke-width="4"/><circle cx="390" cy="350" r="5" fill="' + INK + '"/><circle cx="420" cy="350" r="5" fill="' + INK + '"/>';
+    s += d.loc.table.map(function (t, k) { return hot("fruit", FRUIT[t](272 + k * 36, 274), t); }).join("");
+    s += hot("jar", '<rect x="500" y="238" width="50" height="54" rx="12" fill="#dff3ff" stroke="' + INK + '" stroke-width="4" opacity=".95"/><rect x="496" y="228" width="58" height="14" rx="5" fill="#ff7ac0" stroke="' + INK + '" stroke-width="4"/><circle cx="514" cy="270" r="9" fill="#c58b55" stroke="' + INK + '" stroke-width="2.5"/><circle cx="534" cy="276" r="9" fill="#c58b55" stroke="' + INK + '" stroke-width="2.5"/><circle cx="524" cy="256" r="9" fill="#c58b55" stroke="' + INK + '" stroke-width="2.5"/>');
+    // מקרר
+    var frIn = d.loc.fridge.map(function (t, k) { var row = k < 4 ? 0 : 1, col = k % 4; return FRUIT[t](636 + col * 34, row ? 318 : 236); }).join("");
+    s += hot("fridge", f.fridge
+      ? '<rect x="610" y="110" width="160" height="290" rx="12" fill="#dff3ff" stroke="' + INK + '" stroke-width="5"/><rect x="620" y="120" width="140" height="70" fill="#bfe6ff" stroke="' + INK + '" stroke-width="3"/><path d="M612 256H768M612 338H768" stroke="' + INK + '" stroke-width="4"/>' + frIn + '<path d="M770 110l28 14v262l-28 14z" fill="#eef7ff" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>'
+      : '<rect x="610" y="110" width="160" height="290" rx="12" fill="#eef7ff" stroke="' + INK + '" stroke-width="5"/><path d="M612 200H768" stroke="' + INK + '" stroke-width="4"/><rect x="624" y="140" width="10" height="40" rx="4" fill="#b9c4d6" stroke="' + INK + '" stroke-width="3"/><rect x="624" y="220" width="10" height="70" rx="4" fill="#b9c4d6" stroke="' + INK + '" stroke-width="3"/><circle cx="700" cy="250" r="10" fill="#ff7ac0" stroke="' + INK + '" stroke-width="3"/><rect x="680" y="300" width="40" height="28" rx="4" fill="#ffd23f" stroke="' + INK + '" stroke-width="3"/>');
+    return s;
+  },
+  recipe: function (S) {
+    var d = S.d;
+    openModal('<h3>📜 הקוד של הדלת</h3><p>"כל מספר בדלת הוא כמה פירות יש במטבח מהצבע שלו!"</p><div class="row">' + d.order.map(function (t) {
+      return '<div style="text-align:center"><span class="dot" style="background:' + C[FCOL[t]] + '"></span><div style="width:44px;margin:4px auto">' + fruitIcon(t) + "</div></div>";
+    }).join("") + '</div><p class="small">רמז: פירות יכולים להתחבא בכל מיני מקומות 😉</p>');
+  },
+  click: function (h, S, el) {
+    var f = S.f, d = S.d, R = this;
+    if (h === "recipe") { f.recipe = 1; R.recipe(S); }
+    else if (h === "fridge") {
+      if (!f.fridge) { f.fridge = 1; sfx.click(); say("פתחת את המקרר. ברררר, קר! 🥶 יש בפנים פירות."); }
+      else say("במקרר יש " + d.loc.fridge.length + " פירות. רק לספור אותם!");
+    } else if (h === "jar") {
+      if (!f.jar) { f.jar = 1; give("cupkey"); say("בתוך צנצנת העוגיות, מתחת לעוגיות, היה מפתח ירוק! 🍪🔑"); }
+      else { wiggle(el); say("נשארו רק עוגיות. יאמי! 🍪"); }
+    } else if (h === "cupboard") {
+      if (f.cup) say("בארון יש עוד פירות. ספרו אותם!");
+      else if (has("cupkey")) { f.cup = 1; take("cupkey"); sfx.ok(); say("המפתח הירוק פתח את הארון! ויש בו עוד פירות 🍎🍐🍌"); }
+      else { sfx.bad(); shake(el); say("הארון נעול 🔒 צריך מפתח."); }
+    } else if (h === "fruit") { wiggle(el); var t = el.dataset.k; say({ apple: "תפוח אדום 🍎", pear: "אגס ירוק 🍐", banana: "בננה צהובה 🍌" }[t]); }
+    else if (h === "clock") say("טיק טק ⏰ אין לחץ, יש לך כל הזמן שבעולם.");
+    else if (h === "door") numLock("🚪 מנעול המטבח", "<p>בכל צבע מספר אחד.</p>", d.order.map(function (t) { return d.cnt[t]; }), d.order.map(function (t) { return FCOL[t]; }), winRoom);
+    render();
+  },
+  hint: function (S) {
+    var f = S.f;
+    if (!f.recipe) return "על הקיר ליד המקרר תלוי פתק. קראו אותו!";
+    if (!f.fridge) return "אולי יש פירות גם בתוך המקרר?";
+    if (!f.jar) return "מה יש בצנצנת העוגיות על השולחן? 🍪";
+    if (!f.cup) return "המפתח הירוק פותח את הארון הירוק למעלה.";
+    return "ספרו כמה " + S.d.order.map(function (t) { return FHE[t]; }).join(", ") + " יש בכל המטבח: על השולחן, במקרר ובארון. אחר כך הקישו בדלת.";
+  }
+},
+// ---------- חדר 4: חדר הקוסם ----------
+{
+  name: "חדר הקוסם", em: "🧙", lvl: "הכי קשה", lc: "#9b5cff",
+  intro: "חדר הקוסם ✨ פה הכול קסום. אולי כדאי להתחיל בספר הקסמים?",
+  setup: function () {
+    var cells = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8]).slice(0, 4);
+    return { seq: shuffle([0, 1, 2, 3]), target: pick(["purple", "green", "orange"]), cells: cells };
+  },
+  candles: ["red", "blue", "green", "yellow"],
+  bottles: ["red", "blue", "yellow"],
+  mix: { purple: ["red", "blue"], green: ["blue", "yellow"], orange: ["red", "yellow"] },
+  mixColor: function (a, b) {
+    if (a === b) return a;
+    var k = [a, b].sort().join("+");
+    return { "blue+red": "purple", "blue+yellow": "green", "red+yellow": "orange" }[k];
+  },
+  draw: function (S) {
+    var f = S.f, d = S.d, R = this, s = '<defs><pattern id="pw" width="70" height="70" patternUnits="userSpaceOnUse"><text x="10" y="30" font-size="14" fill="#6d58b8">✦</text><text x="45" y="62" font-size="10" fill="#6d58b8">✦</text></pattern></defs>';
+    s += floorWall("#3b2a6b", "#5b3f8f", '<rect width="800" height="362" fill="url(#pw)"/>');
+    s += '<ellipse cx="500" cy="450" rx="250" ry="36" fill="#7a5cff" stroke="' + INK + '" stroke-width="4"/>';
+    s += door(f.open, '<circle cx="120" cy="180" r="30" fill="#3b2a6b" stroke="#ffd23f" stroke-width="4"/>' + shapeSVG("star", 120, 180, 18, has("starkey") || f.open ? "#ffb3e0" : "#1d1b4b") + '<text x="120" y="320" font-size="40" text-anchor="middle" fill="#ffd23f">✦ ☾ ✦</text>');
+    // ציור קסום
+    var pat = "";
+    if (f.wand) for (var i = 0; i < 9; i++) { var on = d.cells.indexOf(i) >= 0, cx = 268 + (i % 3) * 32, cy = 82 + Math.floor(i / 3) * 32; pat += '<rect x="' + (cx - 13) + '" y="' + (cy - 13) + '" width="26" height="26" rx="5" fill="' + (on ? "#ffeaa0" : "#2b2160") + '" stroke="#ffd23f" stroke-width="2"/>' + (on ? shapeSVG("star", cx, cy, 9, "#ffd23f", 'stroke-width="2"') : ""); }
+    else pat = '<text x="300" y="125" font-size="40" text-anchor="middle" fill="#6d58b8">?</text>';
+    s += hot("painting", '<rect x="236" y="50" width="128" height="128" rx="8" fill="#ffd23f" stroke="' + INK + '" stroke-width="5"/><rect x="248" y="62" width="104" height="104" fill="#2b2160" stroke="' + INK + '" stroke-width="3"/>' + pat);
+    // מדף בקבוקים
+    s += '<rect x="420" y="140" width="230" height="14" rx="4" fill="#9a6a3c" stroke="' + INK + '" stroke-width="4"/>';
+    R.bottles.forEach(function (c, k) {
+      var x = 460 + k * 70;
+      s += hot("bottle", '<rect x="' + (x - 7) + '" y="78" width="14" height="18" fill="#c58b55" stroke="' + INK + '" stroke-width="3"/><rect x="' + (x - 5) + '" y="92" width="10" height="12" fill="#dff3ff" stroke="' + INK + '" stroke-width="3"/><path d="M' + (x - 20) + " 140v-26q0 -10 15 -12h10q15 2 15 12v26z" + '" fill="' + C[c] + '" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/><circle cx="' + (x - 7) + '" cy="118" r="4" fill="#fff" opacity=".6"/>', c);
+    });
+    // מגילה
+    s += hot("scroll", '<rect x="688" y="70" width="84" height="130" rx="4" fill="#fbe7b5" stroke="' + INK + '" stroke-width="4"/><rect x="680" y="62" width="100" height="14" rx="7" fill="#d79a5c" stroke="' + INK + '" stroke-width="4"/><rect x="680" y="194" width="100" height="14" rx="7" fill="#d79a5c" stroke="' + INK + '" stroke-width="4"/><path d="M730 105c-14 18 -14 30 0 30s14 -12 0 -30z" fill="' + C[d.target] + '" stroke="' + INK + '" stroke-width="3"/><path d="M700 160h60M700 175h40" stroke="#b08a50" stroke-width="3"/>');
+    // כדור בדולח
+    s += hot("ball", '<path d="M270 360l10 -40h40l10 40z" fill="#9a6a3c" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/><circle id="ballGlow" cx="300" cy="282" r="40" fill="#bfe8ff" stroke="' + INK + '" stroke-width="5"/><ellipse cx="287" cy="268" rx="9" ry="13" fill="#fff" opacity=".7"/>');
+    // ספר
+    s += hot("book", '<rect x="214" y="380" width="70" height="18" rx="3" fill="#9a6a3c" stroke="' + INK + '" stroke-width="3"/><path d="M218 380l31 -18 31 18z" fill="#fffbe6" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><path d="M249 362v18" stroke="' + INK + '" stroke-width="3"/><rect x="214" y="398" width="70" height="28" fill="#ff5fa2" stroke="' + INK + '" stroke-width="3"/><text x="249" y="419" font-size="16" text-anchor="middle">✨</text>');
+    // שולחן נרות
+    s += '<rect x="395" y="300" width="250" height="14" rx="4" fill="#9a6a3c" stroke="' + INK + '" stroke-width="4"/><rect x="410" y="314" width="12" height="80" fill="#9a6a3c" stroke="' + INK + '" stroke-width="3"/><rect x="618" y="314" width="12" height="80" fill="#9a6a3c" stroke="' + INK + '" stroke-width="3"/>';
+    var lit = f.simon ? 4 : (f.prog || 0);
+    R.candles.forEach(function (c, k) {
+      var x = 430 + k * 60, on = d.seq.slice(0, lit).indexOf(k) >= 0;
+      s += hot("candle", (on ? '<circle cx="' + x + '" cy="232" r="26" fill="#ffe680" opacity=".45"/><path d="M' + x + " 220q-12 14 0 24q12 -10 0 -24z" + '" fill="#ffb02e" stroke="' + INK + '" stroke-width="2.5"/>' : "") + '<path d="M' + x + ' 250v-8" stroke="' + INK + '" stroke-width="3"/><rect x="' + (x - 13) + '" y="250" width="26" height="50" rx="4" fill="' + C[c] + '" stroke="' + INK + '" stroke-width="4"/>', k);
+    });
+    // קדירה
+    var liquid = f.mix && f.mix.length ? (f.mix.length === 1 ? C[f.mix[0]] : C[R.mixColor(f.mix[0], f.mix[1])] || C.brown) : (f.potion ? C[d.target] : "#4b5670");
+    s += hot("cauldron", '<path d="M672 352a58 46 0 0 0 116 0z" fill="#2b2b3a" stroke="' + INK + '" stroke-width="5"/><ellipse cx="730" cy="352" rx="58" ry="12" fill="' + liquid + '" stroke="' + INK + '" stroke-width="4"/><path d="M690 392l-8 18M770 392l8 18" stroke="' + INK + '" stroke-width="6" stroke-linecap="round"/>' + (f.mix && f.mix.length ? '<circle cx="715" cy="335" r="6" fill="' + liquid + '" stroke="' + INK + '" stroke-width="2" class="bob"/><circle cx="745" cy="328" r="4" fill="' + liquid + '" stroke="' + INK + '" stroke-width="2" class="bob"/>' : ""));
+    // תיבה
+    s += hot("chest", f.simon && !f.wand
+      ? '<path d="M420 410l8 -40h112l8 40z" fill="#ffd23f" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/><rect x="424" y="410" width="120" height="62" rx="6" fill="#c98650" stroke="' + INK + '" stroke-width="4"/><circle cx="484" cy="402" r="18" fill="#fff6a0" opacity=".7"/>'
+      : '<rect x="424" y="410" width="120" height="62" rx="6" fill="#c98650" stroke="' + INK + '" stroke-width="4"/><rect x="420" y="396" width="128" height="24" rx="8" fill="#ffd23f" stroke="' + INK + '" stroke-width="4"/>' + (f.wand ? "" : '<text x="484" y="452" font-size="22" text-anchor="middle">🔮</text>'));
+    return s;
+  },
+  playBall: function (S) {
+    var f = S.f, d = S.d, R = this, i = 0;
+    S.busy = true; f.prog = 0; render(); say("הסתכלו טוב על הכדור... 👀");
+    function step() {
+      var g = document.getElementById("ballGlow");
+      if (!g) { S.busy = false; return; }
+      if (i >= d.seq.length) { g.setAttribute("fill", "#bfe8ff"); S.busy = false; f.seen = 1; say("עכשיו הדליקו את הנרות באותו סדר של הצבעים!"); return; }
+      g.setAttribute("fill", C[R.candles[d.seq[i]]]); sfx.note(d.seq[i]);
+      setTimeout(function () { g.setAttribute("fill", "#bfe8ff"); i++; setTimeout(step, 280); }, 700);
+    }
+    setTimeout(step, 500);
+  },
+  click: function (h, S, el) {
+    var f = S.f, d = S.d, R = this;
+    if (S.busy) return;
+    if (h === "book") {
+      f.book = 1;
+      openModal('<h3>📖 ספר הקסמים</h3><p>🔮 כדור הבדולח זוכר צבעים. מה שהוא מראה, הנרות צריכים לעשות.</p><p>🧪 שני בקבוקים בקדירה עושים צבע חדש. המגילה אומרת איזה.</p><p>🖼️ הציור מתגלה רק למי שיש לו שרביט.</p>');
+      return;
+    }
+    if (h === "ball") { if (f.simon) say("הכדור נוצץ בשקט ✨ כבר פתרת את החידה שלו."); else { R.playBall(S); return; } }
+    else if (h === "candle") {
+      var k = +el.dataset.k;
+      if (f.simon) say("כל הנרות כבר דולקים 🕯️");
+      else if (!f.seen) { sfx.note(k); say("הנר נדלק ומיד כבה. אולי כדור הבדולח יודע משהו? 🔮"); }
+      else if (d.seq[f.prog || 0] === k) {
+        f.prog = (f.prog || 0) + 1; sfx.note(k);
+        if (f.prog === 4) { f.simon = 1; sfx.find(); say("כל הנרות דולקים! 🕯️ שמעת? משהו נפתח למטה..."); }
+      } else { f.prog = 0; sfx.bad(); say("אופס! כל הנרות כבו 💨 לחצו על הכדור וצפו שוב."); }
+    } else if (h === "chest") {
+      if (f.wand) say("התיבה ריקה.");
+      else if (f.simon) { f.wand = 1; give("wand"); say("מצאת שרביט קסמים! 🪄 עכשיו משהו בחדר נראה אחרת..."); }
+      else { sfx.bad(); shake(el); say("התיבה נעולה בקסם 🔮 אולי זה קשור לנרות?"); }
+    } else if (h === "scroll") {
+      f.scroll = 1;
+      openModal('<h3>📜 המגילה</h3><p>"הכינו שיקוי בצבע הזה:"</p><div class="row"><span class="dot" style="width:80px;height:80px;background:' + C[d.target] + '"></span></div><p>' + (f.potion ? "✅ כבר הכנת אותו!" : "זרקו לקדירה בדיוק שני בקבוקים.") + "</p>");
+      return;
+    } else if (h === "bottle") {
+      var c = el.dataset.k;
+      if (f.potion) say("כבר הכנת את השיקוי ✨");
+      else {
+        f.mix = f.mix || [];
+        f.mix.push(c); tone(400 + f.mix.length * 150, 0.15, "sine");
+        if (f.mix.length === 1) say("טפטפת " + CHE[c] + " לקדירה. עוד בקבוק אחד!");
+        else {
+          var got = R.mixColor(f.mix[0], f.mix[1]);
+          if (got === d.target) { f.potion = 1; f.mix = []; give("starkey"); say("פוף! ✨ יצא שיקוי " + CHE[got] + ", ובתוכו מפתח בצורת כוכב! ⭐"); }
+          else {
+            sfx.bad(); say("יצא " + CHE[got] + "... זה לא הצבע במגילה 😅 הקדירה מתרוקנת, נסו שוב.");
+            render(); setTimeout(function () { f.mix = []; render(); }, 1200); return;
+          }
+        }
+      }
+    } else if (h === "cauldron") say(f.potion ? "השיקוי מבעבע בשמחה 🫧" : "קדירת קסמים 🫕 זורקים לתוכה שני בקבוקים מהמדף.");
+    else if (h === "painting") say(f.wand ? "הציור מראה כוכבים! ⭐ אולי זה הקוד של הדלת?" : "הציור חשוך לגמרי... יש בו קסם שמחכה למשהו 🪄");
+    else if (h === "door") {
+      if (!has("starkey")) { sfx.bad(); shake(el); say("במנעול יש חור בצורת כוכב ⭐ צריך מפתח כוכב."); }
+      else if (!f.wand) { sfx.bad(); shake(el); say("המפתח נכנס, אבל הדלת מכושפת! 🪄 צריך שרביט קסמים."); }
+      else R.gridDoor(S);
+    }
+    render();
+  },
+  gridDoor: function (S) {
+    var d = S.d, on = {};
+    var cells = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(function (i) { return '<button class="cell" data-c="' + i + '" aria-label="משבצת ' + (i + 1) + '"></button>'; }).join("");
+    openModal('<h3>🚪 דלת הכוכבים</h3><p>הדליקו את הכוכבים בדלת. איפה? 🤔</p><div class="grid3" id="g3">' + cells + '</div><button class="btn" id="gGo">🪄 לפתוח</button>');
+    [].forEach.call(document.querySelectorAll("#g3 .cell"), function (b) {
+      b.onclick = function () { var i = +b.dataset.c; on[i] = !on[i]; b.classList.toggle("on", on[i]); b.textContent = on[i] ? "⭐" : ""; sfx.click(); };
+    });
+    $("#gGo").onclick = function () {
+      var ok = [0, 1, 2, 3, 4, 5, 6, 7, 8].every(function (i) { return !!on[i] === (d.cells.indexOf(i) >= 0); });
+      if (ok) { closeModal(); take("starkey"); winRoom(); } else { sfx.bad(); badEl($("#g3")); say("הדלת לא זזה. הסתכלו שוב על הציור הקסום 🖼️"); }
+    };
+  },
+  hint: function (S) {
+    var f = S.f, d = S.d, R = this;
+    if (!f.book) return "התחילו מספר הקסמים הוורוד ליד כדור הבדולח 📖";
+    if (!f.simon) return "לחצו על כדור הבדולח, זכרו את הצבעים, ואז לחצו על הנרות באותו סדר.";
+    if (!f.wand) return "התיבה שליד הנרות נפתחה! לחצו עליה.";
+    if (!f.potion) return "במגילה צריך שיקוי " + CHE[d.target] + ". " + CHE[d.target] + " = " + CHE[R.mix[d.target][0]] + " + " + CHE[R.mix[d.target][1]] + " 🧪";
+    return "יש לך שרביט ומפתח כוכב! הציור הקסום מראה איפה להדליק כוכבים בדלת.";
+  }
+}
+];
+
+// ===== מצב המשחק =====
+var S = null, R = null;
+var SAVE = "livEscapeRoom";
+function load() { try { var v = JSON.parse(localStorage.getItem(SAVE)); if (v && v.stars) return v; } catch (e) {} return { stars: [0, 0, 0, 0] }; }
+function save(p) { try { localStorage.setItem(SAVE, JSON.stringify(p)); } catch (e) {} }
+var prog = load();
+
+function itemDef(id) {
+  if (id === "key") return { name: "מפתח קטן", icon: keyIcon("#ffd23f") };
+  if (id === "note1") return { name: "פתק", icon: noteIcon, use: function () { ROOMS[0].note(S); } };
+  if (id === "cupkey") return { name: "מפתח ירוק", icon: keyIcon("#34c759") };
+  if (id === "wand") return { name: "שרביט קסמים", icon: wandIcon };
+  if (id === "starkey") return { name: "מפתח כוכב", icon: starKeyIcon };
+  if (id.indexOf("shape-") === 0) { var t = id.slice(6); return { name: SHE[t], icon: shapeSVG(t, 30, 30, 20, S.d.pc[t]) }; }
+  return { name: id, icon: "" };
+}
+function give(id) { S.inv.push(id); S.newItem = id; sfx.find(); }
+function take(id) { var i = S.inv.indexOf(id); if (i >= 0) S.inv.splice(i, 1); }
+function say(t) { var el = $("#say"); el.textContent = t; el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+function shake(el) { if (!el) return; el.classList.remove("shake"); void el.getBoundingClientRect(); el.classList.add("shake"); }
+function wiggle(el) { if (!el) return; var g = el.firstElementChild || el; g.classList.remove("wig"); void g.getBoundingClientRect(); g.classList.add("wig"); }
+
+function render() {
+  if (!S) return;
+  $("#scene").innerHTML = '<svg viewBox="0 0 800 500" role="img" aria-label="' + R.name + '">' + R.draw(S) + "</svg>";
+  var inv = $("#inv"), html = "";
+  for (var i = 0; i < Math.max(5, S.inv.length); i++) {
+    var id = S.inv[i];
+    if (id) { var def = itemDef(id); html += '<button class="slot full' + (id === S.newItem ? " new" : "") + '" data-i="' + id + '" title="' + def.name + '" aria-label="' + def.name + '"><svg viewBox="0 0 60 60">' + def.icon + "</svg></button>"; }
+    else html += '<span class="slot"></span>';
+  }
+  inv.innerHTML = html;
+  S.newItem = null;
+}
+$("#scene").addEventListener("click", function (e) {
+  var el = e.target.closest ? e.target.closest("[data-h]") : null;
+  if (!el || !S || S.done) return;
+  R.click(el.dataset.h, S, el);
+});
+$("#inv").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-i]"); if (!b || !S) return;
+  var def = itemDef(b.dataset.i);
+  if (def.use) def.use(); else say("זה " + def.name + ". איפה אפשר להשתמש בו? 🤔");
+});
+
+function startRoom(i) {
+  R = ROOMS[i];
+  S = { i: i, f: {}, inv: [], hints: 0, d: R.setup(), busy: false, done: false };
+  $("#menu").hidden = true; $("#game").hidden = false;
+  $("#hintBtn").hidden = false; $("#menuBtn").hidden = false;
+  render(); say(R.intro);
+  window.scrollTo(0, 0);
+}
+function showMenu() {
+  S = null; R = null;
+  $("#menu").hidden = false; $("#game").hidden = true;
+  $("#hintBtn").hidden = true; $("#menuBtn").hidden = true;
+  var total = prog.stars.reduce(function (a, b) { return a + b; }, 0);
+  $("#sStars").textContent = "⭐ " + total;
+  $("#rooms").innerHTML = ROOMS.map(function (r, i) {
+    var open = i === 0 || prog.stars[i - 1] > 0, st = prog.stars[i];
+    return '<button class="room" data-r="' + i + '"' + (open ? "" : " disabled") + '><div class="em">' + (open ? r.em : "🔒") + "</div><b>" + (i + 1) + ". " + r.name + '</b><span class="lvl" style="background:' + r.lc + '">' + r.lvl + '</span><div class="st">' + (st ? "⭐⭐⭐".slice(0, st * 2) + '<span style="opacity:.25">' + "⭐⭐⭐".slice(0, (3 - st) * 2) + "</span>" : (open ? "שחקו!" : "פתרו את החדר הקודם")) + "</div></button>";
+  }).join("");
+  [].forEach.call(document.querySelectorAll(".room"), function (b) { b.onclick = function () { if (!b.disabled) { sfx.click(); startRoom(+b.dataset.r); } }; });
+}
+$("#menuBtn").onclick = function () { closeModal(); $("#win").classList.remove("on"); showMenu(); };
+$("#hintBtn").onclick = function () { if (!S || S.done) return; S.hints++; tone(880, 0.15, "sine"); say("💡 " + R.hint(S)); };
+
+function confetti() {
+  var box = $("#confetti"), cols = ["#ff4d5e", "#ffd23f", "#34c759", "#3d8bff", "#9b5cff", "#ff7ac0"];
+  for (var i = 0; i < 70; i++) {
+    var c = document.createElement("i");
+    c.style.left = Math.random() * 100 + "vw"; c.style.background = pick(cols);
+    c.style.animationDuration = (1.8 + Math.random() * 1.8) + "s"; c.style.animationDelay = Math.random() * 0.6 + "s";
+    box.appendChild(c);
+  }
+  setTimeout(function () { box.innerHTML = ""; }, 4500);
+}
+function winRoom() {
+  S.f.open = 1; S.done = true; render(); sfx.win();
+  say("הדלת נפתחה! 🎉");
+  var st = S.hints === 0 ? 3 : S.hints <= 2 ? 2 : 1, i = S.i;
+  if (st > prog.stars[i]) { prog.stars[i] = st; save(prog); }
+  $("#sStars").textContent = "⭐ " + prog.stars.reduce(function (a, b) { return a + b; }, 0);
+  var last = i === ROOMS.length - 1;
+  setTimeout(function () {
+    confetti();
+    var stars = "";
+    for (var k = 0; k < 3; k++) stars += '<span class="' + (k < st ? "" : "off") + '">⭐</span>';
+    $("#wbox").innerHTML = "<h3>" + (last ? "🏆 ברחת מכל החדרים!" : "🎉 ברחת מ" + R.name + "!") + '</h3><div class="stars">' + stars + "</div><p>" +
+      (S.hints === 0 ? "בלי אף רמז! את/ה גאון/ית של חידות 🧠" : "השתמשת ב־" + S.hints + " רמזים. נסו שוב בלי רמזים כדי לקבל 3 כוכבים!") + "</p>" +
+      (last ? "<p>פתרת את כל ארבעת החדרים. כל הכבוד! 🌟</p>" : "") +
+      '<div class="row">' + (last ? "" : '<button class="btn" id="wNext">לחדר הבא ←</button>') + '<button class="btn alt" id="wAgain">🔄 שוב</button><button class="btn alt" id="wMenu">🚪 כל החדרים</button></div><p class="small">בכל פעם הרמזים והקודים מתחלפים!</p>';
+    $("#win").classList.add("on");
+    if (!last) $("#wNext").onclick = function () { $("#win").classList.remove("on"); startRoom(i + 1); };
+    $("#wAgain").onclick = function () { $("#win").classList.remove("on"); startRoom(i); };
+    $("#wMenu").onclick = function () { $("#win").classList.remove("on"); showMenu(); };
+  }, 1100);
+}
+
+window.escapeRoomState = function () { return S; }; // לבדיקות
+showMenu();
+})();
+</script>
+</body>
+</html>
