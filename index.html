@@ -580,9 +580,15 @@
     var storeKey = "livGamesPlayed:" + g.key;
     var box = card.querySelector(".seen"), num = card.querySelector(".n");
     var current = null; // המספר שמוצג עכשיו
+    // מספר התחלה קבוע לכל משחק (נבחר באקראי בין 30 ל־160), והמונה עולה משם כרגיל.
+    // משחק חדש שלא ברשימה מקבל מספר קבוע בטווח הזה לפי השם שלו.
+    var startAt = { "cake-bakery": 50, "my-zoo": 72, "animal-salon": 109, "dressup-city": 61, "dream-in-dream": 102, "luna-game": 112, "space-shooter": 146, "cube-world": 47, "cops-and-robbers": 101, "build-house": 125, "flashcards": 130, "panda": 61, "star-gardener": 71, "lemonade-stand": 119, "leaf-cleaners": 144, "penalty-kicks": 132, "squishy-factory": 106, "design-apartment": 58, "rage-room": 32, "territory-3d": 129 };
+    var offset = startAt[g.key];
+    if (typeof offset !== "number") { offset = 0; for (var i = 0; i < g.key.length; i++) offset = (offset * 31 + g.key.charCodeAt(i)) % 131; offset += 30; }
 
     function show(n) {
       if (typeof n !== "number") return;
+      n += offset;
       current = n;
       num.textContent = n.toLocaleString("he-IL");
       box.setAttribute("aria-label", "מספר הנכנסים למשחק: " + n.toLocaleString("he-IL"));
