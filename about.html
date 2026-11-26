@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מי אני | אתר המשחקים של ליב</title>
+<meta name="description" content="על אתר המשחקים של ליב: אוסף משחקי דפדפן בחינם, בלי הורדה ובלי הרשמה.">
+<meta name="theme-color" content="#6fd3ff">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/about.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #6fd3ff; --sun: #ffd23f; --pink: #ff5fa2; --grape: #7a5cff; --mint: #2fd1a0;
+    --ink: #1d1b4b; --paper: #ffffff;
+    --display: "Secular One", "Arial Rounded MT Bold", Arial, sans-serif;
+    --body: "Rubik", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    direction: rtl; margin: 0;
+    background-color: var(--sky);
+    background-image: radial-gradient(rgba(255,255,255,.55) 3px, transparent 3.5px);
+    background-size: 34px 34px;
+    color: var(--ink); font-family: var(--body); font-size: 17px;
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));
+  }
+  .wrap { max-width: 46em; margin: 0 auto; }
+  .topbar { display: flex; justify-content: center; padding-top: 18px; }
+  .back {
+    display: inline-block; text-decoration: none; color: var(--ink);
+    font-family: var(--display); font-size: 1.15rem; line-height: 1; padding: 10px 24px;
+    background: var(--sun); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .back:hover, .back:focus-visible { transform: translateY(-3px); box-shadow: 6px 7px 0 var(--ink); }
+  .back:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
+  h1 {
+    font-family: var(--display); font-weight: 400; text-align: center;
+    font-size: clamp(2.4rem, 8vw, 4rem); line-height: 1.1; margin: 32px 0 24px;
+    color: var(--paper); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill;
+    text-shadow: 4px 5px 0 var(--ink);
+  }
+  .about {
+    background: var(--paper); border: 4px solid var(--ink); border-radius: 26px;
+    box-shadow: 8px 8px 0 var(--pink); padding: 20px 26px 22px; line-height: 1.75;
+  }
+  .about h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0 0 8px; }
+  .about p { margin: 0 0 .7em; }
+  .about p:last-child { margin-bottom: 0; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topbar"><a class="back" href="./">חזרה למשחקים</a></nav>
+  <h1>מי אני</h1>
+  <section class="about" aria-labelledby="aboutTitle">
+    <h2 id="aboutTitle">על האתר</h2>
+    <p>אתר המשחקים של ליב הוא אוסף משחקי דפדפן בחינם. כל משחק נפתח בלחיצה אחת, בלי הורדה ובלי הרשמה.</p>
+    <p>אפשר לבעוט פנדלים מול מחשב, לנהל דוכן לימונדה שהופך לדוכן תה ועוגיות כשקר בחוץ, להגן על החלל, לבנות בית ועוד. ליד כל משחק מוצג כמה אנשים כבר נכנסו אליו.</p>
+  </section>
+</div>
+</body>
+</html>
