@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 20 400 240" role="img" aria-label="אלופי המסלול">
+  <rect width="400" height="260" fill="#8fd8ff"/>
+  <circle cx="60" cy="52" r="26" fill="#ffd23f" stroke="#1d1b4b" stroke-width="4"/>
+  <rect y="112" width="400" height="148" fill="#5cbf55"/>
+  <path d="M165 112 H235 L390 260 H10 Z" fill="#55555f" stroke="#1d1b4b" stroke-width="4"/>
+  <path d="M196 124 h8 l3 18 h-14 Z M190 160 h20 l5 30 h-30 Z" fill="#ffe680"/>
+  <g stroke="#1d1b4b" stroke-width="4">
+    <rect x="122" y="52" width="12" height="76" fill="#7a5cff"/>
+    <rect x="266" y="52" width="12" height="76" fill="#7a5cff"/>
+    <rect x="116" y="38" width="168" height="30" rx="6" fill="#fff"/>
+  </g>
+  <g fill="#1d1b4b">
+    <path d="M122 41h20v12h-20zM162 41h20v12h-20zM202 41h20v12h-20zM242 41h20v12h-20zM142 53h20v12h-20zM182 53h20v12h-20zM222 53h20v12h-20zM262 53h19v12h-19z"/>
+  </g>
+  <g stroke="#1d1b4b" stroke-width="4">
+    <rect x="130" y="196" width="30" height="46" rx="9" fill="#22222a"/>
+    <rect x="240" y="196" width="30" height="46" rx="9" fill="#22222a"/>
+    <rect x="144" y="188" width="112" height="44" rx="14" fill="#ff3b4e"/>
+    <path d="M165 188 L178 158 H222 L235 188 Z" fill="#9fe3ff"/>
+    <rect x="136" y="170" width="128" height="12" rx="5" fill="#22222a"/>
+    <rect x="154" y="202" width="22" height="12" rx="4" fill="#ffd23f"/>
+    <rect x="224" y="202" width="22" height="12" rx="4" fill="#ffd23f"/>
+  </g>
+  <g fill="#ffd23f" stroke="#1d1b4b" stroke-width="4">
+    <circle cx="322" cy="190" r="17"/>
+    <circle cx="350" cy="232" r="21"/>
+    <circle cx="72" cy="214" r="19"/>
+  </g>
+  <g stroke="#1d1b4b" stroke-width="4">
+    <rect x="42" y="106" width="12" height="36" fill="#8a5a33"/>
+    <circle cx="48" cy="98" r="26" fill="#2f9e44"/>
+    <rect x="344" y="110" width="12" height="36" fill="#8a5a33"/>
+    <circle cx="350" cy="100" r="28" fill="#2f9e44"/>
+  </g>
+</svg>

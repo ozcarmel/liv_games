@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>אלופי המסלול | משחק מרוצי מכוניות לילדים בחינם</title>
+<meta name="description" content="משחק מרוצי מכוניות בתלת ממד לילדים בחינם: ארבעה מסלולים, שמונה אתגרים וחנות עם מכוניות, צבעים, שדרוגים וקישוטים.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://ozcarmel.github.io/liv_games/race-champions.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="אתר המשחקים של ליב">
+<meta property="og:title" content="אלופי המסלול | משחק מרוצי מכוניות לילדים בחינם">
+<meta property="og:description" content="משחק מרוצי מכוניות בתלת ממד לילדים בחינם: ארבעה מסלולים, שמונה אתגרים וחנות עם מכוניות, צבעים, שדרוגים וקישוטים.">
+<meta property="og:url" content="https://ozcarmel.github.io/liv_games/race-champions.html">
+<meta property="og:image" content="https://ozcarmel.github.io/liv_games/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "אלופי המסלול",
+  "description": "משחק מרוצי מכוניות בתלת ממד לילדים בחינם: ארבעה מסלולים, שמונה אתגרים וחנות עם מכוניות, צבעים, שדרוגים וקישוטים.",
+  "url": "https://ozcarmel.github.io/liv_games/race-champions.html",
+  "image": "https://ozcarmel.github.io/liv_games/og-image.png",
+  "inLanguage": "he",
+  "genre": "מרוצים",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "אתר המשחקים של ליב",
+    "url": "https://ozcarmel.github.io/liv_games/"
+  }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1b4b;--paper:#fff;--sun:#ffd23f;--pink:#ff5fa2;--grape:#7a5cff;--mint:#2fd1a0;--sky:#6fd3ff;
+  --display:"Secular One","Arial Rounded MT Bold",Arial,sans-serif;--body:"Rubik",Arial,sans-serif;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--sky);color:var(--ink);font-family:var(--body);font-weight:500;
+  user-select:none;-webkit-user-select:none;touch-action:none}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+[hidden]{display:none!important}
+.coin{display:inline-block;width:.95em;height:.95em;border-radius:50%;background:#ffcc22;border:2px solid #a86f00;box-shadow:inset 0 0 0 2px #ffe680;vertical-align:-.1em}
+button{font-family:var(--display);font-size:1.1rem;color:var(--ink);background:var(--paper);border:3px solid var(--ink);border-radius:999px;
+  padding:8px 18px;box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+button:focus-visible{outline:4px solid var(--grape);outline-offset:3px}
+button:disabled{opacity:.5;cursor:default}
+.big{font-size:1.5rem;padding:12px 22px;width:100%}
+.sun{background:var(--sun)}.pink{background:var(--pink)}.mint{background:var(--mint)}.grape{background:var(--grape);color:#fff}
+
+/* תפריט */
+#menu{position:fixed;top:0;bottom:0;right:0;width:min(440px,48vw);padding:14px;display:flex;flex-direction:column;gap:10px;z-index:5}
+#topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chip{background:var(--sun);border:3px solid var(--ink);border-radius:999px;padding:5px 16px;font-family:var(--display);font-size:1.25rem;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+#back{font-family:var(--display);font-size:1.1rem;color:var(--ink);text-decoration:none;background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:5px 16px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+#panel{flex:1;min-height:0;overflow-y:auto;touch-action:pan-y;background:rgba(255,255,255,.93);border:4px solid var(--ink);border-radius:24px;box-shadow:7px 7px 0 var(--ink);padding:16px}
+h1{font-family:var(--display);font-weight:400;font-size:2.5rem;margin:0 0 4px;text-align:center;line-height:1.1}
+h2{font-family:var(--display);font-weight:400;font-size:1.7rem;margin:0}
+.sub{text-align:center;margin:0 0 16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.item{border:3px solid var(--ink);border-radius:18px;padding:10px 12px;background:var(--paper);display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.item.on{background:#fff4c2}
+.item.locked{opacity:.65}
+.item h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.2rem}
+.item p{margin:2px 0 0;font-size:.9rem}
+.item button{flex:none;font-size:1rem;padding:6px 14px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tabs button{font-size:.95rem;padding:5px 12px}
+.tabs button.on{background:var(--grape);color:#fff}
+.bars{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:.78rem;margin-top:6px;align-items:center}
+.bar{display:block;height:9px;width:120px;max-width:100%;border:2px solid var(--ink);border-radius:9px;overflow:hidden;background:#fff}
+.bar i{display:block;height:100%;background:var(--mint)}
+.swatch{width:36px;height:36px;border-radius:50%;border:3px solid var(--ink);flex:none}
+.help{font-size:.85rem;text-align:center;margin:14px 0 0;line-height:1.6}
+.credit{direction:ltr;font-size:.7rem;text-align:center;margin:12px 0 0;opacity:.8}
+.credit a{color:inherit}
+
+/* מסך מרוץ */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:4}
+.box{background:rgba(255,255,255,.9);border:3px solid var(--ink);border-radius:16px;padding:5px 12px;font-family:var(--display);box-shadow:3px 3px 0 var(--ink)}
+#stats{position:absolute;top:max(10px,env(safe-area-inset-top));right:10px;display:flex;flex-direction:column;gap:7px;align-items:flex-start;font-size:1.05rem}
+#hPos{font-size:1.9rem;background:var(--sun)}
+#hGoal{max-width:min(330px,60vw);font-size:.95rem;background:#e8e0ff}
+#mapwrap{position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+#map{width:140px;height:140px;background:rgba(255,255,255,.8);border:3px solid var(--ink);border-radius:18px}
+#pauseBtn{pointer-events:auto}
+#speedo{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);text-align:center;min-width:170px}
+#speedo b{font-weight:400;font-size:2.1rem;line-height:1}
+#nitroBar{height:13px;border:2px solid var(--ink);border-radius:9px;background:#fff;overflow:hidden;margin:4px 0 2px;direction:ltr}
+#nitroBar i{display:block;height:100%;width:50%;background:linear-gradient(90deg,var(--grape),var(--pink))}
+#big{position:absolute;top:34%;left:0;right:0;text-align:center;font-family:var(--display);font-size:clamp(3rem,13vw,7rem);color:var(--sun);-webkit-text-stroke:4px var(--ink);paint-order:stroke fill;text-shadow:5px 6px 0 var(--ink)}
+#toast{position:absolute;top:58%;left:0;right:0;padding:0 16px;text-align:center;font-family:var(--display);font-size:clamp(1.1rem,3.4vw,1.7rem);color:#fff;-webkit-text-stroke:5px var(--ink);paint-order:stroke fill;transition:opacity .25s;opacity:0}
+#touch{position:absolute;inset:0;direction:ltr}
+.pad{position:absolute;pointer-events:auto;width:76px;height:76px;border-radius:50%;padding:0;font-size:2rem;background:rgba(255,255,255,.85);touch-action:none}
+.pad.down{background:var(--sun);transform:translate(2px,2px)}
+#tL{left:16px;bottom:22px}#tR{left:108px;bottom:22px}
+#tN{right:16px;bottom:22px;background:var(--pink);font-size:1.1rem}
+#tB{right:108px;bottom:22px;font-size:1rem}
+@media (pointer:coarse){#speedo{bottom:112px}}
+
+.overlay{position:fixed;inset:0;background:rgba(29,27,75,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.dialog{background:var(--paper);border:4px solid var(--ink);border-radius:26px;box-shadow:8px 8px 0 var(--ink);padding:20px;width:min(420px,100%);max-height:100%;overflow-y:auto;touch-action:pan-y;display:flex;flex-direction:column;gap:12px;text-align:center}
+.dialog table{width:100%;border-collapse:collapse}
+.dialog td{padding:3px 6px;border-bottom:2px dashed #cfcbe8}
+.dialog tr.me{background:#fff4c2;font-weight:700}
+.stars{font-size:2.4rem;letter-spacing:6px}
+
+@media (max-aspect-ratio:1/1){
+  #menu{top:auto;left:0;width:auto;height:62%;padding:10px}
+  h1{font-size:2rem}
+  #map{width:96px;height:96px}
+}
+@media (max-height:500px){h1{font-size:1.7rem}.sub{margin-bottom:8px}.big{font-size:1.15rem;padding:7px}#map{width:92px;height:92px}.help{display:none}
+  /* טלפון לרוחב: מד המהירות יורד לתחתית כדי לא להסתיר את המכונית */
+  #speedo{bottom:8px;min-width:130px;padding:2px 10px}#speedo b{font-size:1.5rem}#speedo small:last-child{display:none}
+  #stats{gap:5px;font-size:.9rem}#hPos{font-size:1.3rem}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="menu">
+  <div id="topbar">
+    <button id="muteBtn" aria-label="צליל">🔊</button>
+    <a id="back" href="index.html">← למשחקים</a>
+    <span class="chip"><i class="coin"></i> <span id="coins">0</span></span>
+  </div>
+  <div id="panel"></div>
+</div>
+
+<div id="hud" hidden>
+  <div id="stats">
+    <div class="box" id="hPos"></div>
+    <div class="box" id="hLap"></div>
+    <div class="box" id="hTime"></div>
+    <div class="box" id="hCoins"></div>
+    <div class="box" id="hGoal" hidden></div>
+  </div>
+  <div id="mapwrap">
+    <canvas id="map" width="280" height="280"></canvas>
+    <button id="pauseBtn" aria-label="עצירה">⏸️</button>
+  </div>
+  <div id="toast"></div>
+  <div id="big"></div>
+  <div class="box" id="speedo">
+    <b id="hSpeed">0</b> <small>קמ"ש</small>
+    <div id="nitroBar"><i></i></div>
+    <small>ניטרו</small>
+  </div>
+  <div id="touch" hidden>
+    <button class="pad" id="tL" aria-label="שמאלה">◀</button>
+    <button class="pad" id="tR" aria-label="ימינה">▶</button>
+    <button class="pad" id="tB">בלם</button>
+    <button class="pad" id="tN">ניטרו</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden><div class="dialog" id="dialog"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="race-champions-starter.js"></script>
+<script src="race-champions-car.js"></script>
+<script src="race-champions-car2.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const TAU = Math.PI * 2;
+// אייקון מטבע מצויר, כי האימוג׳י של מטבע לא מוצג בכל המחשבים
+const COIN = '<i class="coin"></i>';
+
+/* ───────── נתוני המשחק ───────── */
+const CARS = [
+  { id:'starter', name:'מכונית ההתחלה',  price:0,    speed:42, accel:20, grip:2.0, note:'המכונית שכולם מתחילים איתה' },
+  { id:'mini',    name:'הקטנטנה',        price:150,  speed:42, accel:20, grip:2.0 },
+  { id:'jeep',    name:'ג׳יפ השטח',      price:300,  speed:45, accel:20, grip:2.15, note:'כמעט לא מאט על הדשא' },
+  { id:'gt',      name:'מכונית השרירים', price:500,  speed:47, accel:23, grip:2.18, note:'מודל תלת ממד מפורט' },
+  { id:'sport',   name:'מכונית ספורט',   price:700,  speed:49, accel:25, grip:2.2 },
+  { id:'monster', name:'משאית מפלצת',    price:1100, speed:48, accel:24, grip:2.35, note:'מעיפה קונוסים בלי להאט' },
+  { id:'super',   name:'מכונית על',      price:1400, speed:52, accel:28, grip:2.35, note:'מודל תלת ממד מפורט' },
+  { id:'formula', name:'פורמולה',        price:1800, speed:55, accel:30, grip:2.5 },
+  { id:'rocket',  name:'רכב חלל',        price:3200, speed:60, accel:34, grip:2.55, note:'הכי מהירה שיש' }
+];
+const COLORS = [
+  { id:'red',    name:'אדום',   hex:0xff3b4e, price:0 },
+  { id:'blue',   name:'כחול',   hex:0x2f7bff, price:0 },
+  { id:'green',  name:'ירוק',   hex:0x23c46b, price:80 },
+  { id:'yellow', name:'צהוב',   hex:0xffd23f, price:80 },
+  { id:'pink',   name:'ורוד',   hex:0xff5fa2, price:120 },
+  { id:'purple', name:'סגול',   hex:0x8a4dff, price:120 },
+  { id:'black',  name:'שחור',   hex:0x25252d, price:200 },
+  { id:'gold',   name:'זהב',    hex:0xe8b21c, price:900, metal:true },
+  { id:'rainbow',name:'קשת',    hex:0xff0000, price:1500, rainbow:true }
+];
+const UPGRADES = [
+  { id:'engine', name:'מנוע',    desc:'מהירות גבוהה יותר', icon:'⚙️' },
+  { id:'tires',  name:'צמיגים',  desc:'פניות חדות יותר',   icon:'🏎️' },
+  { id:'turbo',  name:'טורבו',   desc:'ניטרו חזק וארוך',   icon:'🔥' }
+];
+const UP_PRICE = [150, 350, 700];
+const EXTRAS = [
+  { id:'none',    name:'בלי קישוט',   price:0,   icon:'➖' },
+  { id:'spoiler', name:'כנף מרוצים',  price:150, icon:'🏁' },
+  { id:'flag',    name:'דגל',         price:180, icon:'🚩' },
+  { id:'ears',    name:'אוזני חתול',  price:250, icon:'🐱' },
+  { id:'balloon', name:'בלונים',      price:300, icon:'🎈' },
+  { id:'crown',   name:'כתר',         price:800, icon:'👑' }
+];
+const TRAILS = [
+  { id:'smoke',   name:'עשן',          price:0,   colors:[0xdddddd] },
+  { id:'fire',    name:'אש',           price:220, colors:[0xff3b00,0xff9a00,0xffe14a] },
+  { id:'bubbles', name:'בועות',        price:260, colors:[0x9be8ff,0xffffff] },
+  { id:'hearts',  name:'ניצוצות ורודים',price:300, colors:[0xff5fa2,0xffa8cc] },
+  { id:'rain',    name:'קשת בענן',     price:600, colors:[0xff3b4e,0xff9a00,0xffe14a,0x23c46b,0x2f7bff,0x8a4dff] }
+];
+const TRACKS = [
+  { id:'park',  name:'הפארק הירוק',   icon:'🌳', sky:0x8fd8ff, ground:0x5cbf55, road:'#55555f', deco:'tree',
+    radii:[150,160,150,125,120,140,165,160,135,125,130,140], sx:1.15, sz:1, ai:[33,39], cones:6,  oil:2, prize:1 },
+  { id:'desert',name:'מדבר הקקטוסים', icon:'🌵', sky:0xffd9a0, ground:0xe5b565, road:'#6b5a50', deco:'cactus',
+    radii:[170,140,115,145,180,150,115,120,165,175,130,125,160,170], sx:1.1, sz:1, ai:[38,45], cones:9,  oil:4, prize:1.4 },
+  { id:'snow',  name:'פסגת השלג',     icon:'⛄', sky:0xc4dcf2, ground:0xf2f7ff, road:'#5c6675', deco:'pine',
+    radii:[160,185,140,110,150,190,155,120,115,160,185,145,115,135], sx:1.2, sz:.95, ai:[43,51], cones:10, oil:7, prize:1.8, slip:.82 },
+  { id:'night', name:'עיר בלילה',     icon:'🌃', sky:0x141238, ground:0x24243e, road:'#2c2c3a', deco:'building',
+    radii:[180,150,115,120,175,195,140,110,160,190,150,115,125,185,170,135], sx:1.2, sz:1, ai:[48,57], cones:12, oil:7, prize:2.4, night:true }
+];
+const CHALLENGES = [
+  { id:'coins',  name:'ציד מטבעות',      desc:'לאסוף 30 מטבעות ב-2 הקפות', track:0, laps:2, rivals:0, goal:'coins', n:30, reward:150 },
+  { id:'clock',  name:'נגד השעון',       desc:'הקפה אחת בפארק בפחות מ-{t} שניות', track:0, laps:1, rivals:0, goal:'time', pace:.92, reward:180 },
+  { id:'clean',  name:'נהיגה זהירה',     desc:'2 הקפות בלי לפגוע בקונוס או בשמן', track:1, laps:2, rivals:0, goal:'clean', cones:22, oil:8, reward:250 },
+  { id:'pads',   name:'מלכי הזינוק',     desc:'לעלות על 8 משטחי טורבו ב-2 הקפות', track:1, laps:2, rivals:3, goal:'pads', n:8, reward:250 },
+  { id:'nonitro',name:'בלי ניטרו',       desc:'להגיע למקום 1 עד 3 בלי להשתמש בניטרו', track:0, laps:3, rivals:5, goal:'nonitro', reward:300 },
+  { id:'duel',   name:'דו-קרב עם ברק',   desc:'לנצח את האלוף ברק, אחד על אחד', track:2, laps:2, rivals:1, goal:'win', boost:1.06, reward:450 },
+  { id:'ice',    name:'אלופי הקרח',      desc:'2 הקפות בשלג בפחות מ-{t} שניות', track:2, laps:2, rivals:0, goal:'time', pace:.9, oil:14, reward:500 },
+  { id:'king',   name:'אלוף האלופים',    desc:'לנצח בעיר בלילה', track:3, laps:3, rivals:5, goal:'win', reward:900 }
+];
+const RIVAL_NAMES = ['ברק','נועה','טורבו-טל','זיקית','סופה'];
+
+/* ───────── שמירה ───────── */
+const SAVE_KEY = 'raceChampions1';
+let S = { coins:100, car:'starter', color:'red', extra:'none', trail:'smoke', cam:0,
+  owned:{ 'car:starter':1, 'color:red':1,'color:blue':1, 'extra:none':1, 'trail:smoke':1 },
+  up:{ engine:0, tires:0, turbo:0 }, unlocked:1, best:{}, done:{}, mute:false, assist:true };
+try {
+  const r = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+  if (r && typeof r === 'object') S = Object.assign(S, r);
+} catch (e) {}
+const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} };
+// שמירה ישנה, פעם אחת: כולם עוברים למכונית ההתחלה. הקטנטנה ומכונית השרירים חולקו בחינם
+// ולכן חוזרות לחנות. מכוניות שנקנו במטבעות נשארות.
+if (!S.owned['car:starter']) { delete S.owned['car:gt']; delete S.owned['car:mini']; S.owned['car:starter'] = 1; S.car = 'starter'; save(); }
+const byId = (list, id) => list.find(x => x.id === id) || list[0];
+
+function carStats() {
+  const c = byId(CARS, S.car);
+  return { speed: c.speed + S.up.engine * 3, accel: c.accel + S.up.engine * 2, grip: c.grip + S.up.tires * .13,
+           nitroPow: 1.38 + S.up.turbo * .05, nitroDrain: .32 - S.up.turbo * .06, car: c.id };
+}
+
+/* ───────── צלילים ───────── */
+const sfx = {
+  ctx:null, osc:null, gain:null,
+  init() {
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    this.ctx = new AC();
+    this.osc = this.ctx.createOscillator(); this.osc.type = 'sawtooth';
+    const f = this.ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 420;
+    this.gain = this.ctx.createGain(); this.gain.gain.value = 0;
+    this.osc.connect(f); f.connect(this.gain); this.gain.connect(this.ctx.destination); this.osc.start();
+  },
+  engine(speed, on, nitro) {
+    if (!this.ctx) return; const t = this.ctx.currentTime;
+    this.gain.gain.setTargetAtTime(on && !S.mute ? .05 : 0, t, .08);
+    this.osc.frequency.setTargetAtTime(45 + speed * 2.4 + (nitro ? 50 : 0), t, .05);
+  },
+  tone(freq, dur, type = 'square', vol = .08, delay = 0, slide) {
+    if (!this.ctx || S.mute) return; const t = this.ctx.currentTime + delay;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t + dur);
+  },
+  coin() { this.tone(988, .08); this.tone(1319, .14, 'square', .07, .07); },
+  nitro() { this.tone(300, .4, 'sawtooth', .08, 0, 900); },
+  hit() { this.tone(150, .25, 'sawtooth', .14, 0, 50); },
+  win() { [523,659,784,1047].forEach((f,i) => this.tone(f, .25, 'triangle', .14, i*.13)); },
+  lose() { [392,330,262].forEach((f,i) => this.tone(f, .3, 'triangle', .12, i*.18)); }
+};
+window.addEventListener('pointerdown', () => sfx.init());
+
+/* ───────── תלת ממד: בסיס ───────── */
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, powerPreference:'high-performance' }); }
+catch (e) {
+  $('panel').innerHTML = '<h2>אופס</h2><p>המשחק לא הצליח להיפתח בדפדפן הזה. כדאי לנסות דפדפן אחר או לטעון את הדף מחדש.</p>';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+const camera = new THREE.PerspectiveCamera(62, 1, .5, 1400);
+
+const matCache = {};
+function mat(color, opts) {
+  const key = color + JSON.stringify(opts || {});
+  return matCache[key] || (matCache[key] = new THREE.MeshLambertMaterial(Object.assign({ color }, opts)));
+}
+const geoBox = new THREE.BoxGeometry(1, 1, 1);
+function box(parent, w, h, d, material, x, y, z) {
+  const m = new THREE.Mesh(geoBox, material); m.scale.set(w, h, d); m.position.set(x, y, z); parent.add(m); return m;
+}
+function mesh(parent, geo, material, x, y, z) {
+  const m = new THREE.Mesh(geo, material); m.position.set(x, y, z); parent.add(m); return m;
+}
+const geoWheel = new THREE.CylinderGeometry(1, 1, 1, 14).rotateZ(Math.PI / 2);
+const geoSphere = new THREE.SphereGeometry(1, 12, 9);
+const geoCone = new THREE.ConeGeometry(1, 1, 10);
+const geoCyl = new THREE.CylinderGeometry(1, 1, 1, 10);
+
+/* ───────── מודלים מפורטים של מכוניות (מהקבצים race-champions-car*.js) ───────── */
+// לכל מודל: הנתונים, רוחב לצל, גובה הגג, קצה אחורי, גובה כנף המרוצים והקרדיט שהרישיון מחייב
+const link = (url, text) => `<a href="${url}" target="_blank" rel="noopener">${text}</a>`;
+const MODELS = {
+  starter: { data: window.CAR_STARTER, wx: 1.1, top: 1.37, rear: -2.32, wing: 1.25,
+    credit: `This work is based on ${link('https://www.tinkercad.com/things/knjpbMjVfWt', '"SPORTS CAR"')} by [1DAY_1CAD], licensed under ${link('https://creativecommons.org/licenses/by-sa/3.0/', 'CC BY-SA 3.0')}. Modified for this game.` },
+  gt:{ data: window.CAR_MODEL, wx: .95, top: 1.48, rear: -2.45, wing: 1.1,
+    credit: `This work is based on ${link('https://sketchfab.com/3d-models/ford-mustang-shelby-2012-b60b3a520c024fd69416d56a71900626', '"Ford Mustang Shelby 2012"')} by ${link('https://sketchfab.com/David_Holiday', 'David_Holiday')}, licensed under ${link('http://creativecommons.org/licenses/by/4.0/', 'CC-BY-4.0')}. Modified for this game.` },
+  super: { data: window.CAR_MODEL2, wx: 1.0, top: 1.2, rear: -2.45, wing: 1.15,
+    credit: `This work is based on ${link('https://sketchfab.com/3d-models/jiotto-caspita-f1-road-car-1989-by-alexka-828c84b390624f0389287bd036d7dbf5', '"Jiotto Caspita F1 Road Car 1989 By Alex.Ka."')} by ${link('https://sketchfab.com/Alex.Ka.', 'Alex.Ka.')}, licensed under ${link('http://creativecommons.org/licenses/by-nc/4.0/', 'CC-BY-NC-4.0')}. Modified for this game.` }
+};
+const shiny = (color, shininess, specular, opts) => new THREE.MeshPhongMaterial(Object.assign({ color, shininess, specular }, opts));
+const modelMats = {
+  black: shiny(0x14141a, 30, 0x222222),
+  dark: shiny(0x3a3a40, 20, 0x222222),
+  metal: shiny(0x8a8f9a, 90, 0xffffff),
+  glass: shiny(0x16222c, 140, 0x99bbdd),
+  red: shiny(0xc01020, 80, 0xff8888, { emissive: 0x500008 }),
+  orange: shiny(0xff8a1a, 80, 0xffffff, { emissive: 0x552200 }),
+  white: shiny(0xf4f6ff, 90, 0xffffff, { emissive: 0x555548 }),
+  lens: shiny(0xcfe0ee, 140, 0xffffff, { transparent: true, opacity: .35, depthWrite: false }),
+  tyre: shiny(0x17171b, 8, 0x111111),
+  rim: shiny(0xb9bfcb, 100, 0xffffff),
+  rimdark: shiny(0x22242a, 60, 0x555555),
+  disk: shiny(0x6a6d75, 50, 0x888888),
+  caliper: shiny(0xffd23f, 60, 0x888888)
+};
+const modelGeo = {};
+function modelGeometry(id) {
+  if (modelGeo[id]) return modelGeo[id];
+  const data = MODELS[id].data;
+  const bytes = s => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer;
+  const build = d => {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(Float32Array.from(new Int16Array(bytes(d.p)), v => v / data.q), 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(new Int8Array(bytes(d.n)), 3, true));
+    g.setIndex(new THREE.BufferAttribute(new (d.big ? Uint32Array : Uint16Array)(bytes(d.i)), 1));
+    g.userData.shared = true;
+    return g;
+  };
+  const all = parts => Object.keys(parts).map(name => ({ name, geo: build(parts[name]) }));
+  return modelGeo[id] = { body: all(data.body), wheels: data.wheels.map(w => ({ c: w.c, r: w.r, front: w.front, parts: all(w.parts) })) };
+}
+function addModel(id, g, body, paint, wheels, front) {
+  const geo = modelGeometry(id);
+  geo.body.forEach(p => body.add(new THREE.Mesh(p.geo, p.name === 'paint' ? paint : modelMats[p.name])));
+  geo.wheels.forEach(d => {
+    const pivot = new THREE.Group(); pivot.position.set(d.c[0], d.c[1], d.c[2]); g.add(pivot);
+    const w = new THREE.Group(); pivot.add(w);
+    // הבלם לא מסתובב עם הגלגל, רק פונה איתו
+    d.parts.forEach(p => (p.name === 'caliper' ? pivot : w).add(new THREE.Mesh(p.geo, modelMats[p.name])));
+    wheels.push({ o: w, r: d.r }); if (d.front) front.push(pivot);
+  });
+}
+
+/* ───────── בניית מכונית ───────── */
+function makeCar(type, colorId, extraId) {
+  const model = MODELS[type] && MODELS[type].data ? MODELS[type] : null, useModel = !!model;
+  if (MODELS[type] && !model) type = type === 'starter' ? 'mini' : 'sport'; // אם קובץ המודל חסר
+  const col = byId(COLORS, colorId);
+  const paint = col.metal
+    ? new THREE.MeshPhongMaterial({ color: col.hex, shininess: 120, specular: 0xffffcc, emissive: 0x3a2800 })
+    : useModel ? shiny(col.hex, 70, 0x777777)
+    : new THREE.MeshLambertMaterial({ color: col.hex });
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const glass = mat(0x9fe3ff), dark = mat(0x22222a), light = mat(0xfff6b0, { emissive: 0xaa9a40 }), tail = mat(0xff2030, { emissive: 0x880010 });
+  const wheels = [], front = [];
+  let wr = .55, ww = .45, wx = 1.15, wzf = 1.25, wzr = -1.25, top = 2.1, rear = -2.05;
+  if (useModel) {
+    addModel(type, g, body, paint, wheels, front);
+    ({ wx, top, rear } = model);
+  } else if (type === 'mini') {
+    box(body, 2.2, .75, 3.7, paint, 0, .95, 0);
+    box(body, 1.95, .75, 1.9, glass, 0, 1.68, -.35);
+    box(body, 2.0, .18, 1.7, paint, 0, 2.12, -.4);
+    top = 2.25; rear = -1.85;
+  } else if (type === 'jeep') {
+    wr = .75; ww = .55; wx = 1.3;
+    box(body, 2.4, .85, 4, paint, 0, 1.3, 0);
+    box(body, 2.2, .85, 2.1, glass, 0, 2.12, -.5);
+    box(body, 2.35, .22, 2.25, paint, 0, 2.65, -.5);
+    box(body, 2.5, .25, .35, dark, 0, 1.0, 2.1);
+    mesh(body, geoWheel, dark, 0, 1.6, -2.25).scale.set(.4, .65, .65);
+    body.children[body.children.length - 1].rotation.y = Math.PI / 2;
+    top = 2.8; rear = -2.2;
+  } else if (type === 'sport') {
+    box(body, 2.35, .55, 4.4, paint, 0, .85, 0);
+    box(body, 2.1, .3, 1.5, paint, 0, 1.2, 1.2);
+    box(body, 1.8, .6, 1.7, glass, 0, 1.4, -.45);
+    box(body, 1.7, .14, 1.1, paint, 0, 1.76, -.6);
+    box(body, .35, .04, 4.45, mat(0xffffff), 0, 1.36, 1.2).scale.z = 1.52;
+    wzf = 1.45; wzr = -1.4; top = 1.85; rear = -2.2;
+  } else if (type === 'monster') {
+    wr = 1.15; ww = .85; wx = 1.55; wzf = 1.45; wzr = -1.45;
+    box(body, 2.3, .9, 4.2, paint, 0, 2.15, 0);
+    box(body, 2.1, .85, 1.8, glass, 0, 3.0, .1);
+    box(body, 2.2, .22, 1.9, paint, 0, 3.5, .1);
+    box(body, 1.4, .5, 3.4, dark, 0, 1.45, 0);
+    [-.7, .7].forEach(x => mesh(body, geoCyl, mat(0xcfd3dc), x, 3.2, -1.1).scale.set(.16, 1.3, .16));
+    top = 3.65; rear = -2.15;
+  } else if (type === 'formula') {
+    wr = .62; ww = .6; wx = 1.45; wzf = 1.55; wzr = -1.45;
+    box(body, 1.1, .55, 4.4, paint, 0, .75, 0);
+    box(body, .6, .35, 1.3, paint, 0, .62, 2.55);
+    box(body, 3.0, .14, .6, paint, 0, .5, 3.05);
+    box(body, 2.6, .16, .8, paint, 0, 1.75, -2.2);
+    [-.9, .9].forEach(x => box(body, .12, 1.0, .35, dark, x, 1.25, -2.2));
+    box(body, 2.1, .4, 1.6, paint, 0, .72, -.5);
+    mesh(body, geoSphere, mat(0xffffff), 0, 1.35, -.3).scale.set(.42, .42, .42);
+    box(body, .5, .16, .2, dark, 0, 1.38, .08);
+    top = 1.75; rear = -2.4;
+  } else { // רכב חלל
+    wr = .5; ww = .5; wx = 1.35;
+    mesh(body, geoCyl, paint, 0, 1.15, -.2).scale.set(1.0, 3.6, 1.0);
+    body.children[0].rotation.x = Math.PI / 2;
+    const nose = mesh(body, geoCone, mat(0xffffff), 0, 1.15, 2.4); nose.scale.set(1, 1.6, 1); nose.rotation.x = Math.PI / 2;
+    mesh(body, geoSphere, glass, 0, 1.9, .5).scale.set(.65, .55, 1.0);
+    [-1.45, 1.45].forEach(x => { box(body, 1.0, .14, 1.5, paint, x, .95, -1.3); box(body, .14, .9, .9, mat(0xffffff), x * 1.3, 1.35, -1.5); });
+    const jet = mesh(body, geoCyl, mat(0xff9a00, { emissive: 0xff5500 }), 0, 1.15, -2.15); jet.scale.set(.6, .35, .6); jet.rotation.x = Math.PI / 2;
+    top = 2.35; rear = -2.2;
+  }
+  if (!useModel && type !== 'formula' && type !== 'rocket') {
+    const ly = type === 'monster' ? 2.2 : type === 'jeep' ? 1.4 : .95;
+    [-.72, .72].forEach(x => { box(body, .45, .25, .1, light, x, ly, -rear + .02); box(body, .45, .22, .1, tail, x, ly, rear - .02); });
+  }
+  if (!useModel) [[-wx, wzf, 1], [wx, wzf, 1], [-wx, wzr, 0], [wx, wzr, 0]].forEach(([x, z, isF]) => {
+    const pivot = new THREE.Group(); pivot.position.set(x, wr, z); g.add(pivot);
+    const w = new THREE.Group(); pivot.add(w);
+    mesh(w, geoWheel, dark, 0, 0, 0).scale.set(ww, wr, wr);
+    box(w, ww + .04, wr * 1.15, wr * .28, mat(0xdfe3ee), 0, 0, 0);
+    wheels.push({ o: w, r: wr }); if (isF) front.push(pivot);
+  });
+  // קישוטים
+  if (extraId === 'spoiler') {
+    const y = useModel ? model.wing : type === 'monster' ? 3.2 : type === 'formula' ? 2.5 : top - .15;
+    box(body, useModel ? 2.05 : 2.7, .16, useModel ? .45 : .65, dark, 0, y + .25, rear + .35);
+    [-.8, .8].forEach(x => box(body, .14, .8, .25, dark, x, y - .15, rear + .35));
+  } else if (extraId === 'flag') {
+    box(body, .1, 2.2, .1, dark, .9, top + .7, rear + .5);
+    box(body, .07, .7, 1.1, mat(0xff3b4e, { emissive: 0x550010 }), .9, top + 1.45, rear - .05);
+  } else if (extraId === 'ears') {
+    [-.6, .6].forEach(x => {
+      const e = mesh(body, geoCone, paint, x, top + .35, -.2); e.scale.set(.42, .8, .3);
+      mesh(body, geoCone, mat(0xffb3d1), x, top + .28, -.02).scale.set(.22, .5, .12);
+    });
+  } else if (extraId === 'balloon') {
+    [[-.7, 1.9, 0xff5fa2], [.1, 2.5, 0xffd23f], [.8, 2.0, 0x2fd1a0]].forEach(([x, y, c]) => {
+      box(body, .04, y, .04, dark, x * .5, top + y / 2 - .2, rear + .6).rotation.z = -x * .2;
+      mesh(body, geoSphere, mat(c, { emissive: 0x222222 }), x, top + y, rear + .6).scale.set(.55, .7, .55);
+    });
+  } else if (extraId === 'crown') {
+    const gold = mat(0xffcc22, { emissive: 0x664400 });
+    mesh(body, geoCyl, gold, 0, top + .2, -.4).scale.set(.6, .3, .6);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * TAU; mesh(body, geoCone, gold, Math.sin(a) * .47, top + .6, -.4 + Math.cos(a) * .47).scale.set(.17, .55, .17); }
+  }
+  const sh = new THREE.Mesh(new THREE.CircleGeometry(1, 20).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .22, depthWrite: false }));
+  sh.scale.set(wx + .6, 1, 2.8); sh.position.y = .09; g.add(sh);
+  g.userData = { wheels, front, body, paint, rainbow: !!col.rainbow, rear };
+  return g;
+}
+function animateCar(g, speed, steer, dt, time) {
+  const u = g.userData;
+  u.wheels.forEach(w => w.o.rotation.x += speed * dt / w.r);
+  u.front.forEach(p => p.rotation.y = -steer * .4);
+  u.body.rotation.z = lerp(u.body.rotation.z, steer * .06 * clamp(speed / 30, 0, 1), .15);
+  if (u.rainbow) u.paint.color.setHSL((time * .15) % 1, .9, .55);
+}
+
+/* ───────── אולם תצוגה (תפריט) ───────── */
+const showroom = new THREE.Scene();
+showroom.background = new THREE.Color(0x6fd3ff);
+showroom.add(new THREE.HemisphereLight(0xffffff, 0x665588, .85));
+{ const d = new THREE.DirectionalLight(0xffffff, .65); d.position.set(5, 10, 8); showroom.add(d); }
+mesh(showroom, new THREE.CylinderGeometry(4.6, 5, .6, 48), mat(0x7a5cff), 0, -.35, 0);
+mesh(showroom, new THREE.CylinderGeometry(4.2, 4.2, .1, 48), mat(0xffffff), 0, -.03, 0);
+mesh(showroom, new THREE.PlaneGeometry(200, 200).rotateX(-Math.PI / 2), mat(0x2fd1a0), 0, -.7, 0);
+let showCar = null, preview = null;
+function refreshShowCar() {
+  const p = preview || {};
+  const rot = showCar ? showCar.rotation.y : -.6;
+  if (showCar) showroom.remove(showCar);
+  showCar = makeCar(p.car || S.car, p.color || S.color, p.extra || S.extra);
+  showCar.rotation.y = rot; showroom.add(showCar);
+}
+
+/* ───────── בניית מסלול ───────── */
+let race = null;
+function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }; }
+
+function buildTrackPath(def) {
+  const n = def.radii.length;
+  const pts = def.radii.map((r, i) => new THREE.Vector3(Math.sin(i / n * TAU) * r * def.sx * 1.15, 0, Math.cos(i / n * TAU) * r * def.sz * 1.15));
+  const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
+  curve.arcLengthDivisions = 2000;
+  const len = curve.getLength(), N = Math.round(len / 2), step = len / N;
+  const p = curve.getSpacedPoints(N).slice(0, N);
+  const t = p.map((_, i) => p[(i + 1) % N].clone().sub(p[(i - 1 + N) % N]).normalize());
+  const side = t.map(v => new THREE.Vector3(v.z, 0, -v.x));
+  return { p, t, side, N, len, step };
+}
+const HALF = 9, WALL = 15;
+function pointAt(tr, s, lat) {
+  const f = (((s % tr.len) + tr.len) % tr.len) / tr.step, i = Math.floor(f) % tr.N, j = (i + 1) % tr.N, k = f - Math.floor(f);
+  const tx = lerp(tr.t[i].x, tr.t[j].x, k), tz = lerp(tr.t[i].z, tr.t[j].z, k);
+  return {
+    x: lerp(tr.p[i].x, tr.p[j].x, k) + tz * lat,
+    z: lerp(tr.p[i].z, tr.p[j].z, k) - tx * lat,
+    h: Math.atan2(tx, tz), i
+  };
+}
+function ribbon(tr, a, b, y, material, vScale, colorFn) {
+  const pos = [], uv = [], col = [], idx = [];
+  for (let k = 0; k <= tr.N; k++) {
+    const i = k % tr.N, p = tr.p[i], s = tr.side[i];
+    pos.push(p.x + s.x * a, y, p.z + s.z * a, p.x + s.x * b, y, p.z + s.z * b);
+    uv.push(0, k * tr.step / vScale, 1, k * tr.step / vScale);
+    if (colorFn) { const c = colorFn(k); col.push(c.r, c.g, c.b, c.r, c.g, c.b); }
+    if (k < tr.N) { const v = k * 2; idx.push(v, v + 2, v + 1, v + 1, v + 2, v + 3); }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  if (colorFn) g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx); g.computeVertexNormals();
+  material.side = THREE.DoubleSide;
+  return new THREE.Mesh(g, material);
+}
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'));
+  return new THREE.CanvasTexture(c);
+}
+// כל סוג קישוט בנוי מכמה חלקים: [צורה, צבע, x,y,z, sx,sy,sz]
+const DECO = {
+  tree:     [[geoCyl,0x8a5a33,0,1.5,0,.6,3,.6],[geoSphere,0x2f9e44,0,4.6,0,2.6,2.4,2.6],[geoSphere,0x40c057,.8,6,.3,1.5,1.4,1.5]],
+  cactus:   [[geoCyl,0x2f8f4e,0,2.5,0,.8,5,.8],[geoCyl,0x2f8f4e,1.4,3.4,0,.45,2.2,.45],[geoBox,0x2f8f4e,.8,2.4,0,1.4,.7,.7],[geoSphere,0xb98a4a,-3,.4,1,1.4,.8,1.2]],
+  pine:     [[geoCyl,0x6b4a2f,0,.8,0,.5,1.6,.5],[geoCone,0x1f6f55,0,3.4,0,2.6,4,2.6],[geoCone,0x2a8a68,0,5.4,0,1.9,3,1.9],[geoCone,0xffffff,0,6.7,0,.9,1.3,.9]],
+  building: [[geoBox,0x5b54a8,0,9,0,7,18,7],[geoBox,0xffd23f,0,13,0,7.1,.8,7.1],[geoBox,0x6fd3ff,0,8,0,7.1,.8,7.1],[geoBox,0xff5fa2,0,3.5,0,7.1,.8,7.1],[geoBox,0x4c478c,0,18.6,0,3,1.2,3]]
+};
+function addInstanced(scene, parts, places, glow) {
+  const m = new THREE.Matrix4(), base = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+  parts.forEach(([geo, color, x, y, z, sx, sy, sz]) => {
+    const lit = glow && (color === 0xffd23f || color === 0x6fd3ff || color === 0xff5fa2);
+    const im = new THREE.InstancedMesh(geo, lit ? new THREE.MeshBasicMaterial({ color }) : mat(color), places.length);
+    const local = new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion(), new THREE.Vector3(sx, sy, sz));
+    places.forEach((pl, i) => {
+      q.setFromAxisAngle(up, pl.rot);
+      base.compose(new THREE.Vector3(pl.x, 0, pl.z), q, new THREE.Vector3(pl.s, pl.s, pl.s));
+      m.multiplyMatrices(base, local); im.setMatrixAt(i, m);
+    });
+    im.frustumCulled = false; scene.add(im);
+  });
+}
+
+function buildWorld(def, opts) {
+  const tr = buildTrackPath(def), scene = new THREE.Scene(), rand = rng(7 + TRACKS.indexOf(def) * 91);
+  scene.background = new THREE.Color(def.sky);
+  scene.fog = new THREE.Fog(def.sky, 160, 560);
+  scene.add(new THREE.HemisphereLight(0xffffff, def.night ? 0x333366 : 0x777766, def.night ? .7 : .85));
+  const sun = new THREE.DirectionalLight(def.night ? 0xaab4ff : 0xffffff, def.night ? .35 : .55); sun.position.set(60, 100, 30); scene.add(sun);
+  mesh(scene, new THREE.PlaneGeometry(2400, 2400).rotateX(-Math.PI / 2), mat(def.ground), 0, -.05, 0);
+
+  const roadTex = canvasTex(128, 128, g => {
+    g.fillStyle = def.road; g.fillRect(0, 0, 128, 128);
+    for (let i = 0; i < 260; i++) { g.fillStyle = i % 2 ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.09)'; g.fillRect(rand() * 126, rand() * 126, 2, 2); }
+    g.fillStyle = '#fff'; g.fillRect(4, 0, 4, 128); g.fillRect(120, 0, 4, 128);
+    g.fillStyle = '#ffe680'; g.fillRect(62, 0, 4, 68);
+  });
+  roadTex.wrapT = THREE.RepeatWrapping; roadTex.anisotropy = 8;
+  scene.add(ribbon(tr, -HALF, HALF, .02, new THREE.MeshLambertMaterial({ map: roadTex }), 10));
+  const red = new THREE.Color(0xff3b4e), white = new THREE.Color(0xffffff);
+  [[-HALF - 1.2, -HALF], [HALF, HALF + 1.2]].forEach(([a, b]) => {
+    const m = ribbon(tr, a, b, .05, new THREE.MeshLambertMaterial({ vertexColors: true }), 10, k => Math.floor(k / 3) % 2 ? red : white);
+    m.geometry = m.geometry.toNonIndexed();
+    const c = m.geometry.attributes.color;
+    for (let v = 0; v < c.count; v += 6) { const cc = Math.floor(v / 6 / 3) % 2 ? red : white; for (let q = 0; q < 6; q++) c.setXYZ(v + q, cc.r, cc.g, cc.b); }
+    scene.add(m);
+  });
+  // עמודי גדר
+  const posts = [];
+  for (let i = 0; i < tr.N; i += 4) [-1, 1].forEach(d => {
+    const p = tr.p[i], s = tr.side[i];
+    posts.push({ x: p.x + s.x * d * (WALL + 1.6), z: p.z + s.z * d * (WALL + 1.6), rot: 0, s: 1 });
+  });
+  addInstanced(scene, [[geoCyl, def.night ? 0x6fd3ff : 0xffffff, 0, .7, 0, .35, 1.4, .35], [geoSphere, def.night ? 0xff5fa2 : 0xff3b4e, 0, 1.55, 0, .45, .45, .45]], posts, def.night);
+  // נוף
+  const places = [];
+  const farFromRoad = (x, z, d) => { for (let i = 0; i < tr.N; i += 3) { const dx = tr.p[i].x - x, dz = tr.p[i].z - z; if (dx * dx + dz * dz < d * d) return false; } return true; };
+  const need = def.night ? 30 : 24;
+  for (let tries = 0; places.length < 170 && tries < 3000; tries++) {
+    const i = Math.floor(rand() * tr.N), d = (rand() < .5 ? -1 : 1) * (need + rand() * 75);
+    const x = tr.p[i].x + tr.side[i].x * d, z = tr.p[i].z + tr.side[i].z * d;
+    if (farFromRoad(x, z, need) && places.every(o => (o.x - x) ** 2 + (o.z - z) ** 2 > (def.night ? 110 : 36)))
+      places.push({ x, z, rot: def.night ? 0 : rand() * TAU, s: .75 + rand() * .65 });
+  }
+  addInstanced(scene, DECO[def.deco], places, def.night);
+
+  // קו סיום ושער
+  const start = pointAt(tr, 0, 0);
+  const gate = new THREE.Group(); gate.position.set(start.x, 0, start.z); gate.rotation.y = start.h; scene.add(gate);
+  const check = canvasTex(144, 32, g => { for (let x = 0; x < 18; x++) for (let y = 0; y < 4; y++) { g.fillStyle = (x + y) % 2 ? '#111' : '#fff'; g.fillRect(x * 8, y * 8, 8, 8); } });
+  check.magFilter = THREE.NearestFilter;
+  mesh(gate, new THREE.PlaneGeometry(HALF * 2, 4).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: check }), 0, .08, 0);
+  [-1, 1].forEach(d => box(gate, 1.2, 11, 1.2, mat(0x7a5cff), d * (HALF + 2.5), 5.5, 0));
+  const sign = canvasTex(512, 80, g => {
+    g.fillStyle = '#ffd23f'; g.fillRect(0, 0, 512, 80); g.fillStyle = '#1d1b4b'; g.font = 'bold 48px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.direction = 'rtl'; g.fillText('אלופי המסלול', 256, 43);
+  });
+  const signMat = new THREE.MeshBasicMaterial({ map: sign });
+  box(gate, HALF * 2 + 6.2, 3.2, .8, mat(0x7a5cff), 0, 10.6, 0);
+  [[-.45, Math.PI], [.45, 0]].forEach(([z, ry]) => { mesh(gate, new THREE.PlaneGeometry(18, 2.8), signMat, 0, 10.6, z).rotation.y = ry; });
+
+  // חפצים על המסלול
+  const items = [];
+  const add = (type, s, lat, obj) => {
+    const q = pointAt(tr, s, lat); obj.position.set(q.x, obj.position.y, q.z); obj.rotation.y = q.h; scene.add(obj);
+    items.push({ type, x: q.x, z: q.z, obj, gone: 0, cool: 0 });
+  };
+  const gold = mat(0xffcc22, { emissive: 0x775500 });
+  const coinGeo = new THREE.CylinderGeometry(.95, .95, .22, 16).rotateX(Math.PI / 2);
+  const lanes = [-5.5, 0, 5.5];
+  for (let g = 0; g < 8; g++) {
+    const s = tr.len * (g + .55) / 8, lane = lanes[Math.floor(rand() * 3)];
+    for (let k = 0; k < 5; k++) { const c = new THREE.Mesh(coinGeo, gold); c.position.y = 1.3; add('coin', s + k * 5, lane, c); }
+  }
+  const padTex = canvasTex(64, 64, g => {
+    g.fillStyle = '#7a5cff'; g.fillRect(0, 0, 64, 64); g.strokeStyle = '#ffd23f'; g.lineWidth = 8;
+    [14, 34, 54].forEach(y => { g.beginPath(); g.moveTo(10, y - 8); g.lineTo(32, y + 6); g.lineTo(54, y - 8); g.stroke(); });
+  });
+  const padGeo = new THREE.PlaneGeometry(5, 7).rotateX(-Math.PI / 2), padMat = new THREE.MeshBasicMaterial({ map: padTex });
+  for (let g = 0; g < 5; g++) {
+    const o = new THREE.Mesh(padGeo, padMat); o.position.y = .1; add('pad', tr.len * (g + .3) / 5, lanes[Math.floor(rand() * 3)], o);
+  }
+  for (let g = 0; g < 4; g++) {
+    const o = new THREE.Group();
+    mesh(o, geoCyl, mat(0x2fd1a0, { emissive: 0x0a5540 }), 0, 0, 0).scale.set(.75, 1.8, .75);
+    mesh(o, geoCyl, mat(0xffffff), 0, 1.1, 0).scale.set(.35, .4, .35);
+    box(o, 1.6, .5, 1.6, mat(0xff5fa2, { emissive: 0x551030 }), 0, 0, 0);
+    o.position.y = 1.5; add('can', tr.len * (g + .8) / 4, lanes[Math.floor(rand() * 3)], o);
+  }
+  const hazard = (type, count, offset, make) => {
+    for (let g = 0; g < count; g++) {
+      const s = 60 + (tr.len - 100) * ((g + offset + rand() * .4) / count);
+      add(type, s, (rand() * 2 - 1) * (HALF - 2.5), make());
+    }
+  };
+  hazard('cone', opts.cones, .1, () => {
+    const o = new THREE.Group();
+    mesh(o, geoCone, mat(0xff7a00, { emissive: 0x441800 }), 0, 1.1, 0).scale.set(.8, 2.2, .8);
+    mesh(o, geoCyl, mat(0xffffff), 0, 1.1, 0).scale.set(.46, .35, .46);
+    box(o, 1.8, .25, 1.8, mat(0xff7a00), 0, .13, 0); return o;
+  });
+  const oilGeo = new THREE.CircleGeometry(2.6, 18).rotateX(-Math.PI / 2);
+  const oilMat = new THREE.MeshPhongMaterial({ color: 0x0b0714, shininess: 140, specular: 0x8866ff });
+  hazard('oil', opts.oil, .6, () => { const o = new THREE.Mesh(oilGeo, oilMat); o.position.y = .09; return o; });
+
+  // עקבות
+  const parts = [];
+  const pg = new THREE.SphereGeometry(.42, 7, 6);
+  for (let i = 0; i < 70; i++) {
+    const m = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+    m.visible = false; scene.add(m); parts.push({ m, life: 0 });
+  }
+  return { tr, scene, items, parts };
+}
+
+/* ───────── מרוץ ───────── */
+const targetCache = {};
+function targetTime(ch) {
+  return targetCache[ch.id] || (targetCache[ch.id] = Math.round(buildTrackPath(TRACKS[ch.track]).len * ch.laps / (CARS[0].speed * ch.pace) + 2));
+}
+const chDesc = ch => ch.goal === 'time' ? ch.desc.replace('{t}', targetTime(ch)) : ch.desc;
+
+function disposeRace() {
+  if (!race) return;
+  race.scene.traverse(o => {
+    if (o.geometry && !o.geometry.userData.shared && ![geoBox, geoWheel, geoSphere, geoCone, geoCyl].includes(o.geometry)) o.geometry.dispose();
+    if (o.material && o.material.map) { o.material.map.dispose(); o.material.dispose(); }
+  });
+  race = null;
+}
+function startRace(trackIdx, challenge) {
+  sfx.init(); disposeRace();
+  const def = TRACKS[trackIdx], ch = challenge || null;
+  const laps = ch ? ch.laps : 3, rivals = ch ? ch.rivals : 5;
+  const w = buildWorld(def, { cones: ch && ch.cones || def.cones, oil: ch && ch.oil || def.oil });
+  const stats = carStats();
+  const cars = [];
+  const grid = i => ({ s: -8 - Math.floor(i / 2) * 8 - (i % 2) * 3, lat: i % 2 ? -4 : 4 });
+  // כל היריבים נוסעים במכונית ההתחלה, כל אחד בצבע אחר
+  const cols = ['blue', 'green', 'yellow', 'purple', 'black'];
+  for (let i = 0; i < rivals; i++) {
+    const g = grid(i), m = makeCar('starter', cols[i] === S.color ? 'pink' : cols[i], 'none');
+    w.scene.add(m);
+    const top = lerp(def.ai[1], def.ai[0], rivals > 1 ? i / (rivals - 1) : 0) * (ch && ch.boost || 1);
+    cars.push({ me: false, name: RIVAL_NAMES[i], mesh: m, s: g.s, lat: g.lat, lane: g.lat, top, speed: 0, laneT: 1 + Math.random() * 3, slow: 0, steer: 0, done: null });
+  }
+  const g = grid(rivals), q = pointAt(w.tr, g.s, g.lat), mm = makeCar(S.car, S.color, S.extra); w.scene.add(mm);
+  const me = { me: true, name: 'אני', mesh: mm, x: q.x, z: q.z, h: q.h, vis: q.h, s: g.s, lat: g.lat, idx: q.i, speed: 0, steer: 0, nitro: .5, boost: 0, spin: 0, slow: 0, done: null };
+  cars.push(me);
+  race = Object.assign(w, { def, trackIdx, ch, laps, cars, me, stats, time: 0, count: 3.6, lastBeep: 4, coins: 0, pads: 0, hits: 0, usedNitro: false,
+    state: 'run', paused: false, endT: 0, camH: q.h, camX: null, emit: 0, nitroOn: false });
+  [...cars].forEach(c => placeCar(c));
+  $('menu').hidden = true; $('hud').hidden = false; $('overlay').hidden = true; $('big').textContent = '';
+  $('hGoal').hidden = !ch; $('hPos').hidden = rivals === 0;
+  $('toast').style.opacity = 0;
+  keys.clear(); resize(); updateCamera(1);
+  if (!isTouch) toast('חץ למעלה: גז · חצים: היגוי · רווח: ניטרו · H: מצלמה', 4);
+}
+let toastT = 0;
+function toast(text, secs = 1.4) { $('toast').textContent = text; $('toast').style.opacity = 1; toastT = secs; }
+
+function placeCar(c) {
+  if (c.me) { c.mesh.position.set(c.x, 0, c.z); c.mesh.rotation.y = c.vis; }
+  else {
+    const q = pointAt(race.tr, c.s, c.lat); c.x = q.x; c.z = q.z; c.h = q.h;
+    c.mesh.position.set(q.x, 0, q.z); c.mesh.rotation.y = q.h + c.steer * -.12;
+  }
+}
+
+/* ───────── קלט ───────── */
+const keys = new Set();
+const isTouch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0 && innerWidth < 900;
+const KEYMAP = { ArrowLeft:'left', KeyA:'left', ArrowRight:'right', KeyD:'right', ArrowUp:'gas', KeyW:'gas', ArrowDown:'brake', KeyS:'brake', Space:'nitro', ShiftLeft:'nitro', ShiftRight:'nitro' };
+addEventListener('keydown', e => {
+  if ((e.code === 'Escape' || e.code === 'KeyP') && race && race.state === 'run') { setPause(!race.paused); return; }
+  if (e.code === 'KeyH' && race && race.state === 'run' && !race.paused && !e.repeat) { nextView(); return; }
+  const k = KEYMAP[e.code]; if (!k || !race || race.paused || race.state === 'over') return;
+  e.preventDefault(); sfx.init(); keys.add(k);
+});
+addEventListener('keyup', e => { const k = KEYMAP[e.code]; if (k) keys.delete(k); });
+addEventListener('blur', () => keys.clear());
+[['tL','left'], ['tR','right'], ['tB','brake'], ['tN','nitro']].forEach(([id, k]) => {
+  const b = $(id);
+  const down = e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (x) {} keys.add(k); b.classList.add('down'); };
+  const up = () => { keys.delete(k); b.classList.remove('down'); };
+  b.addEventListener('pointerdown', down);
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, up));
+  b.addEventListener('contextmenu', e => e.preventDefault());
+});
+if (isTouch) $('touch').hidden = false;
+
+/* ───────── עדכון ───────── */
+function updatePlayer(dt) {
+  const R = race, c = R.me, st = R.stats, tr = R.tr;
+  const finished = c.done !== null;
+  let steer = (keys.has('right') ? 1 : 0) - (keys.has('left') ? 1 : 0);
+  const brake = keys.has('brake') && !finished;
+  const gas = !finished && !brake && (isTouch || keys.has('gas') || keys.has('nitro'));
+  let nitro = !finished && keys.has('nitro') && c.nitro > .01;
+  if (finished) steer = 0;
+  R.nitroOn = nitro;
+  if (nitro) { if (!R.usedNitro) sfx.nitro(); R.usedNitro = true; c.nitro = Math.max(0, c.nitro - st.nitroDrain * dt); }
+  else c.nitro = Math.min(1, c.nitro + .04 * dt);
+  c.boost = Math.max(0, c.boost - dt); c.slow = Math.max(0, c.slow - dt);
+
+  const offroad = Math.abs(c.lat) > HALF + .6;
+  let max = st.speed;
+  if (nitro) max *= st.nitroPow;
+  if (c.boost > 0) max = Math.max(max, st.speed * 1.35);
+  if (offroad && c.boost <= 0) max *= st.car === 'jeep' || st.car === 'monster' ? .85 : .55;
+  if (c.slow > 0) max *= .6;
+
+  if (gas || nitro || c.boost > 0) {
+    const a = st.accel * (nitro || c.boost > 0 ? 2.2 : 1);
+    if (c.speed < max) c.speed = Math.min(max, c.speed + a * dt);
+  } else if (brake) {
+    c.speed = Math.max(-12, c.speed - (c.speed > 0 ? 45 : 10) * dt);
+  } else c.speed -= c.speed * (finished ? 1.2 : .5) * dt;
+  if (c.speed > max) c.speed = Math.max(max, c.speed - 35 * dt);
+
+  c.steer = lerp(c.steer, steer, Math.min(1, dt * 10));
+  const slip = R.def.slip || 1;
+  const power = clamp(Math.abs(c.speed) / 12, 0, 1) * Math.sign(c.speed || 1);
+  // בפנייה במהירות גבוהה ההגה קצת כבד יותר
+  c.h -= c.steer * st.grip * slip * (1 - .18 * clamp(c.speed / 60, 0, 1)) * power * dt;
+
+  const t = tr.t[c.idx], roadH = Math.atan2(t.x, t.z);
+  const diff = Math.atan2(Math.sin(roadH - c.h), Math.cos(roadH - c.h));
+  if (!finished && Math.abs(diff) > 2.1 && c.speed > 8) toast('נוסעים הפוך! 🔄', .4);
+  if (finished) { c.h += diff * Math.min(1, dt * 4); }
+  else if (S.assist && !steer && c.speed > 5 && Math.abs(diff) < 1.4) {
+    // עזרת היגוי: כשלא נוגעים בהגה המכונית מתיישרת עם הכביש וחוזרת בעדינות מהשוליים
+    const edge = Math.abs(c.lat) > HALF - 2.5 ? Math.sign(c.lat) * -.22 : 0;
+    const d2 = diff + edge;
+    c.h += clamp(d2 * 2.4, -st.grip * .75 * slip, st.grip * .75 * slip) * dt;
+  }
+  if (c.spin > 0) { c.spin = Math.max(0, c.spin - dt); }
+
+  // על קרח המכונית מחליקה: כיוון התנועה מתעכב אחרי ההגה
+  let moveH = c.h;
+  if (slip < 1) { c.mh = c.mh === undefined ? c.h : c.mh + Math.atan2(Math.sin(c.h - c.mh), Math.cos(c.h - c.mh)) * Math.min(1, dt * 5); moveH = c.mh; }
+  c.x += Math.sin(moveH) * c.speed * dt;
+  c.z += Math.cos(moveH) * c.speed * dt;
+  c.vis = c.h + (c.spin > 0 ? c.spin / .9 * TAU : -c.steer * .1);
+
+  trackPlayer(dt);
+}
+function trackPlayer(dt) {
+  const R = race, c = R.me, tr = R.tr;
+  let best = c.idx, bd = Infinity;
+  for (let k = -8; k <= 8; k++) {
+    const i = (c.idx + k + tr.N) % tr.N, d = (tr.p[i].x - c.x) ** 2 + (tr.p[i].z - c.z) ** 2;
+    if (d < bd) { bd = d; best = i; }
+  }
+  c.idx = best;
+  const p = tr.p[best], t = tr.t[best], s = tr.side[best];
+  const dx = c.x - p.x, dz = c.z - p.z;
+  c.lat = dx * s.x + dz * s.z;
+  const local = best * tr.step + dx * t.x + dz * t.z;
+  let ds = local - (((c.s % tr.len) + tr.len) % tr.len);
+  if (ds > tr.len / 2) ds -= tr.len; if (ds < -tr.len / 2) ds += tr.len;
+  c.s += ds;
+  if (Math.abs(c.lat) > WALL) {
+    const over = c.lat - Math.sign(c.lat) * WALL;
+    c.x -= s.x * over; c.z -= s.z * over; c.lat -= over;
+    const h = Math.atan2(t.x, t.z), diff = Math.atan2(Math.sin(h - c.h), Math.cos(h - c.h));
+    const target = Math.abs(diff) < Math.PI / 2 ? diff : Math.atan2(Math.sin(diff + Math.PI), Math.cos(diff + Math.PI));
+    c.h += target * Math.min(1, dt * 6); c.mh = c.h;
+    c.speed *= 1 - Math.min(.5, Math.abs(Math.sin(target)) * 2.5 * dt);
+  }
+}
+function updateRival(c, dt) {
+  const R = race, tr = R.tr;
+  // ככל שהפנייה חדה יותר, היריבים מאטים
+  const a = tr.t[pointAt(tr, c.s, 0).i], b = tr.t[pointAt(tr, c.s + 28, 0).i];
+  const bend = 1 - clamp(a.x * b.x + a.z * b.z, 0, 1);
+  const gap = c.s - R.me.s;
+  const band = gap > 80 ? .92 : gap < -80 ? 1.08 : 1;
+  c.slow = Math.max(0, c.slow - dt);
+  const max = c.top * (1 - bend * .45) * band * (c.slow > 0 ? .65 : 1) * (c.done !== null ? .5 : 1);
+  c.speed += clamp(max - c.speed, -30 * dt, 17 * dt);
+  c.laneT -= dt;
+  if (c.laneT < 0) { c.laneT = 2 + Math.random() * 4; c.lane = (Math.random() * 2 - 1) * (HALF - 2.5); }
+  const before = c.lat;
+  c.lat += clamp(c.lane - c.lat, -4 * dt, 4 * dt);
+  c.steer = (before - c.lat) / Math.max(dt, .001) / 4;
+  c.s += c.speed * dt;
+}
+function collide(dt) {
+  const R = race, me = R.me, cars = R.cars;
+  for (let i = 0; i < cars.length; i++) for (let j = i + 1; j < cars.length; j++) {
+    const a = cars[i], b = cars[j], dx = b.x - a.x, dz = b.z - a.z, d = Math.hypot(dx, dz);
+    if (d >= 3.1 || d < .001) continue;
+    const push = 3.1 - d, nx = dx / d, nz = dz / d;
+    if (b.me) { // היריב a מול השחקן
+      b.x += nx * push * .7; b.z += nz * push * .7;
+      const side = R.tr.side[b.idx];
+      a.lat = clamp(a.lat - (nx * side.x + nz * side.z) * push * .5, -HALF, HALF);
+      const ahead = a.s - b.s;
+      if (ahead > 1) b.speed = Math.min(b.speed, Math.max(8, a.speed * .92));
+      else if (ahead < -1) a.speed = Math.min(a.speed, Math.max(8, b.speed * .9));
+    } else {
+      const sgn = Math.sign(b.lat - a.lat) || 1;
+      a.lat = clamp(a.lat - sgn * push * .3, -HALF, HALF); b.lat = clamp(b.lat + sgn * push * .3, -HALF, HALF);
+    }
+  }
+}
+function updateItems(dt) {
+  const R = race, me = R.me;
+  for (const it of R.items) {
+    if (it.type === 'coin') it.obj.rotation.y += dt * 3;
+    if (it.type === 'can') it.obj.rotation.y += dt * 2;
+    it.cool = Math.max(0, it.cool - dt);
+    if (it.gone > 0) {
+      it.gone -= dt;
+      if (it.type === 'cone') { it.obj.position.x += it.vx * dt; it.obj.position.z += it.vz * dt; it.obj.position.y = Math.max(0, it.obj.position.y + it.vy * dt); it.vy -= 40 * dt; it.obj.rotation.x += dt * 9; }
+      // חוזרים אחרי כמה שניות, רק כשהשחקן כבר רחוק
+      if (it.gone <= 0) {
+        if (Math.hypot(me.x - it.x, me.z - it.z) < 40) it.gone = 1;
+        else { it.obj.visible = true; it.obj.position.x = it.x; it.obj.position.z = it.z; it.obj.rotation.x = 0; if (it.type === 'cone') it.obj.position.y = 0; }
+      } else if (it.type === 'cone' && it.gone < 6) it.obj.visible = false;
+      continue;
+    }
+    if (me.done !== null || it.cool > 0) continue;
+    const reach = it.type === 'oil' ? 3.2 : it.type === 'pad' ? 4.2 : it.type === 'cone' ? 2.3 : 2.9;
+    if ((me.x - it.x) ** 2 + (me.z - it.z) ** 2 > reach * reach) continue;
+    if (it.type === 'coin') { it.gone = 8; it.obj.visible = false; R.coins++; sfx.coin(); }
+    else if (it.type === 'can') { it.gone = 8; it.obj.visible = false; me.nitro = Math.min(1, me.nitro + .5); sfx.tone(660, .2, 'triangle', .14, 0, 1320); toast('ניטרו!', .8); }
+    else if (it.type === 'pad') { it.cool = 2; me.boost = 1.1; me.speed = Math.max(me.speed, R.stats.speed * 1.2); R.pads++; sfx.nitro(); toast('טורבו!', .8); }
+    else if (it.type === 'cone') {
+      it.gone = 9; it.vx = Math.sin(me.h) * me.speed * 1.1 + (Math.random() - .5) * 16; it.vz = Math.cos(me.h) * me.speed * 1.1 + (Math.random() - .5) * 16; it.vy = 16;
+      R.hits++; sfx.hit();
+      if (R.stats.car !== 'monster') { me.speed *= .55; me.slow = .5; toast('אופס, קונוס!', .8); }
+    } else if (it.type === 'oil' && Math.abs(me.speed) > 10) { it.cool = 3; me.spin = .9; me.slow = 1.1; me.speed *= .75; R.hits++; sfx.hit(); toast('החלקה!', .9); }
+  }
+}
+function updateTrail(dt) {
+  const R = race, me = R.me, trail = byId(TRAILS, S.trail);
+  R.emit -= dt;
+  if (R.emit <= 0 && Math.abs(me.speed) > 12) {
+    R.emit = R.nitroOn || me.boost > 0 ? .02 : .05;
+    const p = R.parts.find(p => p.life <= 0);
+    if (p) {
+      const back = me.mesh.userData.rear - .4, side = (Math.random() - .5) * 1.8;
+      p.m.position.set(me.x + Math.sin(me.h) * back + Math.cos(me.h) * side, .6 + Math.random() * .5, me.z + Math.cos(me.h) * back - Math.sin(me.h) * side);
+      const colors = (R.nitroOn || me.boost > 0) && trail.id === 'smoke' ? [0xffd23f, 0xff7a00] : trail.colors;
+      p.m.material.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
+      p.life = .6; p.m.visible = true;
+    }
+  }
+  for (const p of R.parts) if (p.life > 0) {
+    p.life -= dt; p.m.position.y += dt * 1.4;
+    const k = Math.max(0, p.life / .6);
+    p.m.material.opacity = k * (trail.id === 'smoke' ? .5 : .9); p.m.scale.setScalar(1.5 - k * .8);
+    if (p.life <= 0) p.m.visible = false;
+  }
+}
+function standings() {
+  return [...race.cars].sort((a, b) => {
+    if (a.done !== null || b.done !== null) return (a.done === null ? 1e9 : a.done) - (b.done === null ? 1e9 : b.done);
+    return b.s - a.s;
+  });
+}
+function update(dt) {
+  const R = race;
+  if (R.count > 0) {
+    R.count -= dt;
+    const n = Math.ceil(R.count - .6);
+    if (n !== R.lastBeep && n <= 3 && n >= 0) { R.lastBeep = n; sfx.tone(n ? 440 : 880, n ? .18 : .5, 'square', .12); }
+    $('big').textContent = R.count > .6 ? Math.min(3, n) : 'צאו!';
+    if (R.count > .6) return;
+  }
+  if (R.count > 0) R.goShown = true; else if (R.goShown) { R.goShown = false; $('big').textContent = ''; }
+  R.time += dt;
+  const total = R.laps * R.tr.len, lapBefore = Math.floor(R.me.s / R.tr.len);
+  updatePlayer(dt);
+  R.cars.forEach(c => { if (!c.me) updateRival(c, dt); });
+  R.cars.forEach(c => { if (!c.me) { const q = pointAt(R.tr, c.s, c.lat); c.x = q.x; c.z = q.z; } });
+  collide(dt);
+  updateItems(dt);
+  R.cars.forEach(c => { if (c.done === null && c.s >= total) c.done = R.time; });
+  R.cars.forEach(c => { placeCar(c); animateCar(c.mesh, c.speed, c.steer, dt, R.time); });
+  const lap = Math.floor(R.me.s / R.tr.len);
+  if (lap > lapBefore && lap >= 1 && lap < R.laps && lap > (R.lapSeen || 0)) { R.lapSeen = lap; toast(lap === R.laps - 1 ? 'הקפה אחרונה!' : `הקפה ${lap + 1}`); sfx.tone(784, .3, 'triangle', .14); }
+  if (R.me.done !== null && R.state === 'run') { R.state = 'end'; R.endT = 1.8; R.result = finishRace(); $('big').textContent = 'סיום!'; }
+  if (R.state === 'end') { R.endT -= dt; if (R.endT <= 0) { R.state = 'over'; $('big').textContent = ''; showResult(R.result); } }
+}
+function checkGoal(pos) {
+  const R = race, ch = R.ch;
+  switch (ch.goal) {
+    case 'coins': return R.coins >= ch.n;
+    case 'time': return R.time <= targetTime(ch);
+    case 'clean': return R.hits === 0;
+    case 'pads': return R.pads >= ch.n;
+    case 'nonitro': return !R.usedNitro && pos <= 3;
+    case 'win': return pos === 1;
+  }
+  return false;
+}
+function finishRace() {
+  const R = race, order = standings(), pos = order.indexOf(R.me) + 1;
+  const res = { pos, time: R.time, picked: R.coins, order: order.map(c => c.name), lines: [], total: 0 };
+  const add = (label, n) => { if (n > 0) { res.lines.push([label, n]); res.total += n; } };
+  add('מטבעות מהמסלול', R.coins * 2);
+  if (R.ch) {
+    res.won = checkGoal(pos);
+    if (res.won) { add(S.done[R.ch.id] ? 'אתגר (שוב)' : 'פרס האתגר', S.done[R.ch.id] ? Math.round(R.ch.reward * .25) : R.ch.reward); S.done[R.ch.id] = 1; }
+  } else {
+    add(`פרס על מקום ${pos}`, Math.round(([120, 85, 60, 40, 30, 20][pos - 1] || 20) * R.def.prize));
+    res.won = pos <= 3;
+    const id = R.def.id;
+    if (!S.best[id] || R.time < S.best[id].time) { res.record = !!S.best[id]; S.best[id] = { time: R.time, pos: Math.min(pos, S.best[id] ? S.best[id].pos : 9) }; }
+    else S.best[id].pos = Math.min(S.best[id].pos, pos);
+    if (pos <= 3 && S.unlocked === R.trackIdx + 1 && S.unlocked < TRACKS.length) { S.unlocked++; res.unlocked = TRACKS[S.unlocked - 1].name; }
+  }
+  S.coins += res.total; save();
+  res.won ? sfx.win() : sfx.lose();
+  return res;
+}
+const fmt = t => `${Math.floor(t / 60)}:${(t % 60).toFixed(1).padStart(4, '0')}`;
+function showResult(res) {
+  const R = race, ch = R.ch;
+  let html = ch
+    ? `<h2>${res.won ? 'האתגר הושלם! 🎉' : 'כמעט! 💪'}</h2><div class="stars">${res.won ? '⭐⭐⭐' : '🔁'}</div><div>${chDesc(ch)}</div>`
+    : `<h2>${res.pos === 1 ? 'ניצחון! 🏆' : res.pos <= 3 ? 'כל הכבוד! 🎉' : 'המרוץ הסתיים 🏁'}</h2><div class="stars">${['🥇','🥈','🥉'][res.pos - 1] || res.pos}</div>`;
+  html += `<div>זמן: <b dir="ltr">${fmt(res.time)}</b>${res.record ? ' · שיא חדש!' : ''}</div>`;
+  if (ch && ch.goal === 'coins') html += `<div>נאספו ${res.picked} מטבעות</div>`;
+  if (res.order.length > 1) html += '<table>' + res.order.map((n, i) => `<tr class="${n === 'אני' ? 'me' : ''}"><td>${i + 1}</td><td>${n}</td></tr>`).join('') + '</table>';
+  if (res.lines.length) html += '<table>' + res.lines.map(([l, n]) => `<tr><td>${l}</td><td>${COIN} ${n}</td></tr>`).join('') + '</table>';
+  if (res.unlocked) html += `<div class="chip">🔓 נפתח מסלול: ${res.unlocked}</div>`;
+  openDialog(html, [['עוד פעם', 'sun', () => startRace(R.trackIdx, ch)], ['לתפריט', '', () => goMenu(ch ? 'challenges' : 'tracks')]]);
+}
+function openDialog(html, buttons) {
+  $('dialog').innerHTML = html; keys.clear();
+  buttons.forEach(([label, cls, fn]) => {
+    const b = document.createElement('button'); b.textContent = label; b.className = cls; b.onclick = fn; $('dialog').appendChild(b);
+  });
+  $('overlay').hidden = false;
+}
+function setPause(p) {
+  if (!race || race.state !== 'run') return;
+  race.paused = p; keys.clear(); sfx.engine(0, false);
+  if (!p) { $('overlay').hidden = true; return; }
+  openDialog('<h2>הפסקה</h2>', [
+    ['להמשיך', 'sun', () => setPause(false)],
+    ['להתחיל מחדש', '', () => startRace(race.trackIdx, race.ch)],
+    [S.mute ? '🔇 צליל כבוי' : '🔊 צליל פועל', '', () => { toggleMute(); setPause(true); }],
+    ['יציאה לתפריט', 'pink', () => goMenu('home')]
+  ]);
+}
+$('pauseBtn').onclick = e => { e.currentTarget.blur(); setPause(true); };
+document.addEventListener('visibilitychange', () => { if (document.hidden && race && race.state === 'run' && !race.paused) setPause(true); });
+
+function updateHud() {
+  const R = race, me = R.me, order = standings();
+  $('hPos').textContent = `מקום ${order.indexOf(me) + 1} מתוך ${R.cars.length}`;
+  $('hLap').textContent = `הקפה ${clamp(Math.floor(me.s / R.tr.len) + 1, 1, R.laps)} מתוך ${R.laps}`;
+  $('hTime').textContent = '⏱️ ' + fmt(me.done !== null ? me.done : R.time);
+  $('hCoins').innerHTML = COIN + ' ' + R.coins;
+  if (R.ch) {
+    const c = R.ch; let t = c.name;
+    if (c.goal === 'coins') t += `: ${R.coins} מתוך ${c.n} מטבעות`;
+    if (c.goal === 'pads') t += `: ${R.pads} מתוך ${c.n} משטחים`;
+    if (c.goal === 'time') { const left = targetTime(c) - R.time; t += left >= 0 ? `: נשארו ${Math.ceil(left)} שניות` : ': נגמר הזמן'; }
+    if (c.goal === 'clean') t += R.hits ? ': הייתה פגיעה ❌' : ': בלי פגיעות ✅';
+    if (c.goal === 'nonitro') t += R.usedNitro ? ': השתמשת בניטרו ❌' : ': בלי ניטרו ✅';
+    if (c.goal === 'win') t += ': להגיע למקום ראשון';
+    $('hGoal').textContent = t;
+  }
+  $('hSpeed').textContent = Math.round(Math.abs(me.speed) * 4);
+  $('nitroBar').firstElementChild.style.width = me.nitro * 100 + '%';
+  drawMap();
+}
+function drawMap() {
+  const R = race, g = $('map').getContext('2d'), tr = R.tr;
+  let m = 0; for (const p of tr.p) m = Math.max(m, Math.abs(p.x), Math.abs(p.z));
+  const k = 124 / m, X = x => 140 - x * k, Y = z => 140 - z * k;
+  g.clearRect(0, 0, 280, 280);
+  g.beginPath(); tr.p.forEach((p, i) => i ? g.lineTo(X(p.x), Y(p.z)) : g.moveTo(X(p.x), Y(p.z))); g.closePath();
+  g.lineJoin = 'round'; g.strokeStyle = '#1d1b4b'; g.lineWidth = 13; g.stroke(); g.strokeStyle = '#d9d6f0'; g.lineWidth = 6; g.stroke();
+  g.fillStyle = '#1d1b4b'; g.fillRect(X(tr.p[0].x) - 4, Y(tr.p[0].z) - 11, 8, 22);
+  R.cars.forEach(c => {
+    g.beginPath(); g.arc(X(c.x), Y(c.z), c.me ? 11 : 7, 0, TAU);
+    g.fillStyle = c.me ? '#ff3b4e' : '#7a5cff'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#fff'; g.stroke();
+  });
+}
+// זוויות צפייה, מחליפים ביניהן עם H
+const VIEWS = ['מאחור', 'מקדימה', 'מהצד', 'מושב הנהג', 'מלמעלה'];
+function nextView() {
+  S.cam = (S.cam + 1) % VIEWS.length; save();
+  toast('📷 ' + VIEWS[S.cam]); updateCamera(0);
+}
+function updateCamera(k) {
+  const R = race, me = R.me;
+  const target = me.spin > 0 || me.speed < 0 ? R.camH : me.h;
+  R.camH += Math.atan2(Math.sin(target - R.camH), Math.cos(target - R.camH)) * Math.min(1, k * 1);
+  const tall = camera.aspect < 1, big = S.car === 'monster' ? 2 : 0;
+  const dist = (tall ? 15 : 12) + big, hgt = (tall ? 7.5 : 5.6) + big;
+  // לכל זווית: איפה המצלמה ולאן היא מסתכלת, כל אחד כמרחק [קדימה, גובה, הצידה] מהמכונית
+  const [from, to] = [
+    [[-dist, hgt, 0], [8, 1.6 + big / 2, 0]],
+    [[dist * .7, 3.6 + big, 0], [0, 1 + big, 0]],
+    [[0, 3.8 + big, dist * .75], [0, .8 + big, 0]],
+    [[.6, 1.9 + big, 0], [14, 1.2 + big, 0]],
+    [[-6, tall ? 44 : 34, 0], [5, 0, 0]]
+  ][S.cam] || [];
+  const fx = Math.sin(R.camH), fz = Math.cos(R.camH);
+  const at = ([f, y, side]) => [me.x + fx * f + fz * side, y, me.z + fz * f - fx * side];
+  camera.position.set(...at(from));
+  camera.lookAt(...at(to));
+  me.mesh.visible = S.cam !== 3; // במושב הנהג המכונית שלנו לא מסתירה את הכביש
+  const fov = (tall ? 74 : 62) + (R.nitroOn || me.boost > 0 ? 11 : 0);
+  camera.fov = lerp(camera.fov, fov, Math.min(1, k * .8)); camera.updateProjectionMatrix();
+}
+
+/* ───────── תפריטים ───────── */
+let view = 'home', shopTab = 'car';
+function goMenu(v) {
+  disposeRace(); sfx.engine(0, false); keys.clear();
+  $('hud').hidden = true; $('overlay').hidden = true; $('menu').hidden = false;
+  show(v); resize();
+}
+function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html !== undefined) e.innerHTML = html; return e; }
+function btn(label, cls, fn) { const b = el('button', cls, label); b.onclick = () => { sfx.init(); sfx.tone(520, .06, 'triangle', .1); fn(); }; return b; }
+function item(title, text, button, cls, lead) {
+  const row = el('div', 'item' + (cls ? ' ' + cls : ''));
+  if (lead) row.appendChild(lead);
+  const mid = el('div', '', `<h3>${title}</h3>${text ? `<p>${text}</p>` : ''}`); mid.style.flex = '1';
+  row.appendChild(mid); if (button) row.appendChild(button); return row;
+}
+function show(v) {
+  const keepScroll = v === view ? $('panel').scrollTop : 0;
+  if (v !== view && preview) { preview = null; refreshShowCar(); }
+  view = v; const P = $('panel'); P.innerHTML = ''; $('coins').textContent = S.coins;
+  $('muteBtn').textContent = S.mute ? '🔇' : '🔊';
+  const head = title => { const h = el('div', 'head'); h.appendChild(el('h2', '', title)); h.appendChild(btn('חזרה', '', () => show('home'))); P.appendChild(h); };
+  if (v === 'home') {
+    P.appendChild(el('h1', '', 'אלופי המסלול'));
+    P.appendChild(el('p', 'sub', `${Object.keys(S.done).length} מתוך ${CHALLENGES.length} אתגרים הושלמו`));
+    const s = el('div', 'stack');
+    s.appendChild(btn('🏁 למרוץ', 'big sun', () => show('tracks')));
+    s.appendChild(btn('⭐ אתגרים', 'big pink', () => show('challenges')));
+    s.appendChild(btn('🛒 חנות', 'big mint', () => show('shop')));
+    s.appendChild(btn(S.assist ? '🧭 עזרת היגוי: פועלת' : '🧭 עזרת היגוי: כבויה', '', () => { S.assist = !S.assist; save(); show('home'); }));
+    P.appendChild(s);
+    P.appendChild(el('p', 'help', isTouch ? 'בטלפון המכונית נוסעת לבד. לוחצים על החצים כדי לפנות.' : 'חץ למעלה: גז · חץ למטה: בלם · חצים לצדדים: היגוי<br>רווח: ניטרו · P: הפסקה · H: זווית צפייה'));
+    // קרדיט למעצב המודל: חובה לפי הרישיון
+    Object.values(MODELS).forEach(m => { if (m.data) P.appendChild(el('p', 'credit', m.credit)); });
+  } else if (v === 'tracks') {
+    head('בחירת מסלול');
+    TRACKS.forEach((t, i) => {
+      const open = i < S.unlocked, b = S.best[t.id];
+      P.appendChild(item(`${t.icon} ${t.name}`,
+        open ? (b ? `הזמן הכי טוב: <bdi dir="ltr">${fmt(b.time)}</bdi> · מקום ${b.pos}` : '3 הקפות מול 5 יריבים') : `נפתח אחרי מקום 1 עד 3 ב${TRACKS[i - 1].name}`,
+        open ? btn('לנסוע', 'sun', () => startRace(i)) : el('span', '', '🔒'), open ? '' : 'locked'));
+    });
+  } else if (v === 'challenges') {
+    head('אתגרים');
+    CHALLENGES.forEach(c => {
+      const done = S.done[c.id], t = TRACKS[c.track];
+      P.appendChild(item(`${done ? '✅ ' : ''}${c.name}`, `${chDesc(c)}<br>${t.icon} ${t.name} · ${COIN} ${done ? Math.round(c.reward * .25) : c.reward}`,
+        btn('להתחיל', done ? '' : 'pink', () => startRace(c.track, c)), done ? 'on' : ''));
+    });
+  } else if (v === 'shop') {
+    head('חנות');
+    const tabs = el('div', 'tabs');
+    [['car', 'מכוניות'], ['color', 'צבעים'], ['up', 'שדרוגים'], ['extra', 'קישוטים'], ['trail', 'עקבות']].forEach(([id, label]) =>
+      tabs.appendChild(btn(label, shopTab === id ? 'on' : '', () => { shopTab = id; preview = null; refreshShowCar(); P.scrollTop = 0; show('shop'); })));
+    P.appendChild(tabs);
+    if (shopTab === 'up') {
+      UPGRADES.forEach(u => {
+        const lv = S.up[u.id], price = UP_PRICE[lv];
+        const b = lv >= 3 ? el('span', '', 'מקסימום!') : btn(`${COIN} ${price}`, 'sun', () => { S.coins -= price; S.up[u.id]++; save(); sfx.coin(); show('shop'); });
+        if (lv < 3) b.disabled = S.coins < price;
+        P.appendChild(item(`${u.icon} ${u.name}`, `${u.desc}<br>דרגה: ${'🟣'.repeat(lv)}${'⚪'.repeat(3 - lv)}`, b));
+      });
+      P.appendChild(el('p', 'help', 'שדרוגים עובדים על כל המכוניות.'));
+    } else {
+      const list = { car: CARS, color: COLORS, extra: EXTRAS, trail: TRAILS }[shopTab], kind = shopTab;
+      list.forEach(x => {
+        const key = kind + ':' + x.id, owned = S.owned[key], using = S[kind] === x.id;
+        let b;
+        if (using) b = el('span', '', '✔️ בשימוש');
+        else if (owned) b = btn('לבחור', 'mint', () => { S[kind] = x.id; preview = null; save(); refreshShowCar(); show('shop'); });
+        else { b = btn(`${COIN} ${x.price}`, 'sun', () => { S.coins -= x.price; S.owned[key] = 1; S[kind] = x.id; preview = null; save(); refreshShowCar(); sfx.win(); show('shop'); }); b.disabled = S.coins < x.price; }
+        let lead = null, text = '';
+        if (kind === 'color') { lead = el('div', 'swatch'); lead.style.background = x.rainbow ? 'conic-gradient(red,orange,yellow,green,blue,violet,red)' : '#' + x.hex.toString(16).padStart(6, '0'); }
+        if (kind === 'car') {
+          const bar = (label, v) => `<span>${label}</span><span class="bar"><i style="width:${v}%"></i></span>`;
+          text = `${x.note || ''}<span class="bars">${bar('מהירות', x.speed / 60 * 100)}${bar('תאוצה', x.accel / 34 * 100)}${bar('היגוי', (x.grip - 1.4) / 1.15 * 100)}</span>`;
+        }
+        if (!owned && S.coins < x.price) text += `${text ? '<br>' : ''}<small>חסרים ${x.price - S.coins} מטבעות</small>`;
+        const row = item(`${x.icon ? x.icon + ' ' : ''}${x.name}`, text, b, using ? 'on' : '', lead);
+        if (kind !== 'trail') { row.style.cursor = 'pointer'; row.addEventListener('click', e => { if (e.target.closest('button')) return; preview = { [kind]: x.id }; refreshShowCar(); }); }
+        P.appendChild(row);
+      });
+      if (kind !== 'trail') P.appendChild(el('p', 'help', 'לחיצה על שורה מראה איך זה נראה, עוד לפני שקונים.'));
+    }
+  }
+  P.scrollTop = keepScroll;
+}
+function toggleMute() { S.mute = !S.mute; save(); $('muteBtn').textContent = S.mute ? '🔇' : '🔊'; }
+$('muteBtn').onclick = () => { sfx.init(); toggleMute(); };
+
+/* ───────── לולאה ───────── */
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  if (race) camera.clearViewOffset();
+  else {
+    // מזיזים את התמונה כך שהמכונית תופיע בחלק הפנוי של המסך
+    const m = $('menu').getBoundingClientRect();
+    if (w > h) camera.setViewOffset(w, h, m.width / 2, 0, w, h);
+    else camera.setViewOffset(w, h, 0, m.height / 2 - 20, w, h);
+  }
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+let last = performance.now(), clock = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; clock += dt;
+  if (race) {
+    if (!race.paused) {
+      // צעדים קטנים כדי שהפיזיקה תהיה יציבה גם במכשיר איטי
+      const n = Math.max(1, Math.ceil(dt / .02));
+      for (let i = 0; i < n && race; i++) update(dt / n);
+      updateCamera(dt * 7); updateTrail(dt);
+      if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').style.opacity = 0; }
+      sfx.engine(Math.abs(race.me.speed), race.state === 'run', race.nitroOn);
+    }
+    updateHud();
+    renderer.render(race.scene, camera);
+  } else {
+    showCar.rotation.y += dt * .5;
+    animateCar(showCar, 0, 0, dt, clock);
+    const a = innerWidth / innerHeight;
+    const free = a > 1 ? (innerWidth - $('menu').offsetWidth) / innerHeight : innerWidth / (innerHeight - $('menu').offsetHeight);
+    const dist = Math.max(15, 21 / Math.max(.45, free)) * (a > 1 ? 1 : 1.7);
+    camera.fov = 40; camera.updateProjectionMatrix();
+    camera.position.set(0, dist * .38, dist); camera.lookAt(0, 1.3, 0);
+    renderer.render(showroom, camera);
+  }
+}
+refreshShowCar(); show('home'); resize(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>
